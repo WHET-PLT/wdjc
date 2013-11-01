@@ -1,8 +1,13 @@
 { open Parser }
 
 rule token = parse
+<<<<<<< HEAD
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
+=======
+s  [' ' '\t' '\r' '\n'] { token lexbuf }	(* Whitespace *)
+| "/*"			{ comment lexbuf }			(* Comments *)
+>>>>>>> ed55e49ca786d5884e88ba6bdf0e83abdc127828
 | '['			{ LBRACK }
 | ']'			{ RBRACK }
 | '('			{ LPAREN }
