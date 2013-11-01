@@ -1,7 +1,7 @@
 { open Parser }
 
 rule token = parse
-s  [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
+  [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     { comment lexbuf }           (* Comments *)
 | '['			{ LBRACK }
 | ']'			{ RBRACK }
