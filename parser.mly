@@ -8,7 +8,15 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 
+%start program
+%type <Ast.program> program
+
 %%
+
+program:
+   /* nothing */ { [], [] }
+ | program vdecl { ($2 :: fst $1), snd $1 }
+ | program fdecl { fst $1, ($2 :: snd $1) }
 
 expr:
     LITERAL          { Literal($1) }
