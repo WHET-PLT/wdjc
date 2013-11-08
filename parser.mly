@@ -1,5 +1,6 @@
 %{ open Ast %}
 
+/*token section not yet finished. need to check if order matters*/
 %token LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE COMMA SEMI
 %token PLUS MINUS TIMES DIVIDE ASSIGN 
 %token SERIAL PARALLEL
@@ -16,6 +17,13 @@
 %token <string> SONG
 %token EOF
 
+/*started associativity. need further clarification.*/
+%nonassoc NOELSE
+%nonassoc ELSE
+%right ASSIGN
+%left EQ NEQ
+%left LT GT LEQ GEQ
+%left SERIAL PARALLEL
 %left PLUS MINUS
 %left TIMES DIVIDE
 
