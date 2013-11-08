@@ -10,6 +10,7 @@ rule token = parse
 | '{'			{ LBRACE }
 | '}'			{ RBRACE }
 | ';'			{ SEMI }
+| ','      		{ COMMA }
 | '^'			{ VIB }
 | '~'			{ TREM }
 | '%'			{ BEND }
@@ -32,6 +33,7 @@ rule token = parse
 | "if"			{ IF }
 | "else"		{ ELSE }
 | "for"			{ FOR }
+| "loop"		{ LOOP }
 | "return"		{ RETURN }
 | "fun"			{ FUN }
 | "vol"			{ VOL }

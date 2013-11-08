@@ -1,9 +1,0 @@
-song {
-
-/*
-Simple arithmetic test.
-Can test comments too.
- */
-print(1+1)
-
-}

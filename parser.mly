@@ -1,8 +1,19 @@
 %{ open Ast %}
 
-%token PLUS MINUS TIMES DIVIDE ASSIGN
+%token LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE COMMA SEMI
+%token PLUS MINUS TIMES DIVIDE ASSIGN 
+%token SERIAL PARALLEL
+%token VIB TREM BEND ARROW
+%token EQ NEQ INCR DECR
+%token LT LEQ GT GEQ
+%token IF ELSE FOR LOOP RETURN INT
+%token FUN VOL DUR
 %token <int> LITERAL
 %token <string> ID
+%token <string> NOTE
+%token <string> REST
+%token <string> CHORD
+%token <string> SONG
 %token EOF
 
 %left PLUS MINUS
