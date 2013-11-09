@@ -64,7 +64,7 @@ public class Track {
 	 * 
 	 * @param other
 	 */
-	public void serialAdd(Track other) {
+	public Track serialAdd(Track other) {
 		//track.addAll(other.getTrack());
 		Track tmp = new Track(track); 
 		tmp.getTrack().addAll(other.getChord());;
@@ -78,7 +78,7 @@ public class Track {
 	 */
 	public void parallelAdd(Track other) {
 		for(int i = 0; i < (this.length() < other.length() ? this.length() : other.length()); i++) {
-			this.getChord(i).parallelAdd(other.getChord(i));
+			this.getTrack(i).parallelAdd(other.getTrack(i));
 		}
 	}
 	
