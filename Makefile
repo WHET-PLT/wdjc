@@ -25,10 +25,6 @@ wdjc : $(OBJS)
 test : wdjc testall.sh
 	./testall.sh
 
-
-scanner.ml : scanner.mll
-	ocamllex scanner.mll
-
 parser.ml parser.mli : parser.mly
 	ocamlyacc parser.mly
 
