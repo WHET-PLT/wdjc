@@ -24,8 +24,9 @@ public class Chord {
 	 * 
 	 * @param other
 	 */
-	public Chord(ArrayList<Note> other) {
-		chord = other;
+	public Chord(Chord other) {
+		chord = new ArrayList<Note>();
+		chord.addAll(other.getChord());
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class Chord {
 	 * @param track
 	 */
 	public Chord parallelAdd(Chord other) {
-		Chord tmp = new Chord(chord);
+		Chord tmp = new Chord(this);
 		tmp.getChord().addAll(other.getChord());
 		return tmp;
 	}
