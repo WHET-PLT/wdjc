@@ -30,6 +30,14 @@ public class Track {
 	
 	/**
 	 * 
+	 * @param track
+	 */
+	public Track(Track other) {
+		track = other.getTrack();
+	}
+	
+	/**
+	 * 
 	 * @return
 	 */
 	public ArrayList<Chord> getTrack() {
@@ -64,21 +72,20 @@ public class Track {
 	 * 
 	 * @param other
 	 */
-	public void serialAdd(Track other) {
-		//track.addAll(other.getTrack());
-		Track tmp = new Track(track); 
-		tmp.getTrack().addAll(other.getChord());;
+	public Track serialAdd(Track other) {
+		Track tmp = new Track(this); 
+		tmp.getTrack().addAll(other.getTrack());;
 		return tmp;
 	}
 
-	
 	/**
 	 * 
 	 * @param track
 	 */
 	public void parallelAdd(Track other) {
+		Track tmp = new Track(this);
 		for(int i = 0; i < (this.length() < other.length() ? this.length() : other.length()); i++) {
-			this.getChord(i).parallelAdd(other.getChord(i));
+			tmp.getChord(i).parallelAdd(other.getChord(i));
 		}
 	}
 	
