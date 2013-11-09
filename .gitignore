@@ -8,3 +8,4 @@
 *.cmxs
 *.cmxa
 *.class
+.DS_Store
