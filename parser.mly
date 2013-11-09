@@ -1,6 +1,7 @@
 %{ open Ast %}
 
 /*token section not yet finished. need to check if order matters*/
+/*As of 11-09-13 we dont think theres precedence here */
 %token LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE COMMA SEMI
 %token PLUS MINUS TIMES DIVIDE ASSIGN 
 %token SERIAL PARALLEL
@@ -18,14 +19,35 @@
 %token EOF
 
 /*started associativity. need further clarification.*/
+/*precedence is ordered bottom to top */
+/*ie TIMES DIVIDE is higher precedence than ASSIGN*/
 %nonassoc NOELSE
 %nonassoc ELSE
+/*Right associative because if you have a = b = c you want
+to do (a = (b = c))*/
 %right ASSIGN
+/* Equals/neq association: (a == b) == c */
 %left EQ NEQ
 %left LT GT LEQ GEQ
+/*SERIAL/PARALLEL defaulted to PLUS/MINUS Associativity*/
 %left SERIAL PARALLEL
 %left PLUS MINUS
 %left TIMES DIVIDE
+/* arrow - symbol: -> */
+%left ARROW
+/*
+VIB - vibrato (^)
+TREM - tremolo (~)
+BEND - pitch bend (%)
+*/
+%left VIB TREM BEND ARROW
+/*incr - incrememnt (++); decr - decrement  (--) */
+/*Ex: (note++)++ */
+%left INCR DECR
+
+
+
+
 
 %start program
 %type <Ast.program> program
@@ -71,7 +93,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
      { For($3, $5, $7, $9) }
-  | LOOP LPAREN expr RPAREN stmt { While($3, $5) }
+  | LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }
 
 expr_opt:
     /* nothing */ { Noexpr }
