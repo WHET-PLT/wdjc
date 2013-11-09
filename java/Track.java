@@ -23,8 +23,9 @@ public class Track {
 	 * 
 	 * @param track
 	 */
-	public Track(ArrayList<Chord> other) {
-		track = other;
+	public Track(Chord other) {
+		track = new ArrayList<Chord>();
+		track.add(other);
 	}
 	
 	/**

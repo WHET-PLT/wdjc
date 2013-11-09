@@ -10,16 +10,16 @@ import java.util.ArrayList;
  */
 public class Chord {
 
-	
+
 	public ArrayList<Note> chord;
-	
+
 	/**
 	 * 
 	 */
 	public Chord() {
 		chord = new ArrayList<Note>();
 	}
-	
+
 	/**
 	 * 
 	 * @param other
@@ -27,7 +27,7 @@ public class Chord {
 	public Chord(ArrayList<Note> other) {
 		chord = other;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -35,7 +35,7 @@ public class Chord {
 	public ArrayList<Note> getChord() {
 		return chord;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -43,7 +43,7 @@ public class Chord {
 	public Note getNote(int index) {
 		return chord.get(index);
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -51,7 +51,7 @@ public class Chord {
 	public int length() {
 		return chord.size();
 	}
-	
+
 	/**
 	 * 
 	 * @param note
@@ -59,18 +59,17 @@ public class Chord {
 	public void addNote(Note note) {
 		chord.add(note);
 	}
-	
+
 	/**
 	 * serial add should return track
 	 * @param other
 	 */
 	public Track serialAdd(Chord other) {
-		Track tmp = new Track(Chord);
-		for(int i = 0; i < (this.length() < other.length() ? this.length() : other.length()); i++) {
-			tmp.serialAdd(new Track(other));
-		}
+		Track tmp = new Track(other);
+		tmp.serialAdd(new Track(other));
+		return tmp;
 	}
-	
+
 	/**
 	 * parallel add should return track
 	 * @param track

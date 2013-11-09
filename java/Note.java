@@ -8,21 +8,23 @@
  */
 public class Note {
 	
-	int pitch, duration, volume;
+	int pitch, duration, volume, instrument;
 	boolean pitch_bend, tremolo, vibrato;
 	
 	/**
 	 * @param pitch
 	 * @param duration
 	 * @param volume
+	 * @param instrument
 	 * @param pitch_bend
 	 * @param tremolo
 	 * @param vibrato
 	 */
-	public Note(int pitch, int duration, int volume, boolean pitch_bend, boolean tremolo, boolean vibrato) {
+	public Note(int pitch, int duration, int volume, int instrument, boolean pitch_bend, boolean tremolo, boolean vibrato) {
 		this.pitch = pitch;
 		this.duration = duration;
 		this.volume = volume;
+		this.instrument = instrument;
 		this.pitch_bend = pitch_bend;
 		this.tremolo = tremolo;
 		this.vibrato = vibrato;
@@ -63,6 +65,18 @@ public class Note {
 	 */
 	public void setVolume(int volume) {
 		this.volume = volume;
+	}
+	/**
+	 * @return the instrument
+	 */
+	public int getInstrument() {
+		return instrument;
+	}
+	/**
+	 * @param instrument the instrument to set
+	 */
+	public void setInstrument(int instrument) {
+		this.instrument = instrument;
 	}
 	/**
 	 * @return the pitch_bend
