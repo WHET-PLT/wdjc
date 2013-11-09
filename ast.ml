@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div | Ser | Par
+type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq | Ser | Par | Incr | Decr | Arrow
 
 type expr =
     Literal of int
@@ -24,6 +24,7 @@ type expr =
     body : stmt list;
   }
 
+(*pretty print for expr*)
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
@@ -35,6 +36,7 @@ let rec string_of_expr = function
       | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">=") ^ " " ^
       string_of_expr e2
 
+(*pretty print for stmts*)
 let rec string_of_stmt = function
     Block(stmts) ->
       "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
@@ -56,6 +58,7 @@ let string_of_fdecl fdecl =
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 
+(*pretty print for program*)
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)

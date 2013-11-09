@@ -12,6 +12,7 @@ public class Note {
 	boolean pitch_bend, tremolo, vibrato;
 	
 	/**
+	 * Constructor takes integer/boolean values representing note.
 	 * @param pitch
 	 * @param duration
 	 * @param volume
