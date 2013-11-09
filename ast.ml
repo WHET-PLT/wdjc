@@ -1,4 +1,4 @@
-type op = Add | Sub | Mult | Div |
+type op = Add | Sub | Mult | Div | Ser | Par
 
 type expr =
     Literal of int
