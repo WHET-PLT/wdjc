@@ -38,7 +38,7 @@ parser.ml parser.mli : parser.mly
 microc.tar.gz : $(TARFILES)
 	cd .. && tar czf microc/microc.tar.gz $(TARFILES:%=microc/%)
 
-.PHONY : clean
+.PHONY :	 clean
 clean :
 	rm -f microc parser.ml parser.mli scanner.ml testall.log \
 	*.cmo *.cmi *.out *.diff
