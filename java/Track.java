@@ -29,6 +29,14 @@ public class Track {
 	
 	/**
 	 * 
+	 * @param track
+	 */
+	public Track(ArrayList<Chord> other) {
+		track = other;
+	}
+	
+	/**
+	 * 
 	 * @return
 	 */
 	public ArrayList<Chord> getTrack() {

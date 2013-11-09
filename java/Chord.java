@@ -40,7 +40,7 @@ public class Chord {
 	 * 
 	 * @return
 	 */
-	public Note getChord(int index) {
+	public Note getNote(int index) {
 		return chord.get(index);
 	}
 	
@@ -64,19 +64,20 @@ public class Chord {
 	 * serial add should return track
 	 * @param other
 	 */
-	public Chord serialAdd(Chord other) {
-		Chord tmp = new Chord(chord);
-		tmp.getChord().addAll(other.getChord());
-		return tmp;
+	public Track serialAdd(Chord other) {
+		Track tmp = new Track(Chord);
+		for(int i = 0; i < (this.length() < other.length() ? this.length() : other.length()); i++) {
+			tmp.serialAdd(new Track(other));
+		}
 	}
 	
 	/**
 	 * parallel add should return track
 	 * @param track
 	 */
-	public void parallelAdd(Track other) {
-		for(int i = 0; i < (this.length() < other.length() ? this.length() : other.length()); i++) {
-			this.getChord(i).parallelAdd(other.getChord(i));
-		}
+	public Chord parallelAdd(Chord other) {
+		Chord tmp = new Chord(chord);
+		tmp.getChord().addAll(other.getChord());
+		return tmp;
 	}
 }
