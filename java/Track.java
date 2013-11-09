@@ -33,7 +33,8 @@ public class Track {
 	 * @param track
 	 */
 	public Track(Track other) {
-		track = other.getTrack();
+		track = new ArrayList<Chord>();
+		track.addAll(other.getTrack());
 	}
 	
 	/**
