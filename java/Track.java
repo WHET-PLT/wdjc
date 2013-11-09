@@ -29,14 +29,6 @@ public class Track {
 	
 	/**
 	 * 
-	 * @param track
-	 */
-	public Track(ArrayList<Chord> other) {
-		track = other;
-	}
-	
-	/**
-	 * 
 	 * @return
 	 */
 	public ArrayList<Chord> getTrack() {
@@ -72,8 +64,12 @@ public class Track {
 	 * @param other
 	 */
 	public void serialAdd(Track other) {
-		track.addAll(other.getTrack());
+		//track.addAll(other.getTrack());
+		Track tmp = new Track(track); 
+		tmp.getTrack().addAll(other.getChord());;
+		return tmp;
 	}
+
 	
 	/**
 	 * 
