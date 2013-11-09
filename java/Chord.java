@@ -61,7 +61,7 @@ public class Chord {
 	}
 	
 	/**
-	 * 
+	 * serial add should return track
 	 * @param other
 	 */
 	public Chord serialAdd(Chord other) {
@@ -71,7 +71,7 @@ public class Chord {
 	}
 	
 	/**
-	 * 
+	 * parallel add should return track
 	 * @param track
 	 */
 	public void parallelAdd(Track other) {
