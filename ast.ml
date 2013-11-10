@@ -1,8 +1,9 @@
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | 
-          Geq | Ser | Par | Incr | Decr | Arrow
+          Geq | Ser | Par | Incr | Decr | Arrow | Vib | Trem | Bend
 
 (*do we need to include song in here? 
-  It is only used as a 'main' like function right?*)
+  It is only used as a 'main' like function right?
+*)
 type expr =
     Literal of int
   | Id of string
@@ -11,6 +12,14 @@ type expr =
   | Chord of string
   | Song of string
   | Binop of expr * op * expr
+  (* TODO
+  not sure about 'Modifier'. trying to account for vibrato, tremolo, and bend
+  operators. I dont think they can be in binop since these modifiers do not
+  require another a sexond expr
+   ex. Note a;
+       a^;
+  *)
+  | Modifier of expr * op 
   | Assign of string * expr
   | Call of string * expr list
   | Array of expr list
@@ -36,7 +45,7 @@ type func_decl = {
 type program = string list * func_decl list
 
 (*pretty print for expr*)
-(*need to decide on arrays*)
+(*TODO need to decide on arrays*)
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
@@ -52,6 +61,11 @@ let rec string_of_expr = function
       | Ser -> "." | Par -> ":" | Incr -> "++" | Decr -> "--"
       | Arrow -> "->") ^ " " ^
       string_of_expr e2
+  (*again, not sure about this section*)
+  | Modifier(e1, o) ->
+      string_of_expr e1 ^
+      (match o with
+      Vib -> "^" | Trem -> "~" | Bend -> "%")
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
@@ -59,7 +73,7 @@ let rec string_of_expr = function
 
 
 (*pretty print for stmts*)
-(*need to do loop*)
+(*TODO need to do loop*)
 let rec string_of_stmt = function
     Block(stmts) ->
       "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
