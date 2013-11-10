@@ -85,6 +85,10 @@ stmt_list:
     /* nothing */  { [] }
   | stmt_list stmt { $2 :: $1 }
 
+/*
+  stmt section not finished.
+  TODO: decide on whether or not we are using 'loop'
+*/
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
@@ -99,6 +103,11 @@ expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
 
+/*
+  expr section not finished.
+  TODO: need clarification on 'Modifier' section: VIB, TREM, BEND.
+  need clarification on INCR, DECR, ARROW
+*/
 expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }
@@ -115,9 +124,15 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
+  | expr INCR   expr { Binop($1, Incr,   $3) }
+  | expr DECR   expr { Binop($1, Decr,   $3) }
+  | expr ARROW  expr { Binop($1, Arrow,   $3) }
   | ID ASSIGN expr   { Assign($1, $3) }
-  | expr SERIAL expr { Binop($1, SERIAL, $3) }
-  | expr PARALLEL expr { Binop ($1, PARALLEL, $3) }
+  | expr SERIAL expr { Binop($1, Ser, $3) }
+  | expr PARALLEL expr { Binop ($1, Par, $3) }
+  | expr VIB         { Modifier($1, Vib) }
+  | expr TREM        { Modifier($1, Trem) }
+  | expr BEND        { Modifier($1, Bend) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
   | LBRACKET actuals_opt RBRACKET { Array($?) } /*array?*/
