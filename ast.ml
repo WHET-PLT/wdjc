@@ -1,15 +1,23 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq | Ser | Par | Incr | Decr | Arrow
+type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | 
+          Geq | Ser | Par | Incr | Decr | Arrow
 
+(*do we need to include song in here? 
+  It is only used as a 'main' like function right?*)
 type expr =
     Literal of int
   | Id of string
-  | Binop of expr * op * expr
   | Note of string
+  | Rest of string
   | Chord of string
   | Song of string
-  (*| Array of string*)
+  | Binop of expr * op * expr
+  | Assign of string * expr
+  | Call of string * expr list
+  | Array of expr list
+  (*an array can be a list of expressions*)
 
-  type stmt =
+(*need to decide if we are keeping loop or not*)
+type stmt =
     Block of stmt list
   | Expr of expr
   | Return of expr
@@ -17,26 +25,41 @@ type expr =
   | For of expr * expr * expr * stmt
   (*| Loop of expr * stmt*)
 
-  type func_decl = {
+type func_decl = {
     fname : string;
     formals : string list;
     locals : string list;
     body : stmt list;
   }
 
+(*ast is a list of stmts and list of function dels*)
+type program = string list * func_decl list
+
 (*pretty print for expr*)
+(*need to decide on arrays*)
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
+  | Note(n) -> n
+  | Rest(r) -> r
+  | Chord(c) -> c
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with
-	Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
+	    Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
       | Equal -> "==" | Neq -> "!="
-      | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">=") ^ " " ^
+      | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
+      | Ser -> "." | Par -> ":" | Incr -> "++" | Decr -> "--"
+      | Arrow -> "->") ^ " " ^
       string_of_expr e2
+  | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Call(f, el) ->
+      f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | Array 
+
 
 (*pretty print for stmts*)
+(*need to do loop*)
 let rec string_of_stmt = function
     Block(stmts) ->
       "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
@@ -49,6 +72,7 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+  | Loop
 
 let string_of_vdecl id = "int " ^ id ^ ";\n"
 
