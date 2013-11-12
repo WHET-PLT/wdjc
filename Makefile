@@ -37,8 +37,8 @@ parser.ml parser.mli : parser.mly
 %.cmi : %.mli
 	ocamlc -c $<
 
-microc.tar.gz : $(TARFILES)
-	cd .. && tar czf microc/microc.tar.gz $(TARFILES:%=microc/%)
+	wdjc.tar.gz : $(TARFILES)
+	cd .. && tar czf wdjc/wdjc.tar.gz $(TARFILES:%=wdjc/%)
 
 .PHONY :	 clean
 clean :
@@ -56,9 +56,9 @@ execute.cmo: bytecode.cmo ast.cmo
 execute.cmx: bytecode.cmx ast.cmx 
 interpret.cmo: ast.cmo 
 interpret.cmx: ast.cmx 
-microc.cmo: scanner.cmo parser.cmi interpret.cmo execute.cmo compile.cmo \
+wdjc.cmo: scanner.cmo parser.cmi interpret.cmo execute.cmo compile.cmo \
     bytecode.cmo ast.cmo 
-microc.cmx: scanner.cmx parser.cmx interpret.cmx execute.cmx compile.cmx \
+swdjc.cmx: scanner.cmx parser.cmx interpret.cmx execute.cmx compile.cmx \
     bytecode.cmx ast.cmx 
 parser.cmo: ast.cmo parser.cmi 
 parser.cmx: ast.cmx parser.cmi 
