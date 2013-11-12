@@ -38,6 +38,8 @@ rule token = parse
 | "fun"			{ FUN }
 | "vol"			{ VOL }
 | "dur"			{ DUR }
+| "pit"			{ PIT }
+| "instr"		{ INSTR }
 | "int"			{ INT }
 | "note"		{ NOTE }
 | "rest"		{ REST }
