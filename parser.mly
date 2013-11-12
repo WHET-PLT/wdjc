@@ -13,6 +13,16 @@
 %token <int> LITERAL
 %token <string> ID
 /*are these strings?*/
+/*
+  I think they are strings just b/c not sure
+  what else we could make them. 
+  Still unsure about SONG though, do we need to include
+  it? Do we use SONG anywhere else but as a microc like 'main'
+  function. If so, I do not think we need to include it in the
+  scanner, parser, ast. microc doesnt have main in its files
+  i think. need to check on that. Also, lets clear up arrays on
+  wed. - Tom
+*/
 %token <string> NOTE
 %token <string> REST
 %token <string> CHORD
