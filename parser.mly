@@ -3,15 +3,16 @@
 /*token section not yet finished. need to check if order matters*/
 /*As of 11-09-13 we dont think theres precedence here */
 %token LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE COMMA SEMI
-%token PLUS MINUS TIMES DIVIDE ASSIGN 
+%token PLUS MINUS TIMES DIVIDE ASSIGN
 %token SERIAL PARALLEL
 %token VIB TREM BEND ARROW
 %token EQ NEQ INCR DECR
 %token LT LEQ GT GEQ
 %token IF ELSE FOR LOOP RETURN INT
-%token FUN VOL DUR
+%token FUN VOL DUR PIT INSTR
 %token <int> LITERAL
 %token <string> ID
+/*are these strings?*/
 %token <string> NOTE
 %token <string> REST
 %token <string> CHORD
