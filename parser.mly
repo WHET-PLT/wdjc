@@ -12,7 +12,7 @@
 %token FUN VOL DUR PIT INSTR
 %token <int> LITERAL
 %token <string> ID
-/*are these strings?*/
+/*are these strings? WFW*/
 /*
   I think they are strings just b/c not sure
   what else we could make them. 
@@ -23,6 +23,13 @@
   i think. need to check on that. Also, lets clear up arrays on
   wed. - Tom
 */
+/*
+- that makes sense, then is it just a list or something in the ast? like "program"?
+- but does microc depend on main? I thought it was just a script, top to bottom? maybe?
+- if we dont have it in the scanner, is it just read as a function ID?
+WFW*/
+*/
+
 %token <string> NOTE
 %token <string> REST
 %token <string> CHORD
