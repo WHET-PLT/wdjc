@@ -85,7 +85,7 @@ let rec string_of_stmt = function
   | For(e1, e2, e3, s) ->
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
-  | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+  (*| While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s*)
   | Loop
 
 let string_of_vdecl id = "int " ^ id ^ ";\n"
