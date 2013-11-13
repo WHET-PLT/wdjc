@@ -10,10 +10,10 @@
 OBJS = ast.cmo parser.cmo scanner.cmo interpret.cmo \
 	bytecode.cmo compile.cmo execute.cmo wdjc.cmo
 
-TARFILES = Makefile testall.sh scanner.mll parser.mly
-	ast.ml interpret.ml compile.ml execute.ml wdjc.ml \
-	$(TESTS:%=tests/test-%.dj) \
-	$(TESTS:%=tests/test-%.out)
+#TARFILES = Makefile testall.sh scanner.mll parser.mly
+#	ast.ml interpret.ml compile.ml execute.ml wdjc.ml \
+#	$(TESTS:%=tests/test-%.dj) \
+#	$(TESTS:%=tests/test-%.out)
 	
 
 wdjc : $(OBJS)
