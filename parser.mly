@@ -28,6 +28,11 @@
 - but does microc depend on main? I thought it was just a script, top to bottom? maybe?
 - if we dont have it in the scanner, is it just read as a function ID?
 WFW*/
+
+/*
+- I am not completely sure about it being a list. All of those are good questions. We may
+need to look further into microc's compile file for the answer. I think the answer might
+have something to do with checking for keywords in a list.
 */
 
 %token <string> NOTE

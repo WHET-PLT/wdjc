@@ -32,7 +32,7 @@ type stmt =
   | Return of expr
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
-  (*| Loop of expr * stmt*)
+  | Loop of expr * expr * stmt
 
 type func_decl = {
     fname : string;
