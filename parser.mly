@@ -56,9 +56,7 @@ to do (a = (b = c))*/
 %left SERIAL PARALLEL
 %left PLUS MINUS
 %left TIMES DIVIDE
-/* arrow - symbol: -> */
-%left ARROW
-/*
+/* arrow - symbol: -> 
 VIB - vibrato (^)
 TREM - tremolo (~)
 BEND - pitch bend (%)
@@ -158,7 +156,7 @@ expr:
   | expr BEND        { Modifier($1, Bend) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | LBRACKET actuals_opt RBRACKET { Array($?) } /*array?*/
+  /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
 
   actuals_opt:
