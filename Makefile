@@ -37,8 +37,8 @@ parser.ml parser.mli : parser.mly
 %.cmi : %.mli
 	ocamlc -c $<
 
-	wdjc.tar.gz : $(TARFILES)
-	cd .. && tar czf wdjc/wdjc.tar.gz $(TARFILES:%=wdjc/%)
+#	wdjc.tar.gz : $(TARFILES)
+#	cd .. && tar czf wdjc/wdjc.tar.gz $(TARFILES:%=wdjc/%)
 
 .PHONY :	 clean
 clean :

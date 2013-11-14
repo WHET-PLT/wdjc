@@ -118,7 +118,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
      { For($3, $5, $7, $9) }
-  | LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }
+  /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
 
 expr_opt:
     /* nothing */ { Noexpr }
