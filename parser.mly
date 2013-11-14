@@ -116,13 +116,9 @@ stmt:
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
+  | FOR LPAREN expr SEMI expr SEMI expr RPAREN stmt
      { For($3, $5, $7, $9) }
   /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
-
-expr_opt:
-    /* nothing */ { Noexpr }
-  | expr          { $1 }
 
 /*
   expr section not finished.
