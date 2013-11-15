@@ -1,9 +1,8 @@
-song {
+song ( ) {
 
 /*
 Simple arithmetic test.
 Can test comments too.
  */
 (1+1);
-
 }
