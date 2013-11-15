@@ -1,4 +1,4 @@
-type action = Ast | Compile
+type action = Ast | Compile | Bytecode
 
 let _ =
   let action = if Array.length Sys.argv > 1 then
