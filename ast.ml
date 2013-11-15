@@ -24,6 +24,8 @@ type expr =
   | Call of string * expr list
   | Array of expr list
   (*an array can be a list of expressions*)
+  | Noexpr
+
 
 (*need to decide if we are keeping loop or not*)
 type stmt =
