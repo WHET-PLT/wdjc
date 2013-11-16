@@ -2,7 +2,7 @@
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
-| "/*"     { comment lexbuf }           (* Comments *)
+| "/*"     		{ comment lexbuf }      (* Comments *)
 | '['			{ LBRACK }
 | ']'			{ RBRACK }
 | '('			{ LPAREN }
@@ -48,6 +48,7 @@ rule token = parse
 (*
 | "array"		{ ARRAY } 
 *)
+(*Note in microc literals are really only integers *)
 | ['0'-'9']+ as lxm { LITERAL(int_of_string lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
 | eof { EOF }
