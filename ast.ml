@@ -1,14 +1,12 @@
 (* AST *)
 type m = Vib | Trem | Bend
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | 
-          Geq | Ser | Par | Incr | Decr | Arrow 
 
 (* operation types *)
 type op =   Add  | Sub
           | Mult | Div 
           | Ser  | Par 
           | Incr | Decr 
-          | Arrow | Vib | Trem | Bend
+          | Arrow
           | Equal | Neq | Geq | Leq | Greater | Less 
 
 
