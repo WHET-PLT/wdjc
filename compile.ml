@@ -85,8 +85,8 @@ let translate (globals, functions) =
 
   (* Code executed to start the program: Jsr main; halt *)
   let entry_function = try
-    [Jsr (StringMap.find "main" function_indexes); Hlt]
-  with Not_found -> raise (Failure ("no \"main\" function"))
+    [Jsr (StringMap.find "song" function_indexes); Hlt]
+  with Not_found -> raise (Failure ("no \"song\" function"))
   in
     
   (* Compile the functions *)
