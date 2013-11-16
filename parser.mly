@@ -117,7 +117,7 @@ vdecl:
 /* ASSIGNMENT 
 */
 vinit:
-  INT ID ASSIGN expr SEMI { Assign(Id($2), $4) }
+  INT ID ASSIGN expr SEMI { Assign($2, $4) }
 
 /* STATEMENTS */
 stmt_list:

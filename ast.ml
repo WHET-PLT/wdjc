@@ -21,7 +21,7 @@ type expr =
  (* | Song of string  *)
   | Binop of expr * op * expr
   | Modifier of expr * m 
-  | Assign of expr * expr
+  | Assign of string * expr
   | Call of string * expr list
   | Array of expr list
   (*an array can be a list of expressions*)
@@ -81,7 +81,7 @@ let rec string_of_expr = function
       string_of_expr e1 ^
       (match m with
       Vib -> "^" | Trem -> "~" | Bend -> "%")
-  | Assign(v, e) -> string_of_expr v ^ " = " ^ string_of_expr e
+  | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
 (*| Array*) 
