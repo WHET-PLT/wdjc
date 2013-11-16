@@ -61,7 +61,7 @@ interpret.cmo: ast.cmo
 interpret.cmx: ast.cmx 
 wdjc.cmo: scanner.cmo parser.cmi interpret.cmo execute.cmo compile.cmo \
     bytecode.cmo ast.cmo 
-swdjc.cmx: scanner.cmx parser.cmx interpret.cmx execute.cmx compile.cmx \
+wdjc.cmx: scanner.cmx parser.cmx interpret.cmx execute.cmx compile.cmx \
     bytecode.cmx ast.cmx 
 parser.cmo: ast.cmo parser.cmi 
 parser.cmx: ast.cmx parser.cmi 
