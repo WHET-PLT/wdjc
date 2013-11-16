@@ -1,6 +1,4 @@
-
 (* AST *)
-=======
 type m = Vib | Trem | Bend
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | 
           Geq | Ser | Par | Incr | Decr | Arrow 
