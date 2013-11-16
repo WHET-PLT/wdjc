@@ -3,6 +3,4 @@ song ( ) {
 
 int pitchA = 60;
 
-
-
 }
