@@ -21,7 +21,7 @@ type expr =
  (* | Song of string  *)
   | Binop of expr * op * expr
   | Modifier of expr * m 
-  | Assign of string * expr
+  | Assign of expr * expr
   | Call of string * expr list
   | Array of expr list
   (*an array can be a list of expressions*)
@@ -40,6 +40,7 @@ type expr =
 (*need to decide if we are keeping loop or not*)
 type stmt =
     Block of stmt list
+  (*| Assign of string * expr*)
   | Expr of expr
   | Return of expr
   | If of expr * stmt * stmt
@@ -80,7 +81,7 @@ let rec string_of_expr = function
       string_of_expr e1 ^
       (match m with
       Vib -> "^" | Trem -> "~" | Bend -> "%")
-  | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Assign(v, e) -> string_of_expr v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
 (*| Array*) 
@@ -99,6 +100,7 @@ let rec string_of_stmt = function
   | For(e1, e2, e3, s) ->
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
+  (*| Assign(v, e) -> string_of_expr v ^ " = " ^ string_of_expr e ^ " ; "*)
   (*| While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s*)
  (*| Loop*)
 
@@ -114,3 +116,5 @@ let string_of_fdecl fdecl =
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)  
+
+

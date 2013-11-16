@@ -9,7 +9,7 @@ int pitchA;
 
 
 /* declaration + initialization */
-int pitchB = 900;
+pitchB = 900;
 
 
 }

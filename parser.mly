@@ -13,7 +13,7 @@
 %token FUN VOL DUR PIT INSTR
 %token <int> LITERAL
 %token <string> ID
-/*are these strings? WFW*/
+
 /*
   I think they are strings just b/c not sure
   what else we could make them. 
@@ -66,8 +66,6 @@ BEND - pitch bend (%)
 
 
 
-
-
 %start program
 %type <Ast.program> program
 
@@ -78,31 +76,50 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
-fdecl:
-   ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-     { { fname = $1;
-	 formals = $3;
-	 locals = List.rev $6;
-	 body = List.rev $7 } }
 
+
+assignment_opt: 
+  /* nothing */ {[] }
+
+fdecl:
+  ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    { { fname = $1;
+	formals = $3;
+	locals = List.rev $6;
+	body = List.rev $7 } }
+
+
+/* FORMALS - 
+optional function arguments 
+*/
 formals_opt:
     /* nothing */ { [] }
   | formal_list   { List.rev $1 }
 
+/* recursive list of function arguments */
 formal_list:
     ID                   { [$1] }
   | formal_list COMMA ID { $3 :: $1 }
 
+
+/* VARIABLE DECLARATIONS */
 vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
+/* adds to local list in ast */
 vdecl:
-    INT ID SEMI { $2 }
+  INT ID SEMI { $2 }
   | NOTE ID SEMI { $2 }
   | CHORD ID SEMI { $2 }
   | TRACK ID SEMI { $2 }
 
+/* ASSIGNMENT 
+*/
+vinit:
+  INT ID ASSIGN expr SEMI { Assign(Id($2), $4) }
+
+/* STATEMENTS */
 stmt_list:
     /* nothing */  { [] }
   | stmt_list stmt { $2 :: $1 }
@@ -113,7 +130,6 @@ stmt_list:
 */
 stmt:
     expr SEMI { Expr($1) }
-  /*| ID ASSIGN expr*/
   | RETURN expr SEMI { Return($2) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
@@ -147,8 +163,7 @@ expr:
   | expr INCR   expr { Binop($1, Incr,   $3) }
   | expr DECR   expr { Binop($1, Decr,   $3) }
   | expr ARROW  expr { Binop($1, Arrow,   $3) }
-  | ID ASSIGN expr   { Assign($1, $3)}
-  | INT ID ASSIGN expr   { Assign($2, $4)}
+  /* | ID ASSIGN expr   { Assign($1, $3)} */
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
   | expr VIB         { Modifier($1, Vib) }
@@ -158,7 +173,9 @@ expr:
   | LPAREN expr RPAREN { $2 }
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
-
+ /* actuals - 
+ When you call the function you use actuals_opt
+ */
   actuals_opt:
     /* nothing */ { [] }
   | actuals_list  { List.rev $1 }
@@ -166,3 +183,4 @@ expr:
   actuals_list:
     expr                    { [$1] }
   | actuals_list COMMA expr { $3 :: $1 }
+
