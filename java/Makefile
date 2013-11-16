@@ -5,6 +5,7 @@ MAIN=Arpeggio1
 SOURCE_DIR=src
 OUTPUT_DIR=class
 DOC_DIR=javadocs
+MIDI_DIR=midi
 
 # Java tools
 JAVA=java
@@ -38,6 +39,7 @@ compile:
 # Run the java main
 .PHONY: run
 run: 
+	mkdir -p $(MIDI_DIR)
 	$(JAVA) $(JFLAGS) $(MAIN)
 
 # javadoc - Generate the Java doc from sources
