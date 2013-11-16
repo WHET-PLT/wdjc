@@ -41,10 +41,10 @@ rule token = parse
 | "pit"			{ PIT }
 | "instr"		{ INSTR }
 | "int"			{ INT }
-| "note"		{ NOTE }
-| "rest"		{ REST }
-| "chord"		{ CHORD }
-| "track"		{ TRACK }
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { NOTE(lxm) }
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { REST(lxm) }
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { CHORD(lxm) }
+| ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { TRACK(lxm) }
 (*
 | "array"		{ ARRAY } 
 *)
