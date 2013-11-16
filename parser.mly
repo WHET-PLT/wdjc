@@ -100,7 +100,10 @@ vdecl_list:
   | vdecl_list vdecl { $2 :: $1 }
 
 vdecl:
-   INT ID SEMI { $2 }
+    INT ID SEMI { $2 }
+  | NOTE ID SEMI { $2 }
+  | CHORD ID SEMI { $2 }
+  | TRACK ID SEMI { $2 }
 
 stmt_list:
     /* nothing */  { [] }
@@ -134,7 +137,7 @@ expr:
   | ID               { Id($1) }
   | NOTE             { Note($1) }
   | REST             { Rest($1) }
-  | CHORD			 { Chord($1) }
+  | Chord            { Chord($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
