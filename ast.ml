@@ -10,6 +10,7 @@ type expr =
   | Note of string
   | Rest of string
   | Chord of string
+  | Track of string
   | Song of string
   | Binop of expr * op * expr
   (* TODO
@@ -54,6 +55,7 @@ let rec string_of_expr = function
   | Note(n) -> n
   | Rest(r) -> r
   | Chord(c) -> c
+  | Track(t) -> t
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with

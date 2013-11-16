@@ -36,6 +36,8 @@ have something to do with checking for keywords in a list.
 */
 
 %token <string> NOTE
+%token <string> CHORD
+%token <string> TRACK
 %token <string> REST
 %token <string> CHORD
 %token <string> SONG
@@ -137,7 +139,8 @@ expr:
   | ID               { Id($1) }
   | NOTE             { Note($1) }
   | REST             { Rest($1) }
-  | Chord            { Chord($1) }
+  | CHORD            { Chord($1) }
+  | TRACK            { Track($1) }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
