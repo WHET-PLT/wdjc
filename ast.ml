@@ -7,14 +7,21 @@ type op =   Add  | Sub
           | Ser  | Par 
           | Incr | Decr 
           | Arrow
-          | Equal | Neq | Geq | Leq | Greater | Less 
+          | Equal | Neq | Geq | Leq | Greater | Less
 
+(*  Note type  *)
+type note = {
+    pitch : int;
+    volume : int;
+    instr : int;
+    dur : int;
+  }
 
 (* Expression type *)
 type expr =
     Literal of int
   | Id of string
-  | Note of string
+  | Note of note
   | Rest of string
   | Chord of string
   | Track of string
@@ -116,5 +123,11 @@ let string_of_fdecl fdecl =
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)  
+
+let string_of_note note = 
+  .fname ^ "(" ^ String.concat ", " fdecl.formals ^ ")\n{\n" ^
+  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
+  String.concat "" (List.map string_of_stmt fdecl.body) ^
+  "}\n"
 
 

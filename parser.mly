@@ -88,6 +88,9 @@ fdecl:
 	locals = List.rev $6;
 	body = List.rev $7 } }
 
+note:
+  ID 
+
 
 /* FORMALS - 
 optional function arguments 
@@ -149,6 +152,7 @@ expr_opt:
 expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }
+  | NOTE             { Note($3)}
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
@@ -162,7 +166,8 @@ expr:
   | expr INCR   expr { Binop($1, Incr,   $3) }
   | expr DECR   expr { Binop($1, Decr,   $3) }
   | expr ARROW  expr { Binop($1, Arrow,   $3) }
-  /* | ID ASSIGN expr   { Assign($1, $3)} */
+  | ID ASSIGN   prim { Assign($1, $3) }
+  | ID ASSIGN   expr { Assign($1, $3)}
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
   | expr VIB         { Modifier($1, Vib) }
