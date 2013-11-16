@@ -115,10 +115,9 @@ vdecl:
   | TRACK ID SEMI { $2 }
 
 /* ASSIGNMENT 
-*/
 vinit:
   INT ID ASSIGN expr SEMI { Assign($2, $4) }
-
+*/
 /* STATEMENTS */
 stmt_list:
     /* nothing */  { [] }
