@@ -1,5 +1,6 @@
+type m = Vib | Trem | Bend
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | 
-          Geq | Ser | Par | Incr | Decr | Arrow | Vib | Trem | Bend
+          Geq | Ser | Par | Incr | Decr | Arrow 
 
 (*do we need to include song in here? 
   It is only used as a 'main' like function right?
@@ -11,21 +12,22 @@ type expr =
   | Rest of string
   | Chord of string
   | Track of string
-  | Song of string
+ (* | Song of string  *)
   | Binop of expr * op * expr
-  (* TODO
+  | Modifier of expr * m 
+  | Assign of string * expr
+  | Call of string * expr list
+  | Array of expr list
+  (*an array can be a list of expressions*)
+  | Noexpr
+
+    (* TODO
   not sure about 'Modifier'. trying to account for vibrato, tremolo, and bend
   operators. I dont think they can be in binop since these modifiers do not
   require another a sexond expr
    ex. Note a;
        a^;
   *)
-  | Modifier of expr * op 
-  | Assign of string * expr
-  | Call of string * expr list
-  | Array of expr list
-  (*an array can be a list of expressions*)
-  | Noexpr
 
 
 (*need to decide if we are keeping loop or not*)
@@ -66,9 +68,9 @@ let rec string_of_expr = function
       | Arrow -> "->") ^ " " ^
       string_of_expr e2
   (*again, not sure about this section*)
-  | Modifier(e1, o) ->
+  | Modifier(e1, m) ->
       string_of_expr e1 ^
-      (match o with
+      (match m with
       Vib -> "^" | Trem -> "~" | Bend -> "%")
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
