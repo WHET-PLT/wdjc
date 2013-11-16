@@ -1,9 +1,15 @@
-type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | 
-          Geq | Ser | Par | Incr | Decr | Arrow | Vib | Trem | Bend
+(* AST *)
 
-(*do we need to include song in here? 
-  It is only used as a 'main' like function right?
-*)
+(* operation types *)
+type op =   Add  | Sub
+          | Mult | Div 
+          | Ser  | Par 
+          | Incr | Decr 
+          | Arrow | Vib | Trem | Bend
+          | Equal | Neq | Geq | Leq | Greater | Less 
+
+
+(* Expression type *)
 type expr =
     Literal of int
   | Id of string
@@ -13,6 +19,7 @@ type expr =
   | Track of string
   | Song of string
   | Binop of expr * op * expr
+
   (* TODO
   not sure about 'Modifier'. trying to account for vibrato, tremolo, and bend
   operators. I dont think they can be in binop since these modifiers do not
@@ -20,7 +27,8 @@ type expr =
    ex. Note a;
        a^;
   *)
-  | Modifier of expr * op 
+
+  | Modifier of expr * op
   | Assign of string * expr
   | Call of string * expr list
   | Array of expr list

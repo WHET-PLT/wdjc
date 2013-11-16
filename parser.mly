@@ -2,8 +2,9 @@
 
 /*token section not yet finished. need to check if order matters*/
 /*As of 11-09-13 we dont think theres precedence here */
-%token LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE COMMA SEMI
-%token PLUS MINUS TIMES DIVIDE ASSIGN
+%token LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE 
+%token COMMA SEMI ASSIGN
+%token PLUS MINUS TIMES DIVIDE 
 %token SERIAL PARALLEL
 %token VIB TREM BEND ARROW
 %token EQ NEQ INCR DECR
@@ -112,6 +113,7 @@ stmt_list:
 */
 stmt:
     expr SEMI { Expr($1) }
+  /*| ID ASSIGN expr*/
   | RETURN expr SEMI { Return($2) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
