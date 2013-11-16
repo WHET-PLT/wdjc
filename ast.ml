@@ -1,10 +1,9 @@
-<<<<<<< HEAD
+
 (* AST *)
 =======
 type m = Vib | Trem | Bend
 type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | 
           Geq | Ser | Par | Incr | Decr | Arrow 
->>>>>>> 261833b37c35310313e11b2f72dbbab2441e22b6
 
 (* operation types *)
 type op =   Add  | Sub
@@ -25,23 +24,16 @@ type expr =
   | Track of string
  (* | Song of string  *)
   | Binop of expr * op * expr
-<<<<<<< HEAD
   | Modifier of expr * op
-=======
   | Modifier of expr * m 
->>>>>>> 261833b37c35310313e11b2f72dbbab2441e22b6
   | Assign of string * expr
   | Call of string * expr list
   | Array of expr list
   (*an array can be a list of expressions*)
   | Noexpr
 
-<<<<<<< HEAD
   
   (* TODO
-=======
-    (* TODO
->>>>>>> 261833b37c35310313e11b2f72dbbab2441e22b6
   not sure about 'Modifier'. trying to account for vibrato, tremolo, and bend
   operators. I dont think they can be in binop since these modifiers do not
   require another a sexond expr
