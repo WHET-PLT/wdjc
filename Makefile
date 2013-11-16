@@ -11,7 +11,7 @@
 #	bytecode.cmo compile.cmo execute.cmo wdjc.cmo
 
 OBJS = ast.cmo parser.cmo scanner.cmo \
-		compile.cmo wdjc.cmo
+		compile.cmo wdjc.cmo bytecode.cmo
 
 #TARFILES = Makefile testall.sh scanner.mll parser.mly
 #	ast.ml interpret.ml compile.ml execute.ml wdjc.ml \
@@ -57,11 +57,9 @@ compile.cmo: bytecode.cmo ast.cmo
 compile.cmx: bytecode.cmx ast.cmx 
 execute.cmo: bytecode.cmo ast.cmo 
 execute.cmx: bytecode.cmx ast.cmx 
-interpret.cmo: ast.cmo 
-interpret.cmx: ast.cmx 
-wdjc.cmo: scanner.cmo parser.cmi interpret.cmo execute.cmo compile.cmo \
+wdjc.cmo: scanner.cmo parser.cmi execute.cmo compile.cmo \
     bytecode.cmo ast.cmo 
-wdjc.cmx: scanner.cmx parser.cmx interpret.cmx execute.cmx compile.cmx \
+wdjc.cmx: scanner.cmx parser.cmx execute.cmx compile.cmx \
     bytecode.cmx ast.cmx 
 parser.cmo: ast.cmo parser.cmi 
 parser.cmx: ast.cmx parser.cmi 
