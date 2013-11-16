@@ -40,13 +40,14 @@ rule token = parse
 | "dur"			{ DUR }
 | "pit"			{ PIT }
 | "instr"		{ INSTR }
-| "int"			{ INT } (*
+| "int"			{ INT }
 | "note"		{ NOTE }
 | "rest"		{ REST }
 | "chord"		{ CHORD }
 | "track"		{ TRACK }
-| "song" 		{ SONG }
-| "array"		{ ARRAY } *)
+(*
+| "array"		{ ARRAY } 
+*)
 | ['0'-'9']+ as lxm { LITERAL(int_of_string lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
 | eof { EOF }
