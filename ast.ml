@@ -20,7 +20,6 @@ type expr =
   | Track of string
  (* | Song of string  *)
   | Binop of expr * op * expr
-  | Modifier of expr * op
   | Modifier of expr * m 
   | Assign of string * expr
   | Call of string * expr list
