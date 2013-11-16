@@ -147,7 +147,8 @@ expr:
   | expr INCR   expr { Binop($1, Incr,   $3) }
   | expr DECR   expr { Binop($1, Decr,   $3) }
   | expr ARROW  expr { Binop($1, Arrow,   $3) }
-  | ID ASSIGN expr   { Assign($1, $3) }
+  | ID ASSIGN expr   { Assign($1, $3)}
+  | INT ID ASSIGN expr   { Assign($2, $4)}
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
   | expr VIB         { Modifier($1, Vib) }

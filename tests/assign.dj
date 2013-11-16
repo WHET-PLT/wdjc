@@ -1,14 +1,12 @@
 song ( ) {
 /* Simple note text. */
 
+/* individual declaration + assignment */
 int pitchA;
-
 pitchA = 60;
 
-
-
-note mynote;
-
+/* declaration + initialization */
+int pitchB = 900;
 
 
 }

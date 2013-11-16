@@ -19,7 +19,14 @@ type expr =
   | Track of string
   | Song of string
   | Binop of expr * op * expr
+  | Modifier of expr * op
+  | Assign of string * expr
+  | Call of string * expr list
+  | Array of expr list
+  (*an array can be a list of expressions*)
+  | Noexpr
 
+  
   (* TODO
   not sure about 'Modifier'. trying to account for vibrato, tremolo, and bend
   operators. I dont think they can be in binop since these modifiers do not
@@ -27,13 +34,6 @@ type expr =
    ex. Note a;
        a^;
   *)
-
-  | Modifier of expr * op
-  | Assign of string * expr
-  | Call of string * expr list
-  | Array of expr list
-  (*an array can be a list of expressions*)
-  | Noexpr
 
 
 (*need to decide if we are keeping loop or not*)
@@ -45,6 +45,7 @@ type stmt =
   | For of expr * expr * expr * stmt
   | Loop of expr * expr * stmt
 
+(* funciton declaration *)
 type func_decl = {
     fname : string;
     formals : string list;
