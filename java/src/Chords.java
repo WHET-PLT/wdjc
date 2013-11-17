@@ -30,7 +30,7 @@ public final class Chords implements JMC{
     }
     
     // write the score to a MIDIfile
-    Write.midi(p, "Chords.mid");
+    Write.midi(p, "midi/Chords.mid");
   } 
   
   private static void rootPosition(int rootPitch) {
