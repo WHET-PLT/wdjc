@@ -1,13 +1,19 @@
 /*
 Tests chord
+Note- right now, all declarations must come before 
+ALL inititializations even if they are for different
+variables.
+
+Recall: chord must be enclosed by parenthesis
 */
 
 song () 
 	{
 		note n1;
 		note n2;
+		chord p;
 
-		chord c;
-		c = n1 : n2 : n3 : 1;
+		n2 = ( a, b, c, d );
+		p = ( n1 : n2 : n3 );
 
 	}

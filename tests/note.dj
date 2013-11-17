@@ -4,9 +4,21 @@ song( ) {
 Simple note text.
 */
 
-note n;
-/*n = (pitchA, volume, instr, volume, duration);*/
-n = (1, 2, 3, 4);
 
+int pitchA;
+int volume;
+int instrument;
+int volume;
+int duration;
+
+
+pitchA = 1;
+volume = 2;
+instrument = 3;
+duration = 4;
+
+
+n = (pitchA, volume, instrument, duration);
+/* n = (1, 2, 3, 4);*/
 	
 }
