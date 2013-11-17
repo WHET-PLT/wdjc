@@ -27,15 +27,6 @@ type expr =
   (*an array can be a list of expressions*)
 
 
-  
-  (* TODO
-  not sure about 'Modifier'. trying to account for vibrato, tremolo, and bend
-  operators. I dont think they can be in binop since these modifiers do not
-  require another a sexond expr
-   ex. Note a;
-       a^;
-  *)
-
 (*  Note type  *)
 (* type note = {
     pitch : int;
