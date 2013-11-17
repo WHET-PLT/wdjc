@@ -27,15 +27,6 @@ type expr =
   (*an array can be a list of expressions*)
 
 
-  
-  (* TODO
-  not sure about 'Modifier'. trying to account for vibrato, tremolo, and bend
-  operators. I dont think they can be in binop since these modifiers do not
-  require another a sexond expr
-   ex. Note a;
-       a^;
-  *)
-
 (*  Note type  *)
 (* type note = {
     pitch : int;
@@ -52,7 +43,7 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
-  | Loop of expr * expr * stmt
+ (* | Loop of expr * expr * stmt *)
 
 (* funciton declaration *)
 type func_decl = {
@@ -93,6 +84,7 @@ let rec string_of_expr = function
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+  | Noexpr -> ""
 (*| Array*) 
 
 
@@ -109,7 +101,6 @@ let rec string_of_stmt = function
   | For(e1, e2, e3, s) ->
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
- (* | Assign(v, e) -> string_of_expr v ^ " = " ^ string_of_expr e ^ " ; "*)
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
  (*| Loop*)
 

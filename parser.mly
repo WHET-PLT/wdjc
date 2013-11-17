@@ -13,34 +13,10 @@
 %token FUN VOL DUR PIT INSTR
 %token <int> LITERAL
 %token <string> ID
-
-/*
-  I think they are strings just b/c not sure
-  what else we could make them. 
-  Still unsure about SONG though, do we need to include
-  it? Do we use SONG anywhere else but as a microc like 'main'
-  function. If so, I do not think we need to include it in the
-  scanner, parser, ast. microc doesnt have main in its files
-  i think. need to check on that. Also, lets clear up arrays on
-  wed. - Tom
-*/
-/*
-- that makes sense, then is it just a list or something in the ast? like "program"?
-- but does microc depend on main? I thought it was just a script, top to bottom? maybe?
-- if we dont have it in the scanner, is it just read as a function ID?
-WFW*/
-
-/*
-- I am not completely sure about it being a list. All of those are good questions. We may
-need to look further into microc's compile file for the answer. I think the answer might
-have something to do with checking for keywords in a list.
-*/
-
 %token NOTE REST CHORD TRACK
 %token EOF
 
-/*started associativity. need further clarification.*/
-/*precedence is ordered bottom to top */
+
 /*ie TIMES DIVIDE is higher precedence than ASSIGN*/
 %nonassoc NOELSE
 %nonassoc ELSE
@@ -54,11 +30,7 @@ to do (a = (b = c))*/
 %left SERIAL PARALLEL
 %left PLUS MINUS
 %left TIMES DIVIDE
-/* arrow - symbol: -> 
-VIB - vibrato (^)
-TREM - tremolo (~)
-BEND - pitch bend (%)
-*/
+
 %left VIB TREM BEND ARROW
 /*incr - incrememnt (++); decr - decrement  (--) */
 /*Ex: (note++)++ */
@@ -154,11 +126,7 @@ expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
 
-/*
-  expr section not finished.
-  TODO: need clarification on 'Modifier' section: VIB, TREM, BEND.
-  need clarification on INCR, DECR, ARROW
-*/
+
 expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }

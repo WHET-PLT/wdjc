@@ -32,6 +32,11 @@ let string_of_stmt = function
   | Bin(Ast.Leq) -> "Leq"
   | Bin(Ast.Greater) -> "Gt"
   | Bin(Ast.Geq) -> "Geq"
+  | Bin(Ast.Ser) -> "Ser"
+  | Bin(Ast.Par) -> "Par"
+  | Bin(Ast.Incr) -> "Incr"
+  | Bin(Ast.Decr) -> "Decr"
+  | Bin(Ast.Arrow) -> "Arrow"
   | Lod(i) -> "Lod " ^ string_of_int i
   | Str(i) -> "Str " ^ string_of_int i
   | Lfp(i) -> "Lfp " ^ string_of_int i
