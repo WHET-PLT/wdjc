@@ -66,14 +66,13 @@ let translate (globals, functions) =
       | If (p, t, f) -> let t' = stmt t and f' = stmt f in
   expr p @ [Beq(2 + List.length t')] @
   t' @ [Bra(1 + List.length f')] @ f'
-  (*
-       | For (e1, e2, e3, b) ->
+      | For (e1, e2, e3, b) ->
     stmt (Block([Expr(e1); While(e2, Block([b; Expr(e3)]))]))
       | While (e, b) ->
     let b' = stmt b and e' = expr e in
     [Bra (1+ List.length b')] @ b' @ e' @
     [Bne (-(List.length b' + List.length e'))] 
-  *)
+  
 
     in [Ent num_locals] @      (* Entry: allocate space for locals *)
     stmt (Block fdecl.body) @  (* Body *)
