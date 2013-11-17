@@ -9,19 +9,11 @@ type op =   Add  | Sub
           | Arrow
           | Equal | Neq | Geq | Leq | Greater | Less
 
-(*  Note type  *)
-type note = {
-    pitch : int;
-    volume : int;
-    instr : int;
-    dur : int;
-  }
-
 (* Expression type *)
 type expr =
     Literal of int
   | Id of string
-  | Note of note
+  | NOTE_CR of int * int * int * int
   | Rest of string
   | Chord of string
   | Track of string
@@ -43,11 +35,17 @@ type expr =
        a^;
   *)
 
+(*  Note type  *)
+(* type note = {
+    pitch : int;
+    volume : int;
+    instr : int;
+    dur : int;
+  } *)
 
 (*need to decide if we are keeping loop or not*)
 type stmt =
     Block of stmt list
-  (*| Assign of string * expr*)
   | Expr of expr
   | Return of expr
   | If of expr * stmt * stmt
@@ -70,7 +68,9 @@ type program = string list * func_decl list
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
-  | Note(n) -> n
+  | NOTE_CR(a, b, c, d) ->
+      "(" ^ string_of_int a ^ ", " ^ string_of_int b ^ 
+          ", " ^ string_of_int c ^ ", " ^ string_of_int d ^ ")"
   | Rest(r) -> r
   | Chord(c) -> c
   | Track(t) -> t
@@ -124,10 +124,9 @@ let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)  
 
-let string_of_note note = 
-  .fname ^ "(" ^ String.concat ", " fdecl.formals ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n"
+(* let string_of_note_cr (a, b, c, d) = 
+   "(" ^ string_of_int a ^ ", " ^ string_of_int b ^ 
+    ", " ^ string_of_int c ^ ", " ^ string_of_int d")\n"
 
 
+ *)
