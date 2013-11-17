@@ -9,7 +9,7 @@
 %token VIB TREM BEND ARROW
 %token EQ NEQ INCR DECR
 %token LT LEQ GT GEQ
-%token IF ELSE FOR LOOP RETURN INT
+%token IF ELSE FOR WHILE LOOP RETURN INT
 %token FUN VOL DUR PIT INSTR
 %token <int> LITERAL
 %token <string> ID
@@ -135,6 +135,7 @@ stmt:
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
      { For($3, $5, $7, $9) }
+  | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
 
 expr_opt:
@@ -162,7 +163,7 @@ expr:
   | expr INCR   expr { Binop($1, Incr,   $3) }
   | expr DECR   expr { Binop($1, Decr,   $3) }
   | expr ARROW  expr { Binop($1, Arrow,   $3) }
-  /* | ID ASSIGN expr   { Assign($1, $3)} */
+  | ID ASSIGN expr   { Assign($1, $3)} 
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
   | expr VIB         { Modifier($1, Vib) }

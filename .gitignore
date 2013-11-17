@@ -8,4 +8,7 @@
 *.cmxs
 *.cmxa
 *.class
+midi/
+class/
+javadocs/
 .DS_Store
