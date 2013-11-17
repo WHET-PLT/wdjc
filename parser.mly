@@ -86,7 +86,7 @@ fdecl:
 
 /*  NOTE  */
 note_cr:
-  LPAREN LITERAL COMMA LITERAL COMMA LITERAL COMMA LITERAL RPAREN
+  LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN
     { NOTE_CR($2, $4, $6, $8) }
 
 /* CHORD */
@@ -95,8 +95,8 @@ chord_cr:
     | LPAREN chord_list RPAREN { CHORD_CR ( List.rev $2 ) }
 
 chord_list:
-    expr { [$1] }
-    | chord_list PARALLEL expr { $3 :: $1 }
+    ID { [$1] }
+    | chord_list PARALLEL ID { $3 :: $1 }
 
 
 /* FORMALS - 
@@ -113,9 +113,6 @@ formal_list:
 
 
 /* VARIABLE DECLARATIONS */
-vdecl_list:
-    /* nothing */    { [] }
-  | vdecl_list vdecl { $2 :: $1 }
 
 /* adds to local list in ast */
 vdecl:
@@ -123,6 +120,11 @@ vdecl:
   | NOTE ID SEMI { $2 }
   | CHORD ID SEMI { $2 }
   | TRACK ID SEMI { $2 }
+
+vdecl_list:
+    /* nothing */    { [] }
+  | vdecl_list vdecl { $2 :: $1 }
+
 
 /* ASSIGNMENT 
 vinit:
@@ -160,8 +162,8 @@ expr_opt:
 expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }
-  | note_cr          { $1 }
   | chord_cr         { $1 }
+  | note_cr          { $1 }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }

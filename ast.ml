@@ -13,9 +13,9 @@ type op =   Add  | Sub
 type expr =
     Literal of int
   | Id of string
-  | NOTE_CR of int * int * int * int
+  | NOTE_CR of string * string * string * string
   | Rest of string
-  | CHORD_CR of expr list
+  | CHORD_CR of string list
   | Track of string
  (* | Song of string  *)
   | Binop of expr * op * expr
@@ -71,11 +71,10 @@ let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) ->
-      "(" ^ string_of_int a ^ ", " ^ string_of_int b ^ 
-          ", " ^ string_of_int c ^ ", " ^ string_of_int d ^ ")"
+      "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")"
   | Rest(r) -> r
   | CHORD_CR(note_list) -> 
-      "(" ^ String.concat " : " (List.map string_of_expr note_list) ^ ")"
+      "(" ^ String.concat " : " note_list ^ ")"
   | Track(t) -> t
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
