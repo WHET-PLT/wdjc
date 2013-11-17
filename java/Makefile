@@ -1,5 +1,5 @@
 # the main class name
-MAIN=Arpeggio1
+MAIN=createNotes
 
 # Location of trees.
 SOURCE_DIR=src
