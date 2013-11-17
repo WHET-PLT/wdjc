@@ -1,0 +1,13 @@
+/*
+Tests chord
+*/
+
+song () 
+	{
+		note n1;
+		note n2;
+
+		chord c;
+		c = n1 : n2 : n3 : 1;
+
+	}

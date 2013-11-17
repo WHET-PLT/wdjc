@@ -15,16 +15,17 @@ type expr =
   | Id of string
   | NOTE_CR of int * int * int * int
   | Rest of string
-  | Chord of string
+  | CHORD_CR of expr list
   | Track of string
  (* | Song of string  *)
   | Binop of expr * op * expr
   | Modifier of expr * m 
   | Assign of string * expr
   | Call of string * expr list
-  | Array of expr list
-  (*an array can be a list of expressions*)
   | Noexpr
+  (* | Array of expr list *)
+  (*an array can be a list of expressions*)
+
 
   
   (* TODO
@@ -73,7 +74,8 @@ let rec string_of_expr = function
       "(" ^ string_of_int a ^ ", " ^ string_of_int b ^ 
           ", " ^ string_of_int c ^ ", " ^ string_of_int d ^ ")"
   | Rest(r) -> r
-  | Chord(c) -> c
+  | CHORD_CR(note_list) -> 
+      "(" ^ String.concat " : " (List.map string_of_expr note_list) ^ ")"
   | Track(t) -> t
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^

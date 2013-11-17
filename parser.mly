@@ -76,6 +76,7 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
+/* FUNCTION */
 fdecl:
   ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
     { { fname = $1;
@@ -85,22 +86,18 @@ fdecl:
 
 /*  NOTE  */
 note_cr:
-  LPAREN LITERAL COMMA LITERAL COMMA LITERAL COMMA LITERAL RPAREN /*SEMI*/
+  LPAREN LITERAL COMMA LITERAL COMMA LITERAL COMMA LITERAL RPAREN
     { NOTE_CR($2, $4, $6, $8) }
-/*
-      { 
-        pitch = $2; 
-        volume = $4; 
-        instr = $6; 
-        dur = $8 
-    } }
-*/
 
-/* arguements for list function
-note_list:
-    ID                   { [$1] }
-  | note_list COMMA ID { $3 :: $1 }
-*/
+/* CHORD */
+chord_cr:
+    LPAREN RPAREN { CHORD_CR ([]) }
+    | LPAREN chord_list RPAREN { CHORD_CR ( List.rev $2 ) }
+
+chord_list:
+    expr { [$1] }
+    | chord_list PARALLEL expr { $3 :: $1 }
+
 
 /* FORMALS - 
 optional function arguments 
@@ -164,6 +161,7 @@ expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }
   | note_cr          { $1 }
+  | chord_cr         { $1 }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
@@ -178,7 +176,6 @@ expr:
   | expr DECR   expr { Binop($1, Decr,   $3) }
   | expr ARROW  expr { Binop($1, Arrow,   $3) }
   | ID ASSIGN expr   { Assign($1, $3)} 
-  /* | ID ASSIGN   note { Assign($1, $3) } */
   | ID ASSIGN   expr { Assign($1, $3)}
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
