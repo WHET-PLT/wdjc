@@ -1,0 +1,11 @@
+/* Test for if statement */
+song () 
+{
+	int i;
+	i = 0;
+
+	if( i < 1)
+	{
+		i = i + 1;
+	}
+}
