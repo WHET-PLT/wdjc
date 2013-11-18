@@ -1,7 +1,5 @@
 %{ open Ast %}
 
-/*token section not yet finished. need to check if order matters*/
-/*As of 11-09-13 we dont think theres precedence here */
 %token LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE 
 %token COMMA SEMI ASSIGN
 %token PLUS MINUS TIMES DIVIDE 
@@ -30,7 +28,6 @@ to do (a = (b = c))*/
 %left SERIAL PARALLEL
 %left PLUS MINUS
 %left TIMES DIVIDE
-
 %left VIB TREM BEND ARROW
 /*incr - incrememnt (++); decr - decrement  (--) */
 /*Ex: (note++)++ */
@@ -48,7 +45,7 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
-/* FUNCTION */
+/*  --- FUNCTION --- */
 fdecl:
   ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
     { { fname = $1;
@@ -56,37 +53,18 @@ fdecl:
 	locals = List.rev $6;
 	body = List.rev $7 } }
 
-/*  NOTE  */
-note_cr:
-  LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN
-    { NOTE_CR($2, $4, $6, $8) }
-
-/* CHORD */
-chord_cr:
-    LPAREN RPAREN { CHORD_CR ([]) }
-    | LPAREN chord_list RPAREN { CHORD_CR ( List.rev $2 ) }
-
-chord_list:
-    ID { [$1] }
-    | chord_list PARALLEL ID { $3 :: $1 }
-
-
-/* FORMALS - 
-optional function arguments 
-*/
+/* --- FORMALS --- */
+/* optional function arguments */
 formals_opt:
     /* nothing */ { [] }
   | formal_list   { List.rev $1 }
 
-/* recursive list of function arguments */
 formal_list:
     ID                   { [$1] }
   | formal_list COMMA ID { $3 :: $1 }
 
 
-/* VARIABLE DECLARATIONS */
-
-/* adds to local list in ast */
+/* --- VARIABLE DECLARATIONS --- */
 vdecl:
   INT ID SEMI { $2 }
   | NOTE ID SEMI { $2 }
@@ -97,20 +75,22 @@ vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
+/*  --- NOTE  --- */
+note_cr:
+  LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN
+    { NOTE_CR($2, $4, $6, $8) }
 
-/* ASSIGNMENT 
-vinit:
-  INT ID ASSIGN expr SEMI { Assign($2, $4) }
-*/
-/* STATEMENTS */
-stmt_list:
-    /* nothing */  { [] }
-  | stmt_list stmt { $2 :: $1 }
+/* --- CHORD --- */
+chord_cr:
+    LPAREN RPAREN { CHORD_CR ([]) }
+    | LPAREN chord_list RPAREN { CHORD_CR ( List.rev $2 ) }
 
-/*
-  stmt section not finished.
-  TODO: decide on whether or not we are using 'loop'
-*/
+chord_list:
+    ID { [$1] }
+    | chord_list PARALLEL ID { $3 :: $1 }
+
+/* --- STATEMENTS --- */
+
 stmt:
     expr SEMI { Expr($1) }
   | RETURN expr SEMI { Return($2) }
@@ -122,10 +102,15 @@ stmt:
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
 
+stmt_list:
+    /* nothing */  { [] }
+  | stmt_list stmt { $2 :: $1 }
+
+/* --- EXPRESSIONS --- */
+
 expr_opt:
     /* nothing */ { Noexpr }
   | expr          { $1 }
-
 
 expr:
     LITERAL          { Literal($1) }
@@ -156,9 +141,7 @@ expr:
   | LPAREN expr RPAREN { $2 }
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
- /* actuals - 
- When you call the function you use actuals_opt
- */
+ /* actuals - When you call the function you use actuals_opt?? */
   actuals_opt:
     /* nothing */ { [] }
   | actuals_list  { List.rev $1 }

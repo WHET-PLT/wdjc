@@ -17,7 +17,6 @@ type expr =
   | Rest of string
   | CHORD_CR of string list
   | Track of string
- (* | Song of string  *)
   | Binop of expr * op * expr
   | Modifier of expr * m 
   | Assign of string * expr
@@ -25,15 +24,6 @@ type expr =
   | Noexpr
   (* | Array of expr list *)
   (*an array can be a list of expressions*)
-
-
-(*  Note type  *)
-(* type note = {
-    pitch : int;
-    volume : int;
-    instr : int;
-    dur : int;
-  } *)
 
 (*need to decide if we are keeping loop or not*)
 type stmt =
@@ -117,9 +107,3 @@ let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)  
 
-(* let string_of_note_cr (a, b, c, d) = 
-   "(" ^ string_of_int a ^ ", " ^ string_of_int b ^ 
-    ", " ^ string_of_int c ^ ", " ^ string_of_int d")\n"
-
-
- *)
