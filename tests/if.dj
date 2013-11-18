@@ -1,11 +1,29 @@
 /* Test for if statement */
+/* NOTE:
+
+	For semantic check - i doesn't have to be declared for 
+	this to work...we need to make sure we check this with
+	the sast 
+
+	NOTE: 
+		DOESN'T WORK WITH int < int
+		only works ID < int
+
+*/
 song () 
 {
+	
 	int i;
 	i = 0;
-
+	
 	if( i < 1)
 	{
 		i = i + 1;
 	}
+	
+	if( 0 < 1)
+	{
+		i = i + 1;
+	}
+}
 }
