@@ -1,0 +1,6 @@
+song ( ) {
+/* Simple note text. */
+
+int pitchA = 60;
+
+}
