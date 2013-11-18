@@ -21,8 +21,13 @@ public final class RowYourBoat implements JMC{
     Part clarinet = new Part("Clarinet", CLARINET, 2);
     
     //Lets write the music in a convenient way.
+
+    //these are the actual notes. This is not how we want to write ours
+    //but for the purpose of learning loops its ok. 
     int[] pitchArray = {C4,C4,C4,D4,E4,E4,D4,E4,F4,G4,C5,C5,C5,G4,G4,G4,E4,E4,E4,
                 C4,C4,C4,G4,F4,E4,D4,C4};
+    
+    //this is rythm. this is quarter notes QT, whole notes C, etc. 
     double[] rhythmArray = {C,C,CT,QT,C,CT,QT,CT, QT,M, QT, QT, QT, QT, QT,
               QT, QT, QT, QT, QT, QT, QT, CT, QT, CT, QT,M};
     //add the notes to a phrase
