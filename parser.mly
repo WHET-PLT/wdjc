@@ -141,13 +141,13 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
-  | expr INCR   expr { Binop($1, Incr,   $3) }
-  | expr DECR   expr { Binop($1, Decr,   $3) }
   | expr ARROW  expr { Binop($1, Arrow,   $3) }
   | ID ASSIGN expr   { Assign($1, $3)} 
   | ID ASSIGN   expr { Assign($1, $3)}
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
+  | expr INCR        { Modifier($1, Incr) }
+  | expr DECR        { Modifier($1, Decr) }
   | expr VIB         { Modifier($1, Vib) }
   | expr TREM        { Modifier($1, Trem) }
   | expr BEND        { Modifier($1, Bend) }

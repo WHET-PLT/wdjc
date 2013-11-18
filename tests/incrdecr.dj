@@ -5,6 +5,6 @@ Incr and Decr
  */
 
  int i;
- int j;
- i ++ j;
+ i ++;
+ 
 }
