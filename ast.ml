@@ -1,6 +1,9 @@
 (* AST *)
 type m = Vib | Trem | Bend
 
+(* Not sure if I should make this a string *)
+type note_attribute = Pitch | Vol | Dur | Instr
+
 (* operation types *)
 type op =   Add  | Sub
           | Mult | Div 
@@ -12,6 +15,7 @@ type op =   Add  | Sub
 (* Expression type *)
 type expr =
     Literal of int
+  | ACCESSOR of string * note_attribute
   | Id of string
   | NOTE_CR of string * string * string * string
   | Rest of string
@@ -54,6 +58,11 @@ let rec string_of_expr = function
   | NOTE_CR(a, b, c, d) ->
       "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")"
   | Rest(r) -> r
+  | ACCESSOR(a, b) -> 
+      a ^ " -> " ^ (
+      match b with
+        Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
+      )
   | CHORD_CR(note_list) -> 
       "(" ^ String.concat " : " note_list ^ ")"
   | Track(t) -> t
