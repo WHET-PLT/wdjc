@@ -8,7 +8,7 @@
 %token EQ NEQ INCR DECR
 %token LT LEQ GT GEQ
 %token IF ELSE FOR WHILE LOOP RETURN INT
-%token FUN VOL DUR PIT INSTR
+%token FUN VOL DUR PITCH INSTR
 %token <int> LITERAL
 %token <string> ID
 %token NOTE REST CHORD TRACK
@@ -89,6 +89,19 @@ chord_list:
     ID { [$1] }
     | chord_list PARALLEL ID { $3 :: $1 }
 
+
+/* --- ACCESSOR --- */
+accessor:
+  ID ARROW note_attribute { ACCESSOR($1, $3) }
+
+/* List of note attributes */
+note_attribute:
+  PITCH {Pitch}
+  | VOL {Vol}
+  | DUR {Dur}
+  | INSTR {Instr}
+  
+
 /* --- STATEMENTS --- */
 
 stmt:
@@ -117,6 +130,7 @@ expr:
   | ID               { Id($1) }
   | chord_cr         { $1 }
   | note_cr          { $1 }
+  | accessor          {$1}
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }

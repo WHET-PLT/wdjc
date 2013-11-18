@@ -39,7 +39,8 @@ rule token = parse
 | "fun"			{ FUN }
 | "vol"			{ VOL }
 | "dur"			{ DUR }
-| "pit"			{ PIT }
+(*CHANGED from pit to pitch, because it sounds exponentially beter *)
+| "pitch"		{ PITCH }
 | "instr"		{ INSTR }
 | "int"			{ INT }
 | "note"		{ NOTE }
