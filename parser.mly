@@ -89,7 +89,6 @@ chord_list:
     ID { [$1] }
     | chord_list PARALLEL ID { $3 :: $1 }
 
-
 /* --- ACCESSOR --- */
 accessor:
   ID ARROW note_attribute { ACCESSOR($1, $3) }
@@ -100,8 +99,17 @@ note_attribute:
   | VOL {Vol}
   | DUR {Dur}
   | INSTR {Instr}
-  
 
+/* --- MODIFIERS --- */
+/*
+modifier:
+
+modifier_options:
+  BEND    {$1}
+  | VIB   {$1}
+  | TREM  {$1}
+
+*/
 /* --- STATEMENTS --- */
 
 stmt:
@@ -130,7 +138,8 @@ expr:
   | ID               { Id($1) }
   | chord_cr         { $1 }
   | note_cr          { $1 }
-  | accessor          {$1}
+  | accessor         { $1 }
+  /*| modifier         { $1 }*/
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
