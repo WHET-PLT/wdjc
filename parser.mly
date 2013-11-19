@@ -101,6 +101,7 @@ note_attribute:
   | INSTR {Instr}
 
 /* --- MODIFIERS --- */
+/*
 modifier:
 
 modifier_options:
@@ -108,7 +109,7 @@ modifier_options:
   | VIB   {$1}
   | TREM  {$1}
 
-
+*/
 /* --- STATEMENTS --- */
 
 stmt:
@@ -138,7 +139,7 @@ expr:
   | chord_cr         { $1 }
   | note_cr          { $1 }
   | accessor         { $1 }
-  | modifier         { $1 }
+  /*| modifier         { $1 }*/
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
