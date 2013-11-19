@@ -1,5 +1,5 @@
 (* AST *)
-type m = Vib | Trem | Bend | Incr | Decr
+type modif = Vib | Trem | Bend | Incr | Decr
 
 (* Not sure if I should make this a string *)
 type note_attribute = Pitch | Vol | Dur | Instr
@@ -21,7 +21,7 @@ type expr =
   | CHORD_CR of string list
   | Track of string
   | Binop of expr * op * expr
-  | Modifier of expr * m 
+  | Modifier of expr * modif 
   | Assign of string * expr
   | Call of string * expr list
   | Noexpr
@@ -74,9 +74,9 @@ let rec string_of_expr = function
       | Ser -> "." | Par -> ":" | Arrow -> "->") ^ " " ^
       string_of_expr e2
   (*again, not sure about this section*)
-  | Modifier(e1, m) ->
+  | Modifier(e1, modif) ->
       string_of_expr e1 ^
-      (match m with
+      (match modif with
       Vib -> "^" | Trem -> "~" | Bend -> "%" | Incr -> "++" | Decr -> "--")
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
