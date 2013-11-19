@@ -4,6 +4,8 @@ type modif = Vib | Trem | Bend | Incr | Decr
 (* Not sure if I should make this a string *)
 type note_attribute = Pitch | Vol | Dur | Instr
 
+type var_type = Int_t | Rest_t | Note_t | Chord_t | Track_t
+
 (* operation types *)
 type op =   Add  | Sub
           | Mult | Div 
@@ -14,11 +16,11 @@ type op =   Add  | Sub
 (* Expression type *)
 type expr =
     Literal of int
-  | ACCESSOR of string * note_attribute
+  | Accessor of string * note_attribute
   | Id of string
-  | NOTE_CR of string * string * string * string
+  | Note_cr of string * string * string * string
   | Rest of string
-  | CHORD_CR of string list
+  | Chord_cr of string list
   | Track of string
   | Binop of expr * op * expr
   | Modifier of expr * modif 
@@ -37,6 +39,12 @@ type stmt =
   | For of expr * expr * expr * stmt
   | While of expr * stmt
  (* | Loop of expr * expr * stmt *)
+
+(* variable declarations *)
+ type var_decl = {
+   vtype : var_type;
+   vname : string;
+ }
 
 (* funciton declaration *)
 type func_decl = {

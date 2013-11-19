@@ -66,10 +66,10 @@ formal_list:
 
 /* --- VARIABLE DECLARATIONS --- */
 vdecl:
-  INT ID SEMI { $2 }
-  | NOTE ID SEMI { $2 }
-  | CHORD ID SEMI { $2 }
-  | TRACK ID SEMI { $2 }
+    INT ID { var_decl ($1, $2) }
+  | NOTE ID { var_decl ($1, $2) }
+  | CHORD ID { var_decl ($1, $2) }
+  | TRACK ID { var_decl ($1, $2) }
 
 vdecl_list:
     /* nothing */    { [] }
@@ -78,12 +78,12 @@ vdecl_list:
 /*  --- NOTE  --- */
 note_cr:
   LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN
-    { NOTE_CR($2, $4, $6, $8) }
+    { Note_cr($2, $4, $6, $8) }
 
 /* --- CHORD --- */
 chord_cr:
-    LPAREN RPAREN { CHORD_CR ([]) }
-    | LPAREN chord_list RPAREN { CHORD_CR ( List.rev $2 ) }
+    LPAREN RPAREN { Chord_cr ([]) }
+    | LPAREN chord_list RPAREN { Chord_cr ( List.rev $2 ) }
 
 chord_list:
     ID { [$1] }
@@ -91,7 +91,7 @@ chord_list:
 
 /* --- ACCESSOR --- */
 accessor:
-  ID ARROW note_attribute { ACCESSOR($1, $3) }
+  ID ARROW note_attribute { Accessor($1, $3) }
 
 /* List of note attributes */
 note_attribute:
