@@ -3,8 +3,8 @@ song ( ) {
 /*
 Incr and Decr
  */
- 
+
  int i;
- (i++);
- (1++);
+ i ++;
+ 
 }

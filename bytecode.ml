@@ -1,3 +1,5 @@
+(*need to add MODIFIERS HERE*)
+
 type bstmt =
     Lit of int    (* Push a literal *)
   | Drp           (* Discard a value *)
@@ -19,6 +21,7 @@ type prog = {
     text : bstmt array; (* Code for all the functions *)
   }
 
+(*need to add MODIFIERS HERE*)
 let string_of_stmt = function
     Lit(i) -> "Lit " ^ string_of_int i
   | Drp -> "Drp"
@@ -34,8 +37,6 @@ let string_of_stmt = function
   | Bin(Ast.Geq) -> "Geq"
   | Bin(Ast.Ser) -> "Ser"
   | Bin(Ast.Par) -> "Par"
-  | Bin(Ast.Incr) -> "Incr"
-  | Bin(Ast.Decr) -> "Decr"
   | Bin(Ast.Arrow) -> "Arrow"
   | Lod(i) -> "Lod " ^ string_of_int i
   | Str(i) -> "Str " ^ string_of_int i

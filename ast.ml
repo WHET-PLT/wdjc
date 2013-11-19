@@ -1,5 +1,5 @@
 (* AST *)
-type m = Vib | Trem | Bend
+type m = Vib | Trem | Bend | Incr | Decr
 
 (* Not sure if I should make this a string *)
 type note_attribute = Pitch | Vol | Dur | Instr
@@ -7,8 +7,7 @@ type note_attribute = Pitch | Vol | Dur | Instr
 (* operation types *)
 type op =   Add  | Sub
           | Mult | Div 
-          | Ser  | Par 
-          | Incr | Decr 
+          | Ser  | Par  
           | Arrow
           | Equal | Neq | Geq | Leq | Greater | Less
 
@@ -72,14 +71,13 @@ let rec string_of_expr = function
 	    Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
       | Equal -> "==" | Neq -> "!="
       | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
-      | Ser -> "." | Par -> ":" | Incr -> "++" | Decr -> "--"
-      | Arrow -> "->") ^ " " ^
+      | Ser -> "." | Par -> ":" | Arrow -> "->") ^ " " ^
       string_of_expr e2
   (*again, not sure about this section*)
   | Modifier(e1, m) ->
       string_of_expr e1 ^
       (match m with
-      Vib -> "^" | Trem -> "~" | Bend -> "%")
+      Vib -> "^" | Trem -> "~" | Bend -> "%" | Incr -> "++" | Decr -> "--")
   | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
