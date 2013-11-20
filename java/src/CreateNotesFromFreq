@@ -32,6 +32,6 @@ public class CreateNotesFromFreq implements JMC {
     }
     p.addPhrase(notePhrase); 
     
-    Write.midi(p, "midi/createNotes.mid"); 
+    Write.midi(p, "midi/createNotesFreq.mid"); 
   }
 }
