@@ -48,10 +48,12 @@ program:
 /*  --- FUNCTION --- */
 fdecl:
   ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-    { { fname = $1;
-	formals = $3;
-	locals = List.rev $6;
-	body = List.rev $7 } }
+    { { 
+      fname = $1;
+	     formals = $3;
+	     locals = List.rev $6;
+	     body = List.rev $7 
+    } }
 
 /* --- FORMALS --- */
 /* optional function arguments */
@@ -60,16 +62,18 @@ formals_opt:
   | formal_list   { List.rev $1 }
 
 formal_list:
-    ID                   { [$1] }
-  | formal_list COMMA ID { $3 :: $1 }
+    vdecl                  { [$1] }
+  | formal_list COMMA vdecl { $3 :: $1 }
 
 
 /* --- VARIABLE DECLARATIONS --- */
+/*type = Ast.var; it expects string */
 vdecl:
-  INT ID SEMI { $2 }
-  | NOTE ID SEMI { $2 }
-  | CHORD ID SEMI { $2 }
-  | TRACK ID SEMI { $2 }
+  INT ID /*SEMI */    { {vType = Ast.Int;   vName = $2; dType = Ast.Int   }}
+  | NOTE ID /*SEMI */  { {vType = Ast.Note;  vName = $2; dType = Ast.Note  }}
+  | CHORD ID /*SEMI */ { {vType = Ast.Chord; vName = $2; dType = Ast.Chord }}
+  | TRACK ID /*SEMI */ { {vType = Ast.Track; vName = $2; dType = Ast.Track }}
+  | ID            { {vType = Ast.None;   vName = $1; dType = Ast.None  }}
 
 vdecl_list:
     /* nothing */    { [] }
@@ -121,6 +125,8 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
      { For($3, $5, $7, $9) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
+  | vdecl ASSIGN expr {ASSIGN($1, $3)}
+  | vdecl SEMI             {ASSIGN($1, LITERAL(Null))}
   /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
 
 stmt_list:
@@ -151,8 +157,8 @@ expr:
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
   | expr ARROW  expr { Binop($1, Arrow,   $3) }
-  | ID ASSIGN expr   { Assign($1, $3)} 
-  | ID ASSIGN   expr { Assign($1, $3)}
+  /*| ID ASSIGN expr   { Assign($1, $3)} */
+  /*| ID ASSIGN   expr { Assign($1, $3)}*/
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
   | expr INCR        { Modifier($1, Incr) }

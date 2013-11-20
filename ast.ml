@@ -1,8 +1,16 @@
 (* AST *)
 type m = Vib | Trem | Bend | Incr | Decr
 
+type typ = Int | Note | Chord | Track | None
+
 (* Not sure if I should make this a string *)
 type note_attribute = Pitch | Vol | Dur | Instr
+
+type var = {
+  vType : typ;
+  vName : string;
+  mutable dType : typ;
+}
 
 (* operation types *)
 type op =   Add  | Sub
@@ -22,7 +30,7 @@ type expr =
   | Track of string
   | Binop of expr * op * expr
   | Modifier of expr * m 
-  | Assign of string * expr
+  | Assign of var * expr
   | Call of string * expr list
   | Noexpr
   (* | Array of expr list *)
@@ -41,13 +49,21 @@ type stmt =
 (* funciton declaration *)
 type func_decl = {
     fname : string;
-    formals : string list;
-    locals : string list;
+    formals : var list;
+    locals : var list;
     body : stmt list;
   }
 
 (*ast is a list of stmts and list of function dels*)
 type program = string list * func_decl list
+
+(*String of var *)
+let string_of_var v = 
+  (match v.vType with
+    Int -> "int "
+    | Note -> "note "
+    | Chord -> "chord "
+    | Track -> "track ") ^ v.vName
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
@@ -78,7 +94,7 @@ let rec string_of_expr = function
       string_of_expr e1 ^
       (match m with
       Vib -> "^" | Trem -> "~" | Bend -> "%" | Incr -> "++" | Decr -> "--")
-  | Assign(v, e) -> v ^ " = " ^ string_of_expr e
+  | Assign(v, e) -> string_of_var v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
@@ -101,16 +117,17 @@ let rec string_of_stmt = function
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
  (*| Loop*)
 
-let string_of_vdecl id = "int " ^ id ^ ";\n"
+
+(*let string_of_vdecl id = "int " ^ id ^ ";\n"*)
 
 let string_of_fdecl fdecl =
-  fdecl.fname ^ "(" ^ String.concat ", " fdecl.formals ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
+  fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_var fdecl.formals) ^ ")\n{\n" ^
+  String.concat "" (List.map string_of_var fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 
 (*pretty print for program*)
 let string_of_program (vars, funcs) =
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
+  String.concat "" (List.map string_of_var vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)  
 
