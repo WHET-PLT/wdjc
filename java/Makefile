@@ -1,5 +1,5 @@
 # the main class name
-MAIN=createNotes
+MAIN=CreateNotesFromFreq
 
 # Location of trees.
 SOURCE_DIR=src
