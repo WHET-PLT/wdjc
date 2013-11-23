@@ -47,11 +47,48 @@ program:
 
 /*  --- FUNCTION --- */
 fdecl:
-  ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
-    { { fname = $1;
-	formals = $3;
-	locals = List.rev $6;
-	body = List.rev $7 } }
+
+  ID INT LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    {{ 
+       rtype = Int;
+       fname = $1;
+	     formals = $4;
+	     locals = List.rev $7;
+	     body = List.rev $8 
+    }}
+    | ID NOTE LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    {{ 
+       rtype = Note;
+       fname = $1;
+       formals = $4;
+       locals = List.rev $7;
+       body = List.rev $8 
+    }}
+    | ID CHORD LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    {{ 
+       rtype = Chord;
+       fname = $1;
+       formals = $4;
+       locals = List.rev $7;
+       body = List.rev $8 
+    }}
+
+    | ID REST LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    {{ 
+       rtype = Rest;
+       fname = $1;
+       formals = $4;
+       locals = List.rev $7;
+       body = List.rev $8 
+    }}
+    | ID TRACK LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    {{ 
+       rtype = Track;
+       fname = $1;
+       formals = $4;
+       locals = List.rev $7;
+       body = List.rev $8 
+    }}
 
 /* --- FORMALS --- */
 /* formals to be vdecl */

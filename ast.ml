@@ -53,6 +53,7 @@ type stmt =
 
 (* funciton declaration *)
 type func_decl = {
+    rtype : dType;
     fname : string;
     formals : var_decl list;
     locals : var_decl list;
@@ -127,7 +128,12 @@ let rec string_of_stmt = function
 
 
 let string_of_fdecl fdecl =
-  fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
+   (match fdecl.rtype with
+    Int -> "int "
+    | Note -> "note "
+    | Chord -> "chord "
+    | Track -> "track "
+    | Rest -> "rest ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
