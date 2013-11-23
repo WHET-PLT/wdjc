@@ -11,7 +11,6 @@ let string_of_type = function
    | Track -> "track"
    | _ -> raise (Failure ("Illegal type"))
 
-(*
+
 let sast_to_ast_type = function
-   Ast.Literal -> Sast.
-   *)
+   Ast.Int -> Sast.
