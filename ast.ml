@@ -4,6 +4,9 @@ type modif = Vib | Trem | Bend | Incr | Decr
 (* Not sure if I should make this a string *)
 type note_attribute = Pitch | Vol | Dur | Instr
 
+(*our data types*)
+type dType = Int | Note | Chord | Track | Rest 
+
 (* operation types *)
 type op =   Add  | Sub
           | Mult | Div 
@@ -25,8 +28,15 @@ type expr =
   | Assign of string * expr
   | Call of string * expr list
   | Noexpr
+ 
   (* | Array of expr list *)
   (*an array can be a list of expressions*)
+
+(*variable declaration*)
+type var_decl = {
+  vType : dType;
+  vName : string;
+}
 
 (*need to decide if we are keeping loop or not*)
 type stmt =
@@ -36,21 +46,33 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
+  (*| Assign of var_decl * expr
+  | Vdecl of var_decl*)
  (* | Loop of expr * expr * stmt *)
+
 
 (* funciton declaration *)
 type func_decl = {
     fname : string;
-    formals : string list;
-    locals : string list;
+    formals : var_decl list;
+    locals : var_decl list;
     body : stmt list;
   }
 
-(*ast is a list of stmts and list of function dels*)
-type program = string list * func_decl list
+(*ast is a list of variables and list of function dels*)
+type program = var_decl list * func_decl list
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
+
+let string_of_vdecl v = 
+  (match v.vType with
+    Int -> "int "
+    | Note -> "note "
+    | Chord -> "chord "
+    | Track -> "track "
+    | Rest -> "rest ") ^ v.vName
+
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
@@ -62,6 +84,7 @@ let rec string_of_expr = function
       match b with
         Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
       )
+  | Assign(id, expr) -> id ^ " = " ^ string_of_expr expr
   | CHORD_CR(note_list) -> 
       "(" ^ String.concat " : " note_list ^ ")"
   | Track(t) -> t
@@ -78,12 +101,10 @@ let rec string_of_expr = function
       string_of_expr e1 ^
       (match modif with
       Vib -> "^" | Trem -> "~" | Bend -> "%" | Incr -> "++" | Decr -> "--")
-  | Assign(v, e) -> v ^ " = " ^ string_of_expr e
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
 (*| Array*) 
-
 
 (*pretty print for stmts*)
 (*TODO need to do loop*)
@@ -99,12 +120,14 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+  (*| Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e
+  | Vdecl(v) -> string_of_vdecl v ^ ";"*)
  (*| Loop*)
 
-let string_of_vdecl id = "int " ^ id ^ ";\n"
+
 
 let string_of_fdecl fdecl =
-  fdecl.fname ^ "(" ^ String.concat ", " fdecl.formals ^ ")\n{\n" ^
+  fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
