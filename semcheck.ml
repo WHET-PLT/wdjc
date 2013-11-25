@@ -34,6 +34,7 @@ let string_of_vartype = function
 
 
 
+(* TYPES - TOM *)
 let get_type = function
 	var -> string_of_vartype var.vartype
 
@@ -125,13 +126,19 @@ let add_function fname return formals env =
 
 (* SEMANTIC CHECKING FUNCTIONS *)
 
-(* check binop operands *)
+(* check binop operands - EMILY *)
+
+(* STATEMENTS - EMILY *)
 (* check statement *)
 (* check statement list *)
+
+(* FUNCTIONS  - TOM *)
 (* check formal list *)
 (* check function arguments *)
 (* check function *)
 (* check function list *)
+
+(* GLOBALS - EMILY *)
 (* sem check global *)
 (* sem check global list *)
 (* semantically check program *)
