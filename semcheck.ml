@@ -26,6 +26,9 @@ type env = {
 }
 
 
+(* TYPE CONVERSIONS *)
+
+(* var type -> string *)
 let string_of_vartype = function
    Int -> "int"
    | Note -> "note"
@@ -33,22 +36,35 @@ let string_of_vartype = function
    | Track -> "track"
 
 
-
-(* TYPES - TOM *)
-let get_type = function
-	var -> string_of_vartype var.vartype
-
-(*get type for variables *)
-
-(*get type for expressions*)
-
-(*gets sast types*)
+(* ast -> sast type*)
 let ast_to_sast_type = function
    Ast.Int -> Sast.Int
    | Ast.Note -> Sast.Note
    | Ast.Chord -> Sast.Chord
    | Ast.Track -> Sast.Track
    | _ -> raise (Failure ("Mismatch type"))
+
+(* we may need a variable total conversion from
+ast to sast *)
+
+
+
+(* TYPES - do we need this?
+let get_type = function
+	var -> string_of_vartype var.vartype
+	*)
+
+(* search for variable types by name; return type or exception *)
+let get_variable_type name env = 
+	let typ = get_variable_name name env in
+	if typ = "" then raise (Failure ("undefined variable: " ^ name))
+	else typ
+
+(*get type for expressions - tom fill in?? maybe wait until we 
+do expression checking? not sure if we went through that yet??*)
+let get_expr_type name env = 
+
+
 
 
 
@@ -62,7 +78,7 @@ let ast_to_sast_type = function
 	If it doesn't find it, it checks the env's global list.
 	If not found, raises error.
 *)
-let get_variable vname env = 
+let get_variable_name vname env = 
 	try StringMap.find vname env.locals
 	with Not_found -> try StringMap.find vname env.globals
 	with Not_found -> raise (Failure ("undeclared variable " ^ vname))
