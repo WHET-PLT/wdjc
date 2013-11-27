@@ -47,7 +47,12 @@ let ast_to_sast_type = function
 (* we may need a variable total conversion from
 ast to sast *)
 
-
+(*need for locals, formals, and global variabes*)
+let convert_types tp = 
+{
+	Sast.vartype = ast_to_sast_type tp.vartype;
+	Sast.varname = tp.varname;
+}
 
 (* TYPES - do we need this?
 let get_type = function
@@ -189,6 +194,26 @@ let rec sc_functions fns env =
 	(* if no function,s return empty list *)
 	[] -> []
 	| h:t -> let f, e = (sc_function h env) in f::(sc_functions t e)
+
+(*checks function arguments, then updates env*)
+let formals_checker env formal =
+	let ret = add_local formal.varname formal.vartype env in
+	if StringMap.is_empty ret then
+	raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
+	else let env = {locals = ret; globals = env.globals; functions = env.functions } in
+	convert_types formal, env
+
+(*updates formals from cur context*)
+let rec formals_update env formals =
+	match formals with
+	  [] -> []
+	| hd::tl -> let frm, en = (formals_checker env hd) in (frm, en)::(formals_update en tl) 
+
+(*invokes a function and returns updated formals and block from env. Needs to also
+update the symbol table for global variables*)
+let functions_checker env func =
+
+let rec functions_update env funcs = 
 
 (* GLOBALS - EMILY *)
 (* sem check global *)
