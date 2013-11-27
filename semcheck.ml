@@ -146,16 +146,16 @@ let add_function fname return formals env =
 
 (* SEMANTIC CHECKING FUNCTIONS *)
 
-(* check binop operands - EMILY *)
+(* check binop operands - TOM *)
 
-(* STATEMENTS - EMILY *)
+(* STATEMENTS - TOM *)
 (* check statement *)
 (* check statement list *)
 
 
 (* EXPRESSIONS - ?? *)
 
-(* FUNCTIONS  - TOM *)
+(* FUNCTIONS  - EMILY *)
 (* check formal list *)
 (* check function arguments *)
 
@@ -217,21 +217,26 @@ let rec functions_update env funcs =
 
 (* GLOBALS - EMILY *)
 (* sem check global *)
-let sc_global global env =
+let sc_global global env = 
+
 	let r = add_global global.vType global.vName env in
-		(* r is the new env	*)
+		(* if already exists in the add_global, don't add it; crash program *)
 		if StringMap.is_empty r then raise (Failure ("global variable " ^ 
 			global.vName ^ " is already defined."))
 		(* update env with globals from r *)
-		else let env = {locals = env.locals; globals = r; 
-			functions = env.functions} in
+		else let env = 
+			{
+				locals = env.locals; 
+				globals = r; 
+				functions = env.functions
+			} in
 		ast_to_sast_type global env
 
 (* sem check global list *)
-let sc_globals globals env =
+let rec sc_globals globals env =
 	match globals with
 	[] -> [] (* empty list of globals*)
-	| h::t -> let g, e = (sc_global h env) in (g,e)::(check_globals t e) (* add global, env to a list.*)
+	| h::t -> let g, e = (sc_global h env) in (g,e)::(sc_globals t e) (* add global, env to a list.*)
 
 
 (* semantically check program - Emily *)
@@ -253,19 +258,3 @@ let sc_program (globals, functions) =
 			*)
 			| _ -> let e = snd (List.hd (List.rev g)) in 
 				(globals, (sc_functions (List.rev functions) env))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
