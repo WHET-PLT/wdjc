@@ -67,7 +67,6 @@ let get_expr_type name env =
 
 
 
-
 (* HELPFUL FUNCTIONS TO GET AND ADD VARIABLES (GLOBAL & LOCAL), FUNCIONS TO ENVIRONMENT *)
 
 (* 
@@ -148,16 +147,87 @@ let add_function fname return formals env =
 (* check statement *)
 (* check statement list *)
 
+
+(* EXPRESSIONS - ?? *)
+
 (* FUNCTIONS  - TOM *)
 (* check formal list *)
 (* check function arguments *)
+
 (* check function *)
+(* this function will return the updated formals and body 
+as per the abstract syntax tree, the return type, name and locals *)
+let rec sc_function fn env = 
+	match List.hd (List.rev fn.body) with
+		(* WHAT IS RETURN _*)
+		Return(_) -> 
+			let env = 
+				{
+					locals = StringMap.empty;
+					globals = env.globals;
+					functions = env.functions;
+				}
+			(* fill up env_new with functions;
+			change name possibly to something more intuitive
+			 *)
+			let env_new =
+				add_function fn.rtype fn.fname fn.formals fn.locals env in(*CHECK THIS order!*)
+				if StringMap.is_empty env_new then raise (Failure ("function " 
+					^ fn.fName ^ " is already defined."))
+				else let env =
+					{
+						locals = env.locals;
+						globals = env.globals;
+						functions = env_new
+					} in
+			(*let f = sc_formals fn.formals env i stopped fu nv stuff at ln 196*)
+
+
 (* check function list *)
+let rec sc_functions fns env =
+	match fns with
+	(* if no function,s return empty list *)
+	[] -> []
+	| h:t -> let f, e = (sc_function h env) in f::(sc_functions t e)
 
 (* GLOBALS - EMILY *)
 (* sem check global *)
+let sc_global global env =
+	let r = add_global global.vType global.vName env in
+		(* r is the new env	*)
+		if StringMap.is_empty r then raise (Failure ("global variable " ^ 
+			global.vName ^ " is already defined."))
+		(* update env with globals from r *)
+		else let env = {locals = env.locals; globals = r; 
+			functions = env.functions} in
+		ast_to_sast_type global env
+
 (* sem check global list *)
-(* semantically check program *)
+let sc_globals globals env =
+	match globals with
+	[] -> [] (* empty list of globals*)
+	| h::t -> let g, e = (sc_global h env) in (g,e)::(check_globals t e) (* add global, env to a list.*)
+
+
+(* semantically check program - Emily *)
+let sc_program (globals, functions) =
+	let env = 
+		{ 	locals 	  = StringMap.empty;
+			globals   = StringMap.empty;
+			functions = StringMap.empty 
+		} in 
+	(* return list of each global with environment; last global has entire env *)
+	let g = sc_globals globals env in
+		(* make a list of globals *)
+		let globals = List.map (fun global -> fst global) g in
+		match g with
+		(* no globals *)
+			[] -> (globals, (sc_functions (List.rev functions) env))
+			(* get environment from the last global 
+			WHATS SND
+			*)
+			| _ -> let e = snd (List.hd (List.rev g)) in 
+				(globals, (sc_functions (List.rev functions) env))
 
 
 
