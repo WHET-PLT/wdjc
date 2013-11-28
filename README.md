@@ -40,3 +40,4 @@ ANSWERED
 3. Discuss vartype, vType, etc. different conventions for getting variable names + variable types;
 	-what standard do we want to use?
 	-are we using them correctly currently?
+4. Streamline function names in semcheck

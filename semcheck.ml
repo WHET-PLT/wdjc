@@ -162,16 +162,33 @@ let add_function fname return formals env =
 
 (* FUNCTIONS  - EMILY *)
 (* check formal list *)
+(*checks function arguments, then updates env*)
+let formals_checker env formal =
+	let ret = add_local formal.varname formal.vartype env in
+	if StringMap.is_empty ret then
+	raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
+	else let env = {locals = ret; globals = env.globals; functions = env.functions } in
+	convert_types formal, env
 (* check function arguments *)
 
-(* check function *)
-(* this function will return the updated formals and body 
-as per the abstract syntax tree, the return type, name and locals *)
+
+(* updates formals from cur context *)
+let rec formals_update formals env =
+	match formals with
+	  [] -> []
+	| h::t -> let frm, en = (formals_checker env hd) in (frm, en)::(formals_update en tl) 
+
+
+(* sc_function
+	returns updated formals + body
+	returns type, name, locals
+ *)
 let rec sc_function fn env = 
 	match List.hd (List.rev fn.body) with
-		(* WHAT IS RETURN _*)
+		(* WHAT IS RETURN(_); do we need parenthesis? *)
 		Return(_) -> 
-			let env = 
+			(* updating this function's personal envirnment *)
+			let local_env = 
 				{
 					locals = StringMap.empty;
 					globals = env.globals;
@@ -196,29 +213,21 @@ let rec sc_function fn env =
 (* check function list *)
 let rec sc_functions fns env =
 	match fns with
-	(* if no function,s return empty list *)
+	(* if no functions, return empty list *)
 	[] -> []
-	| h:t -> let f, e = (sc_function h env) in f::(sc_functions t e)
+	(* otherwise, go through and create a list of function, environment
+	pairs; the last element in the list is the most up-to-date env *)
+	| h:t -> let f, e = (sc_function h env) in (f, e)::(sc_functions t e)
 
-(*checks function arguments, then updates env*)
-let formals_checker env formal =
-	let ret = add_local formal.varname formal.vartype env in
-	if StringMap.is_empty ret then
-	raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
-	else let env = {locals = ret; globals = env.globals; functions = env.functions } in
-	convert_types formal, env
 
-(*updates formals from cur context*)
-let rec formals_update env formals =
-	match formals with
-	  [] -> []
-	| hd::tl -> let frm, en = (formals_checker env hd) in (frm, en)::(formals_update en tl) 
-
+(* TOM - I don't know what this is so I didn't want to change it *)
 (*invokes a function and returns updated formals and block from env. Needs to also
 update the symbol table for global variables*)
-let functions_checker env func =
+(*let functions_checker env func =
 
 let rec functions_update env funcs = 
+*)
+
 
 (* GLOBALS - EMILY *)
 
