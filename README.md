@@ -34,3 +34,5 @@ ANSWERED
 		j = 1;
 		
 	**Because** in fdecl `vdecl list` comes before `stmt list`
+
+?? mutable global/local in env
