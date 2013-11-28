@@ -122,7 +122,12 @@ let add_local var_type name env =
 	If it dlesn't contain it, it adds it to the env's global list.
 *)
 let add_global var_type name env =
+	(* if name exists in env.globals, return empty stringmap *)
 	if StringMap.mem name env.globals then StringMap.empty
+	(*  else; add to env.globals:
+		key = name
+		value = vartype 
+	*)
 	else StringMap.add name (string_of_vartype vtype) env.globals
 
 (*
@@ -216,45 +221,70 @@ let functions_checker env func =
 let rec functions_update env funcs = 
 
 (* GLOBALS - EMILY *)
+
 (* sem check global *)
 let sc_global global env = 
-
-	let r = add_global global.vType global.vName env in
+	(* add_global returns updated stringmap *)
+	let new_global_sm = add_global global.vType global.vName env in
 		(* if already exists in the add_global, don't add it; crash program *)
-		if StringMap.is_empty r then raise (Failure ("global variable " ^ 
+		if StringMap.is_empty new_global_sm then raise (Failure ("global variable " ^ 
 			global.vName ^ " is already defined."))
 		(* update env with globals from r *)
 		else let env = 
 			{
 				locals = env.locals; 
-				globals = r; 
+				globals = new_global_sm;
 				functions = env.functions
 			} in
-		ast_to_sast_type global env
+		(* 
+		RETURN: global + env
+		*)
+		convert_types global, env 
 
-(* sem check global list *)
+(* sem check list of globals *)
 let rec sc_globals globals env =
 	match globals with
-	[] -> [] (* empty list of globals*)
-	| h::t -> let g, e = (sc_global h env) in (g,e)::(sc_globals t e) (* add global, env to a list.*)
+	(* empty list of globals*)
+	[] -> [] 
+	(* 
+		- iterate through list of globals 
+		- semantically check each individual global
+		- (g, e) end up being pairs of globals + respective environments
+		- the last (g,e) pair has env with info from all globals
+	*)
+	| h::t -> let g, e = (sc_global h env) in (g,e)::(sc_globals t e)
 
 
 (* semantically check program - Emily *)
 let sc_program (globals, functions) =
+	(*  initialize empty env *)
 	let env = 
 		{ 	locals 	  = StringMap.empty;
 			globals   = StringMap.empty;
 			functions = StringMap.empty 
 		} in 
-	(* return list of each global with environment; last global has entire env *)
+	(* 
+		sc_globals returns list: [(g1,e1), (g2,e2), (g3,e3)....(gn,en)]
+		where g = global , e = environment
+	*)
 	let g = sc_globals globals env in
 		(* make a list of globals *)
+		(* note: fun = function pattern matching *)
+		(* note: elementss returned are in form (g, e)
+			-fst global returns g
+			-snd global returns e
+		*)
+
 		let globals = List.map (fun global -> fst global) g in
-		match g with
-		(* no globals *)
-			[] -> (globals, (sc_functions (List.rev functions) env))
-			(* get environment from the last global 
-			WHATS SND
-			*)
-			| _ -> let e = snd (List.hd (List.rev g)) in 
-				(globals, (sc_functions (List.rev functions) env))
+			match g with
+				(* no globals; thus our environment stays the same *)
+				[] -> (globals, (sc_functions (List.rev functions) env))
+				(* 
+				e - most up-to-date environment with all globals
+				*)
+				| _ -> let new_env = snd (List.hd (List.rev g)) in 
+					(globals, (sc_functions (List.rev functions) new_env))
+
+
+
+
