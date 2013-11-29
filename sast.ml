@@ -53,7 +53,6 @@ type stmt_t =
 
 (* funciton declaration *)
 type func_decl_t = {
-    rtype : dType_t;
     fname : string;
     formals : var_decl_t list;
     locals : var_decl_t list;
