@@ -11,8 +11,8 @@ let function_string ftype fname formals locals body =
   and jbody = stmtlist_string body in
   fprintf java "public %s %s(%s) { %s %s }" jtype jname jformals jlocals jbody; 
 
-(* need to figure out what the java library constructs are
-   that could complicate this *)
+(* need to figure out what the java library 
+   constructs are; that could complicate this *)
 let ftype_string ftype = 
   match ftype with
     Int -> "int"
@@ -22,9 +22,10 @@ let ftype_string ftype =
   | Rest -> "rest"
   
 (* TODO: break down expression/formals loop *)
-let paramlist_string formals =
-  let params = expr_string formals in
-  
+let rec params_string formals = function
+    [] -> ""
+  | [f] -> expr_string f
+  | f::t -> expr_string f ^ ", " ^ params_string t  
   
 
 let vdecllist_string locals = 
