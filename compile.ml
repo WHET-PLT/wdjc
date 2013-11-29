@@ -24,7 +24,7 @@ let ftype_string ftype =
 (* TODO: break down expression/formals loop *)
 let rec params_string formals = function
     [] -> ""
-  | [f] -> expr_string f
+  | [t] -> expr_string t
   | f::t -> expr_string f ^ ", " ^ params_string t  
   
 
