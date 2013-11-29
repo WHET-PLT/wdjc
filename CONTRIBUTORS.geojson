@@ -1,200 +1,114 @@
 { "type": "FeatureCollection", "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } }, "features": [ 
+{ "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 29 11:17:45 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969651, 40.800816, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 29 11:08:59 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969683, 40.800839, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 29 10:58:30 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969657, 40.800802, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 29 10:42:10 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969630, 40.800790, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Thu Nov 28 13:43:37 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969717, 40.800862, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Mon Nov 25 03:19:27 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969681, 40.800831, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Mon Nov 25 03:03:54 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969689, 40.800830, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Mon Nov 25 02:40:57 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969638, 40.800818, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Mon Nov 25 02:20:02 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969682, 40.800849, 0.0 ] } },
-=======
-=======
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Wed Nov 27 17:13:50 PST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -122.431028, 37.751602, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Wed Nov 27 16:52:30 PST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -122.431062, 37.751578, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Wed Nov 27 16:52:19 PST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -122.431081, 37.751563, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Wed Nov 27 13:31:25 PST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -122.429916, 37.742256, 0.0 ] } },
->>>>>>> b9901d7954689a04fa9f61f69331b7947c4e2de8
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Tue Nov 26 16:51:39 EST 2013; Location Accuracy: 73.208605" }, "geometry": { "type": "Point", "coordinates": [ -73.964952, 40.806164, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sun Nov 24 23:12:10 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964952, 40.806134, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 24 21:03:13 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.963336, 40.806946, 0.0 ] } },
->>>>>>> 8e2803f82582b5e0bc5b5c5611f6d7a514240a87
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sat Nov 23 15:43:15 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964886, 40.808508, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sat Nov 23 15:23:22 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964915, 40.808469, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 23 15:20:12 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964936, 40.808473, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 23 15:19:44 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964928, 40.808460, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sat Nov 23 15:10:53 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964933, 40.808465, 0.0 ] } },
->>>>>>> 05fc4c90f9077e5ea125c6d8c38980a710074c12
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sat Nov 23 14:55:55 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964827, 40.808420, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 23 13:32:26 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964985, 40.808474, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Wed Nov 20 22:09:43 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964955, 40.806159, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Wed Nov 20 18:04:19 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.965002, 40.806254, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 19:26:30 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961224, 40.809351, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 19:26:11 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961224, 40.809351, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 19:25:43 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961224, 40.809351, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 19:25:10 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961226, 40.809362, 0.0 ] } },
-=======
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Tue Nov 19 19:22:58 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
->>>>>>> 485738a38ddf00bdcadb99cdd3c3fd00a3d369c8
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Tue Nov 19 19:15:35 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 19:00:05 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961204, 40.809354, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 18:55:39 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961205, 40.809364, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Tue Nov 19 18:42:29 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961198, 40.809430, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 18:20:06 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961227, 40.809357, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 18:19:51 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961225, 40.809376, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 18:10:49 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961022, 40.809403, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Tue Nov 19 18:12:52 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961194, 40.809268, 0.0 ] } },
->>>>>>> c6612e7ca3df32ca905fba6e7f7cc002ffddf073
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 18:10:31 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961022, 40.809403, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 18:09:59 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.960982, 40.809415, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Tue Nov 19 18:00:09 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961283, 40.809322, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Tue Nov 19 17:58:10 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961283, 40.809322, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Tue Nov 19 17:57:48 EST 2013; Location Accuracy: 76.521258" }, "geometry": { "type": "Point", "coordinates": [ -73.961458, 40.809260, 0.0 ] } },
-=======
->>>>>>> 65d78bb44bb788354cb936973630cc35bf54bab1
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 14:55:40 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.959632, 40.808840, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Tue Nov 19 14:45:27 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.959828, 40.808982, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Mon Nov 18 18:05:15 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961344, 40.809410, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Mon Nov 18 17:49:55 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961363, 40.809443, 0.0 ] } },
->>>>>>> ea4d363e1edec53070c6350c010a42d112e2c977
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Mon Nov 18 13:06:27 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961229, 40.809396, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Mon Nov 18 13:04:45 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961229, 40.809396, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Mon Nov 18 13:04:26 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961229, 40.809396, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Mon Nov 18 13:02:33 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961229, 40.809396, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Mon Nov 18 13:02:08 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961190, 40.809381, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Mon Nov 18 12:39:01 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961248, 40.809403, 0.0 ] } },
->>>>>>> a72ee92d12be47aa0426828fad35ab9a2d7d9d29
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Mon Nov 18 12:08:12 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961264, 40.809310, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 21:35:34 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964533, 40.808232, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 21:29:38 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964533, 40.808232, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 21:29:03 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964554, 40.808280, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 21:15:37 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964484, 40.808188, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 21:11:58 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964481, 40.808152, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 21:01:58 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964116, 40.808284, 0.0 ] } },
-=======
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sun Nov 17 18:08:58 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
->>>>>>> e61799bdd1ce4564c7d7448e9083f110acfb3485
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 18:04:21 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961353, 40.809435, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 18:03:48 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961353, 40.809435, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 18:03:22 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961329, 40.809439, 0.0 ] } },
-=======
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sun Nov 17 18:01:12 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sun Nov 17 17:57:23 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961300, 40.809428, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sun Nov 17 17:41:35 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961318, 40.809440, 0.0 ] } },
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sun Nov 17 17:38:18 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
->>>>>>> 70bc3a91210a0635a5e10137272c7f96bd0442c5
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 16:54:08 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961263, 40.809406, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 16:53:53 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961236, 40.809390, 0.0 ] } },
-=======
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sun Nov 17 16:53:49 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sun Nov 17 16:20:36 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
->>>>>>> 35690512f95eee26ac858b726ff1e6da25cc6d05
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 14:02:52 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961287, 40.809415, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 13:58:54 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961287, 40.809415, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 13:57:17 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961287, 40.809415, 0.0 ] } },
-<<<<<<< HEAD
-=======
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 13:55:48 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961343, 40.809441, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 13:55:27 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961259, 40.809408, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Nov 17 13:54:27 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961259, 40.809408, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 16:22:57 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961257, 40.809420, 0.0 ] } },
->>>>>>> create_note
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 16:22:13 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961230, 40.809410, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sun Nov 17 13:20:49 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961285, 40.809429, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sun Nov 17 12:40:27 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961338, 40.809444, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Sat Nov 16 16:07:02 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961303, 40.809428, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Sat Nov 16 15:55:33 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961311, 40.809436, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Sat Nov 16 15:46:43 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961253, 40.809407, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Sat Nov 16 15:46:25 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961254, 40.809401, 0.0 ] } },
->>>>>>> e3a07641ace4e3c6eeebd6d744d98388e35f8aeb
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 15:33:46 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961274, 40.809411, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 14:59:23 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961166, 40.809356, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 14:57:29 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961166, 40.809356, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 14:56:32 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961165, 40.809353, 0.0 ] } },
-=======
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sat Nov 16 13:16:47 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
->>>>>>> 7ff1715b8348763b6063d1413a5be6416eacd7ce
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 12:51:07 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961188, 40.809375, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 12:50:50 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961211, 40.809388, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sat Nov 16 12:43:11 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961308, 40.809426, 0.0 ] } },
->>>>>>> 267c751675314ca2585aeca36246ea8b6bd49e8c
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 12:33:16 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961249, 40.809408, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 12:32:31 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961249, 40.809408, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 12:25:33 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961242, 40.809400, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 11:59:22 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961245, 40.809387, 0.0 ] } },
-=======
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sat Nov 16 12:07:57 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sat Nov 16 12:00:24 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-<<<<<<< HEAD
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sat Nov 16 11:58:58 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sat Nov 16 11:58:46 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-<<<<<<< HEAD
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sat Nov 16 11:56:09 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-=======
-=======
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Sat Nov 16 11:58:31 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961266, 40.809417, 0.0 ] } },
->>>>>>> 5169f7d0042cd42f29c8d552917c49057f57043a
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sat Nov 16 11:53:25 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961219, 40.809382, 0.0 ] } },
->>>>>>> 96b033af3d80f0cff8955cee9ef88c0732541ff0
->>>>>>> 261833b37c35310313e11b2f72dbbab2441e22b6
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 16 11:24:43 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961245, 40.809383, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 20:52:31 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961336, 40.809430, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Fri Nov 15 20:47:02 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961337, 40.809394, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 20:43:42 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961314, 40.809433, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 20:43:03 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961314, 40.809434, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Fri Nov 15 20:42:39 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961360, 40.809394, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Fri Nov 15 20:23:16 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961237, 40.809437, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Fri Nov 15 20:23:02 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961237, 40.809437, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Fri Nov 15 20:20:58 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961172, 40.809456, 0.0 ] } },
-=======
->>>>>>> f8e4f2639c8aa5b4237f70a5bbe47e4e33138c74
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 20:19:13 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961313, 40.809436, 0.0 ] } },
->>>>>>> 7a3221b6def7315abcdbf4a7a4fbf67ebb1aa5e6
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 20:09:12 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961321, 40.809442, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 20:08:18 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961321, 40.809442, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Fri Nov 15 20:06:04 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961639, 40.809290, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Fri Nov 15 20:04:41 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961948, 40.809202, 0.0 ] } },
-=======
->>>>>>> 4a989fe23427c96b7c698c5817f1312b23460d72
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 20:04:09 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961321, 40.809442, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 20:02:33 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961340, 40.809446, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 19:44:49 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961325, 40.809437, 0.0 ] } },
-=======
->>>>>>> 62115f97b94e3b4719a5d7a515187c1dd57d1494
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Fri Nov 15 19:41:20 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-<<<<<<< HEAD
-{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Fri Nov 15 19:39:57 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-=======
->>>>>>> 735bb1e5477e54efd114ecf91e3dd7a216c2748c
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 19:27:34 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961325, 40.809436, 0.0 ] } },
->>>>>>> c8eb3f175184d525c2304d048f0f7f35df97d66c
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 19:24:45 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961325, 40.809436, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 19:21:52 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961325, 40.809436, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 19:19:19 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961350, 40.809441, 0.0 ] } },
@@ -205,12 +119,9 @@
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 14:43:37 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961208, 40.809375, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 14:41:55 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961208, 40.809375, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 14:40:26 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961208, 40.809375, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 14:39:14 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961208, 40.809375, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 14:38:49 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961229, 40.809380, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Fri Nov 15 14:06:49 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961322, 40.809420, 0.0 ] } },
->>>>>>> b90bc46f5df7a2a700248295706975cd9f785b13
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 13:46:57 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961243, 40.809410, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 13:46:23 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961214, 40.809416, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Fri Nov 15 13:36:03 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961237, 40.809407, 0.0 ] } },
@@ -229,22 +140,12 @@
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Wed Nov 13 15:56:06 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.959500, 40.809297, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Wed Nov 13 14:59:08 EST 2013; Location Accuracy: 165.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.959574, 40.808949, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Wed Nov 13 14:42:36 EST 2013; Location Accuracy: 66.774026" }, "geometry": { "type": "Point", "coordinates": [ -73.963666, 40.808266, 0.0 ] } },
-<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Mon Nov 11 23:38:01 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969637, 40.800811, 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Tue Nov 12 02:33:46 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964955, 40.806214, 0.0 ] } },
->>>>>>> 27d80e464ab4293ea887bda18147b08421f10f0b
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Mon Nov 11 23:37:15 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969562, 40.800783, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Mon Nov 11 23:30:16 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969622, 40.800806, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "William Falk-Wallace", "Description": "Mon Nov 11 23:23:12 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.969649, 40.800815, 0.0 ] } },
-{ "type": "Feature", "properties": { "Name": "Hila Gutfreund", "Description": "Mon Nov 11 18:38:21 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-<<<<<<< HEAD
-{ "type": "Feature", "properties": { "Name": "Hila Gutfreund", "Description": "Mon Nov 11 18:37:08 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-{ "type": "Feature", "properties": { "Name": "Hila Gutfreund", "Description": "Mon Nov 11 18:35:23 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
-=======
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Mon Nov 11 01:29:39 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964935, 40.806153, 0.0 ] } },
->>>>>>> 0d8f26ea74edd9895f68ade9f0457332a6579e02
-{ "type": "Feature", "properties": { "Name": "Hila Gutfreund", "Description": "Sun Nov 10 20:09:28 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sun Nov 10 12:34:03 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964923, 40.806118, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov  9 14:19:13 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961260, 40.809413, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov  9 14:08:31 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961294, 40.809438, 0.0 ] } },
