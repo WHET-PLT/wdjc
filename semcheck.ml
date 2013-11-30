@@ -134,7 +134,7 @@ let add_global var_type name env =
 	CONFUSED ON THE GET_TYPE 
 	add_function fname return formals env
 		fname - function name
-		return - return type
+		rtype - return type
 		formals - formal arguments
 		env - environment stringmap
 
@@ -142,10 +142,11 @@ let add_global var_type name env =
 	if not- it gets the types of the formals, adds:
 		name, vartype of return, formals to environemt's function
 *)
-let add_function fname return formals env =
+let add_function fname rtype formals env =
 	if StringMap.mem name env.functions then StringMap.empty
 	else let fmls = List.map get_type formals in
-	StringMap.add name (string_of_vartype (return) :: fmls) env.funct`ions
+	(* weird parenthesis...*)
+	StringMap.add name (string_of_vartype (return) :: fmls) env.functions
 
 
 
@@ -162,6 +163,7 @@ let add_function fname return formals env =
 
 (* FUNCTIONS  - EMILY *)
 (* check formal list *)
+
 (*checks function arguments, then updates env*)
 let formals_checker env formal =
 	let ret = add_local formal.varname formal.vartype env in
@@ -185,7 +187,7 @@ let rec formals_update formals env =
  *)
 let rec sc_function fn env = 
 	match List.hd (List.rev fn.body) with
-		(* WHAT IS RETURN(_); do we need parenthesis? *)
+		(* check there is a return statement at the end of the function *)
 		Return(_) -> 
 			(* updating this function's personal envirnment *)
 			let local_env = 
@@ -196,17 +198,45 @@ let rec sc_function fn env =
 				}
 			(* fill up env_new with functions;
 			change name possibly to something more intuitive
+			new_fn_sm - new function stringmap
 			 *)
-			let env_new =
-				add_function fn.rtype fn.fname fn.formals fn.locals env in(*CHECK THIS order!*)
+			let new_func_sm =
+				add_function fn.rtype fn.fname fn.formals fn.locals env in
 				if StringMap.is_empty env_new then raise (Failure ("function " 
 					^ fn.fName ^ " is already defined."))
 				else let env =
 					{
 						locals = env.locals;
 						globals = env.globals;
-						functions = env_new
+						functions = new_func_sm (* new function env *)
 					} in
+			(* check formal arguments with sc_formals 
+			formals_env
+				- returns formal list appended w/ new environment as tuples
+			*)
+			let f = sc_formals fn.formals env in
+				let formals = List.map (fun formal -> fst formal ) f in
+				(match f with
+					(* empty, no formals *)
+					[] -> let body = sc_stmt_list fn fn.body env in
+						{
+							Sast.rtype = ast_to_sast_type fn.rtype;
+							Sast.fname = fn.fname;
+							Sast.formals = formals; (* ie empty *)
+							Sast.locals = List.map  ast_to_sast_type fn.locals;
+							Sast.body = body
+						}, env
+					|_ -> let new_env = snd (List.hd (List.rev f)) in
+						let body = sc_stmt_list fn fn.body new_env in
+						{
+							Sast.rtype = ast_to_sast_type fn.rtype;
+							Sast.fname = fn.fname;
+							Sast.formals = formals; (* ie empty *)
+							Sast.locals = List.map  ast_to_sast_type fn.locals;
+							Sast.body = body
+						}, new_env
+				)
+			|_ -> raise (Failure ("The last statement must be a return statement"))
 			(*let f = sc_formals fn.formals env i stopped fu nv stuff at ln 196*)
 
 
