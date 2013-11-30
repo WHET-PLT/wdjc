@@ -230,11 +230,59 @@ let rec stmt_list_checker env func =
   | hd::tl -> let st, en = (stmt_checker env func hd) in st::(stmt_list_checker en func tl)
 
 
-(* EXPRESSIONS - ?? *)
+(* EXPRESSIONS - EMILY *)
+(* get sast type from expr + raise error if incorrect 
+let get_expr_with_type expr t env = ... - already exists as ...
+
+*)
+
+(* check the expression type can be used for
+ * the corresponding argument according to definition
+ * return the new expression list in expr_t for sast *)
+let sc_func_arg lst expr arg_t =
+	if (snd expr) = arg_t then (fst expr)::lst else
+	raise (Failure("function arguments do not match"))
+
+(* returns expr + its type 
+meat of this part taken from sast.ml
+*)
+let rec sc_expr env = function
+	(* literal *)
+	Ast.Literal(i) -> Sast.Literal(i), "int"
+	(* accessor *)
+	| Ast.ACCCESSOR(id, note_attr) -> 
+	(* id *)
+	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
+	(* note creation *)
+	| Ast.NOTE_CR(s1,s2,s3,s4) ->
+	(* Rest *)
+	| Ast.Rest(s) -> 
+	(*  chord create *)
+	| Ast.CHORD_CR(str_lst) ->
+	(* track *)
+	| Ast.Track(s) ->
+	(* binop *)
+ 	| Ast.Binop(e1, op, e2) ->
+ 		sc_binop (sc_expr env e1) op (sc_sexpr env e2)
+	(* Assign *)
+	| Ast.Assign(s, exp) -> 
+ 	(* Call 
+ 	| Ast.call(func, expr_list) ->
+ 		let args = get_function func env in
+ 			(match args with
+ 				[] -> raise (Failure ("undefined function " ^ func))
+ 				| h::t -> let new_lst = 
+ 					try List.fold_left2 sc_func_arg [] (List.map (sc_expr env) expr_list)
+ 				with 
+ 			)
+	*)
+ 	| Ast.Noexpr -> Sast.Noexpr, "void" (* do we even have void type *)
+
+
+
+
 
 (* FUNCTIONS  - EMILY *)
-(* check formal list *)
-
 (*checks function arguments, then updates env*)
 let sc_formal formal env =
 	(*currently, formals are var_decls*)
