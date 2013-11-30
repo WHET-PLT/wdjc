@@ -65,11 +65,6 @@ let get_variable_type name env =
 	if typ = "" then raise (Failure ("undefined variable: " ^ name))
 	else typ
 
-(*get type for expressions - tom fill in?? maybe wait until we 
-do expression checking? not sure if we went through that yet??*)
-let get_expr_type name env = 
-
-
 
 
 (* HELPFUL FUNCTIONS TO GET AND ADD VARIABLES (GLOBAL & LOCAL), FUNCIONS TO ENVIRONMENT *)
@@ -152,11 +147,87 @@ let add_function fname rtype formals env =
 
 (* SEMANTIC CHECKING FUNCTIONS *)
 
+
 (* check binop operands - TOM *)
+
+(*checks binop types. so far, we can do an op to two ints. 
+  need to decide what types can be binop'd and how*)
+let get_binop_expr_type t1 t2 = 
+	if t1 = "int" && t2 = "int" then "int" else
+	(*consideration for Ser and Par*)
+	if t1 = "note" && t2 = "chord" then "chord" else
+	if t1 = "chord" && t2 = "note" then "chord" else
+	if t1 = "chord" && t2 = "track" then "track" else
+	if t1 = "track" && t2 = "chord" then "track" else
+	raise (Failure ("illegal operation types"))
+
+(*need to decide types to be acted on. only considers ints now.*)
+let sc_binop e1 o e2 =
+	let expr_t = get_binop_expr_type (old e1) (old e2) in
+	(match o with
+	  Ast.Add -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Add, cur e2), "int") else
+		  raise (Failure ("type error: add"))
+	| Ast.Sub -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Sub, cur e2), "int") else
+		  raise (Failure ("type error: sub"))
+	| Ast.Mult -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Mult, cur e2), "int") else
+		  raise (Failure ("type error: mult"))
+	| Ast.Div -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Div, cur e2), "int") else
+		  raise (Failure ("type error: div"))
+	| Ast.Equal -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Equal, cur e2), "int") else
+		  raise (Failure ("type error: equal"))
+	| Ast.Neq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Neq, cur e2), "int") else
+		  raise (Failure ("type error: neq"))
+	| Ast.Geq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Geq, cur e2), "int") else
+		  raise (Failure ("type error: geq"))
+	| Ast.Leq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Leq, cur e2), "int") else
+		  raise (Failure ("type error: leq"))
+	| Ast.Greater -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Greater, cur e2), "int") else
+		  raise (Failure ("type error: greater"))
+	| Ast.Less -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Less, cur e2), "int") else
+		  raise (Failure ("type error: less"))
+	| Ast.Ser -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Ser, cur e2), "int") else
+		  raise (Failure ("type error: ser"))
+	| Ast.Par -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Par, cur e2), "int") else
+		  raise (Failure ("type error: par"))
+	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Arrow, cur e2), "int") else
+		  raise (Failure ("type error: arrow"))
+
+	)
+
+(*need to discuss actions of modifiers. do they go through every note in
+  a chord? Can they be applied to just a single note?*)
+let get_mod_expr_type t1 =
+	if t1 = "note" then "note" else
+	if t1 = "chord" then "chord" else
+	if t1 = "track" then "track" else
+	raise (Failure ("illegal modifier types"))
+
+let sc_modifier e1 o =
+	let expr_t = get mod_expr_type (old e1) in
+	(match o with
+	  Ast.Vib ->
+	| Ast.Trem ->
+	| Ast.Bend ->
+	| Ast.Incr ->
+	| Ast.Decr -> 
+
+	)
 
 (* STATEMENTS - TOM *)
 (* check statement *)
 (* check statement list *)
+let rec stmt_checker env func = function
+	  Ast.Block(stmt_list) -> (Sast.Block(stmt_list_checker env func stmt_list)), env
+	| Ast.Expr ->
+	| Ast.Return ->
+	| Ast.If ->
+	| Ast.For ->
+	| Ast.While ->
+
+
+let rec stmt_list_checker env func = 
+	[] -> []
+  | hd::tl -> let st, en = (stmt_checker env func hd) in st::(stmt_list_checker en func tl)
 
 
 (* EXPRESSIONS - ?? *)
@@ -310,11 +381,11 @@ let sc_program (globals, functions) =
 		(* make a list of globals *)
 		(* note: fun = function pattern matching *)
 		(* note: elementss returned are in form (g, e)
-			-fst global returns g
+			-cur global returns g
 			-snd global returns e
 		*)
 
-		let globals = List.map (fun global -> fst global) g in
+		let globals = List.map (fun global -> cur global) g in
 			match g with
 				(* no globals; thus our environment stays the same *)
 				[] -> (globals, (sc_functions (List.rev functions) env))
