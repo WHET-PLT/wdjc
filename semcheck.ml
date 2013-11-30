@@ -236,20 +236,26 @@ let rec stmt_list_checker env func =
 (* check formal list *)
 
 (*checks function arguments, then updates env*)
-let formals_checker env formal =
-	let ret = add_local formal.varname formal.vartype env in
-	if StringMap.is_empty ret then
-	raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
-	else let env = {locals = ret; globals = env.globals; functions = env.functions } in
+let sc_formal formal env =
+	(*currently, formals are var_decls*)
+	let new_env = add_local formal.vName formal.vType env in
+	if StringMap.is_empty new_env then
+		raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
+	else let env = 
+		{
+			locals = new_env; 
+			globals = env.globals; 
+			functions = env.functions 
+		} in
 	convert_types formal, env
 (* check function arguments *)
 
 
 (* updates formals from cur context *)
-let rec formals_update formals env =
+let rec sc_formals formals env =
 	match formals with
 	  [] -> []
-	| h::t -> let frm, en = (formals_checker env hd) in (frm, en)::(formals_update en tl) 
+	| h::t -> let f, new_e = (sc_formal h env) in (f, e)::(sc_formals t new_e) 
 
 
 (* sc_function
