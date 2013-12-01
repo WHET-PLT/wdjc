@@ -93,11 +93,8 @@ fdecl:
 /* --- FORMALS --- */
 /* formals to be vdecl */
 formal:
-    INT ID        { { vType = Int;  vName = $2; } }
-    | NOTE ID     { { vType = Note; vName = $2; } }
-    | CHORD ID     { { vType = Chord; vName = $2; } }
-    | TRACK ID      { { vType = Track;  vName = $2; } }
-    | REST ID     { { vType = Rest; vName = $2; } }
+    vdecl        { vdecl($1) }
+
 
 /* optional function arguments */
 formals_opt:
@@ -111,11 +108,11 @@ formal_list:
 
 /* --- VARIABLE DECLARATIONS --- */
 vdecl:
-   INT ID SEMI    { { vType = Int;  vName = $2; } }
-    | NOTE ID SEMI  { { vType = Note; vName = $2; } }
-    | CHORD ID SEMI { { vType = Chord; vName = $2; } }
-    | TRACK ID SEMI { { vType = Track;  vName = $2; } }
-    | REST ID SEMI  { { vType = Rest; vName = $2; } }
+   INT ID     { { vType = Int;  vName = $2; } }
+    | NOTE ID  { { vType = Note; vName = $2; } }
+    | CHORD ID { { vType = Chord; vName = $2; } }
+    | TRACK ID { { vType = Track;  vName = $2; } }
+    | REST ID  { { vType = Rest; vName = $2; } }
 
 vdecl_list:
     /* nothing */    { [] }
@@ -160,6 +157,7 @@ modifier_options:
 
 stmt:
     expr SEMI { Expr($1) }
+  | vdecl SEMI { vdecl($1) }
   | RETURN expr SEMI { Return($2) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
