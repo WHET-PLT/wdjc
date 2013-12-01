@@ -30,7 +30,7 @@ parser.ml parser.mli : parser.mly
 	ocamlc -c $<
 
 %.cmi : %.mli
-	ocamlc -c $<s
+	ocamlc -c $<
 
 .PHONY :	 clean
 clean :
