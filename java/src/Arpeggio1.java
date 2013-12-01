@@ -25,6 +25,7 @@ public class Arpeggio1 implements JMC {
         
         // repeat the arpeggio a few times
         Mod.repeat(arpPhrase, 3);
+        Mod.repeat(arpPhrase,2); 
         
         // save it as a file
         Write.midi(arpPhrase, "midi/Arpeggio1.mid");
