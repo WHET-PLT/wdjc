@@ -7,7 +7,7 @@ variables.
 Recall: chord must be enclosed by parenthesis
 */
 
-song () 
+song int () 
 	{
 		note n1;
 		note n2;

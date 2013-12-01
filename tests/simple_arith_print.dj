@@ -1,4 +1,4 @@
-song ( ) {
+song int ( ) {
 
 /*
 Simple arithmetic test.
