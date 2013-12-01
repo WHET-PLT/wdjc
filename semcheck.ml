@@ -65,11 +65,6 @@ let get_variable_type name env =
 	if typ = "" then raise (Failure ("undefined variable: " ^ name))
 	else typ
 
-(*get type for expressions - tom fill in?? maybe wait until we 
-do expression checking? not sure if we went through that yet??*)
-let get_expr_type name env = 
-
-
 
 
 (* HELPFUL FUNCTIONS TO GET AND ADD VARIABLES (GLOBAL & LOCAL), FUNCIONS TO ENVIRONMENT *)
@@ -134,7 +129,7 @@ let add_global var_type name env =
 	CONFUSED ON THE GET_TYPE 
 	add_function fname return formals env
 		fname - function name
-		return - return type
+		rtype - return type
 		formals - formal arguments
 		env - environment stringmap
 
@@ -142,41 +137,173 @@ let add_global var_type name env =
 	if not- it gets the types of the formals, adds:
 		name, vartype of return, formals to environemt's function
 *)
-let add_function fname return formals env =
+let add_function fname rtype formals env =
 	if StringMap.mem name env.functions then StringMap.empty
 	else let fmls = List.map get_type formals in
-	StringMap.add name (string_of_vartype (return) :: fmls) env.funct`ions
+	(* weird parenthesis...*)
+	StringMap.add name (string_of_vartype (return) :: fmls) env.functions
 
 
 
 (* SEMANTIC CHECKING FUNCTIONS *)
 
+
 (* check binop operands - TOM *)
+
+(*checks binop types. so far, we can do an op to two ints. 
+  need to decide what types can be binop'd and how*)
+let get_binop_expr_type t1 t2 = 
+	if t1 = "int" && t2 = "int" then "int" else
+	(*consideration for Ser and Par*)
+	if t1 = "note" && t2 = "chord" then "chord" else
+	if t1 = "chord" && t2 = "note" then "chord" else
+	if t1 = "chord" && t2 = "track" then "track" else
+	if t1 = "track" && t2 = "chord" then "track" else
+	raise (Failure ("illegal operation types"))
+
+(*need to decide types to be acted on. only considers ints now.*)
+let sc_binop e1 o e2 =
+	let expr_t = get_binop_expr_type (old e1) (old e2) in
+	(match o with
+	  Ast.Add -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Add, cur e2), "int") else
+		  raise (Failure ("type error: add"))
+	| Ast.Sub -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Sub, cur e2), "int") else
+		  raise (Failure ("type error: sub"))
+	| Ast.Mult -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Mult, cur e2), "int") else
+		  raise (Failure ("type error: mult"))
+	| Ast.Div -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Div, cur e2), "int") else
+		  raise (Failure ("type error: div"))
+	| Ast.Equal -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Equal, cur e2), "int") else
+		  raise (Failure ("type error: equal"))
+	| Ast.Neq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Neq, cur e2), "int") else
+		  raise (Failure ("type error: neq"))
+	| Ast.Geq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Geq, cur e2), "int") else
+		  raise (Failure ("type error: geq"))
+	| Ast.Leq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Leq, cur e2), "int") else
+		  raise (Failure ("type error: leq"))
+	| Ast.Greater -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Greater, cur e2), "int") else
+		  raise (Failure ("type error: greater"))
+	| Ast.Less -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Less, cur e2), "int") else
+		  raise (Failure ("type error: less"))
+	| Ast.Ser -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Ser, cur e2), "int") else
+		  raise (Failure ("type error: ser"))
+	| Ast.Par -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Par, cur e2), "int") else
+		  raise (Failure ("type error: par"))
+	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Arrow, cur e2), "int") else
+		  raise (Failure ("type error: arrow"))
+
+	)
+
+(*need to discuss actions of modifiers. do they go through every note in
+  a chord? Can they be applied to just a single note?*)
+let get_mod_expr_type t1 =
+	if t1 = "note" then "note" else
+	if t1 = "chord" then "chord" else
+	if t1 = "track" then "track" else
+	raise (Failure ("illegal modifier types"))
+
+let sc_modifier e1 o =
+	let expr_t = get mod_expr_type (old e1) in
+	(match o with
+	  Ast.Vib ->
+	| Ast.Trem ->
+	| Ast.Bend ->
+	| Ast.Incr ->
+	| Ast.Decr -> 
+
+	)
 
 (* STATEMENTS - TOM *)
 (* check statement *)
 (* check statement list *)
+let rec stmt_checker env func = function
+	  Ast.Block(stmt_list) -> (Sast.Block(stmt_list_checker env func stmt_list)), env
+	| Ast.Expr ->
+	| Ast.Return ->
+	| Ast.If ->
+	| Ast.For ->
+	| Ast.While ->
 
 
-(* EXPRESSIONS - ?? *)
+let rec stmt_list_checker env func = 
+	[] -> []
+  | hd::tl -> let st, en = (stmt_checker env func hd) in st::(stmt_list_checker en func tl)
+
+
+(* EXPRESSIONS - EMILY *)
+(* get sast type from expr + raise error if incorrect 
+let get_expr_with_type expr t env = ... - already exists as ...
+
+*)
+
+(* check the expression type can be used for
+ * the corresponding argument according to definition
+ * return the new expression list in expr_t for sast *)
+let sc_func_arg lst expr arg_t =
+	if (snd expr) = arg_t then (fst expr)::lst else
+	raise (Failure("function arguments do not match"))
+
+(* returns expr + its type 
+meat of this part taken from sast.ml
+*)
+let rec sc_expr env = function
+	(* literal *)
+	Ast.Literal(i) -> Sast.Literal(i), "int"
+	(* accessor *)
+	| Ast.ACCCESSOR(id, note_attr) -> 
+	(* id *)
+	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
+	(* note creation *)
+	| Ast.NOTE_CR(s1,s2,s3,s4) ->
+	(* Rest *)
+	| Ast.Rest(s) -> 
+	(*  chord create *)
+	| Ast.CHORD_CR(str_lst) ->
+	(* track *)
+	| Ast.Track(s) ->
+	(* binop *)
+ 	| Ast.Binop(e1, op, e2) ->
+ 		sc_binop (sc_expr env e1) op (sc_sexpr env e2)
+	(* Assign *)
+	| Ast.Assign(s, exp) -> 
+ 	(* Call 
+ 	| Ast.call(func, expr_list) ->
+ 		let args = get_function func env in
+ 			(match args with
+ 				[] -> raise (Failure ("undefined function " ^ func))
+ 				| h::t -> let new_lst = 
+ 					try List.fold_left2 sc_func_arg [] (List.map (sc_expr env) expr_list)
+ 				with 
+ 			)
+	*)
+ 	| Ast.Noexpr -> Sast.Noexpr, "void" (* do we even have void type *)
+
+
+
+
 
 (* FUNCTIONS  - EMILY *)
-(* check formal list *)
 (*checks function arguments, then updates env*)
-let formals_checker env formal =
-	let ret = add_local formal.varname formal.vartype env in
-	if StringMap.is_empty ret then
-	raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
-	else let env = {locals = ret; globals = env.globals; functions = env.functions } in
+let sc_formal formal env =
+	(*currently, formals are var_decls*)
+	let new_env = add_local formal.vName formal.vType env in
+	if StringMap.is_empty new_env then
+		raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
+	else let env = 
+		{
+			locals = new_env; 
+			globals = env.globals; 
+			functions = env.functions 
+		} in
 	convert_types formal, env
 (* check function arguments *)
 
 
 (* updates formals from cur context *)
-let rec formals_update formals env =
+let rec sc_formals formals env =
 	match formals with
 	  [] -> []
-	| h::t -> let frm, en = (formals_checker env hd) in (frm, en)::(formals_update en tl) 
+	| h::t -> let f, new_e = (sc_formal h env) in (f, e)::(sc_formals t new_e) 
 
 
 (* sc_function
@@ -185,7 +312,7 @@ let rec formals_update formals env =
  *)
 let rec sc_function fn env = 
 	match List.hd (List.rev fn.body) with
-		(* WHAT IS RETURN(_); do we need parenthesis? *)
+		(* check there is a return statement at the end of the function *)
 		Return(_) -> 
 			(* updating this function's personal envirnment *)
 			let local_env = 
@@ -196,17 +323,45 @@ let rec sc_function fn env =
 				}
 			(* fill up env_new with functions;
 			change name possibly to something more intuitive
+			new_fn_sm - new function stringmap
 			 *)
-			let env_new =
-				add_function fn.rtype fn.fname fn.formals fn.locals env in(*CHECK THIS order!*)
+			let new_func_sm =
+				add_function fn.rtype fn.fname fn.formals fn.locals env in
 				if StringMap.is_empty env_new then raise (Failure ("function " 
 					^ fn.fName ^ " is already defined."))
 				else let env =
 					{
 						locals = env.locals;
 						globals = env.globals;
-						functions = env_new
+						functions = new_func_sm (* new function env *)
 					} in
+			(* check formal arguments with sc_formals 
+			formals_env
+				- returns formal list appended w/ new environment as tuples
+			*)
+			let f = sc_formals fn.formals env in
+				let formals = List.map (fun formal -> fst formal ) f in
+				(match f with
+					(* empty, no formals *)
+					[] -> let body = sc_stmt_list fn fn.body env in
+						{
+							Sast.rtype = ast_to_sast_type fn.rtype;
+							Sast.fname = fn.fname;
+							Sast.formals = formals; (* ie empty *)
+							Sast.locals = List.map  ast_to_sast_type fn.locals;
+							Sast.body = body
+						}, env
+					|_ -> let new_env = snd (List.hd (List.rev f)) in
+						let body = sc_stmt_list fn fn.body new_env in
+						{
+							Sast.rtype = ast_to_sast_type fn.rtype;
+							Sast.fname = fn.fname;
+							Sast.formals = formals; (* ie empty *)
+							Sast.locals = List.map  ast_to_sast_type fn.locals;
+							Sast.body = body
+						}, new_env
+				)
+			|_ -> raise (Failure ("The last statement must be a return statement"))
 			(*let f = sc_formals fn.formals env i stopped fu nv stuff at ln 196*)
 
 
@@ -280,11 +435,11 @@ let sc_program (globals, functions) =
 		(* make a list of globals *)
 		(* note: fun = function pattern matching *)
 		(* note: elementss returned are in form (g, e)
-			-fst global returns g
+			-cur global returns g
 			-snd global returns e
 		*)
 
-		let globals = List.map (fun global -> fst global) g in
+		let globals = List.map (fun global -> cur global) g in
 			match g with
 				(* no globals; thus our environment stays the same *)
 				[] -> (globals, (sc_functions (List.rev functions) env))
