@@ -39,11 +39,3 @@ let rec stmt_string = function
 
 (* modifs and note attrs and ops? *)
 
-
-and params_to_string paramsList= 
-  let paramsStringList = List.map gen_expr paramsList in
-    let rec paramsListtoString = function
-        [] -> ""
-      | [a] -> sprintf("%s") a 
-      | hd::tl -> (sprintf("%s,") hd)^paramsListtoString tl
-    in paramsListtoString paramsStringList 
