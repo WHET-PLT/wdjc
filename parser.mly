@@ -93,7 +93,7 @@ fdecl:
 /* --- FORMALS --- */
 /* formals to be vdecl */
 formal:
-    vdecl        { vdecl($1) }
+  vdecl { Vdecl($1) }
 
 
 /* optional function arguments */
@@ -157,7 +157,7 @@ modifier_options:
 
 stmt:
     expr SEMI { Expr($1) }
-  | vdecl SEMI { vdecl($1) }
+  | vdecl SEMI { Vdecl($1) }
   | RETURN expr SEMI { Return($2) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }

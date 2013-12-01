@@ -46,8 +46,8 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
-  (*| Assign of var_decl * expr
-  | Vdecl of var_decl*)
+  (* | Assign of var_decl * expr *)
+  | Vdecl of var_decl
  (* | Loop of expr * expr * stmt *)
 
 
