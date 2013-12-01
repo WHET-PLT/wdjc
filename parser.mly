@@ -48,46 +48,41 @@ program:
 /*  --- FUNCTION --- */
 fdecl:
 
-  ID INT LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+  ID INT LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Int;
        fname = $1;
 	     formals = $4;
-	     locals = List.rev $7;
-	     body = List.rev $8 
+	     body = List.rev $7
     }}
-    | ID NOTE LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    | ID NOTE LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Note;
        fname = $1;
        formals = $4;
-       locals = List.rev $7;
-       body = List.rev $8 
+       body = List.rev $7
     }}
-    | ID CHORD LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    | ID CHORD LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Chord;
        fname = $1;
        formals = $4;
-       locals = List.rev $7;
-       body = List.rev $8 
+       body = List.rev $7
     }}
 
-    | ID REST LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    | ID REST LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Rest;
        fname = $1;
        formals = $4;
-       locals = List.rev $7;
-       body = List.rev $8 
+       body = List.rev $7
     }}
-    | ID TRACK LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    | ID TRACK LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Track;
        fname = $1;
        formals = $4;
-       locals = List.rev $7;
-       body = List.rev $8 
+       body = List.rev $7
     }}
 
 /* --- FORMALS --- */
