@@ -1,4 +1,4 @@
-song() {
+song int () {
 	
 	note n;
 	int p;

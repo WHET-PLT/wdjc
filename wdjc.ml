@@ -11,9 +11,9 @@ let _ =
   match action with
   	Ast -> let listing = Ast.string_of_program program
            in print_string listing
-    | Bytecode -> let listing =
+(*     | Bytecode -> let listing =
         Bytecode.string_of_prog (Compile.translate program)
-      in print_endline listing
+      in print_endline listing *)
     (* | Compile -> Execute.execute_prog (Compile.translate program) *)
 
   (*Need to pass program to compile or translate*)

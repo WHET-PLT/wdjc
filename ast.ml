@@ -126,7 +126,6 @@ let rec string_of_stmt = function
  (*| Loop*)
 
 
-
 let string_of_fdecl fdecl =
    (match fdecl.rtype with
     Int -> "int "
