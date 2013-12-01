@@ -93,7 +93,7 @@ fdecl:
 /* --- FORMALS --- */
 /* formals to be vdecl */
 formal:
-  vdecl { Vdecl($1) }
+  vdecl { $1 }
 
 
 /* optional function arguments */
