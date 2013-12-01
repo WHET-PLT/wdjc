@@ -53,9 +53,9 @@ ast.cmx:
 #types.cmx: semcheck.cmx ast.cmx sast.cmx
 compile.cmo: bytecode.cmo ast.cmo 
 compile.cmx: bytecode.cmx ast.cmx 
-wdjc.cmo: scanner.cmo parser.cmi execute.cmo compile.cmo \
+wdjc.cmo: scanner.cmo parser.cmi compile.cmo \
     bytecode.cmo ast.cmo 
-wdjc.cmx: scanner.cmx parser.cmx execute.cmx compile.cmx \
+wdjc.cmx: scanner.cmx parser.cmx compile.cmx \
     bytecode.cmx ast.cmx 
 parser.cmo: ast.cmo parser.cmi 
 parser.cmx: ast.cmx parser.cmi 
