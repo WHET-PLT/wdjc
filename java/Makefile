@@ -1,5 +1,5 @@
 # the main class name
-MAIN=CreateNotesFromFreq
+MAIN=RowYourBoat
 
 # Location of trees.
 SOURCE_DIR=src

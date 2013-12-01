@@ -1,5 +1,5 @@
 
-song ( ) {
+song int ( ) {
 /* Simple note text. */
 
 /* individual declaration + assignment */
