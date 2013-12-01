@@ -1,4 +1,4 @@
-int song ( ) {
+song int ( ) {
 /* Simple note text. */
 
 int pitchA;
