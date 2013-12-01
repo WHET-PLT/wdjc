@@ -56,7 +56,6 @@ type func_decl = {
     rtype : dType;
     fname : string;
     formals : var_decl list;
-    locals : var_decl list;
     body : stmt list;
   }
 
@@ -133,7 +132,6 @@ let string_of_fdecl fdecl =
     | Chord -> "chord "
     | Track -> "track "
     | Rest -> "rest ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 
