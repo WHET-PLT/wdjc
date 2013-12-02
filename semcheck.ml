@@ -163,7 +163,14 @@ let get_binop_expr_type t1 t2 =
 
 (*need to decide types to be acted on. only considers ints now.*)
 (*Serial: combine chords to make a track. Can combine notes to make chord.
-  Parallel: combine chords to make a track.*))
+  Parallel: combine chords to make a track.
+
+Serial (.)
+track  = chord.chord...;
+Parallel(:)
+chord = note(:note.....);
+
+*))
 let sc_binop e1 o e2 =
 	let expr_t = get_binop_expr_type (old e1) (old e2) in
 	(match o with
