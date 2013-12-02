@@ -28,6 +28,13 @@ let rec params_string formals = function
   | f::t -> expr_string f ^ ", " ^ params_string t  
   
 
+(* break down variable dec loop *)
+ let rec vardecl_string = function
+  [] -> ""
+  |[t] -> var_string t
+  | f::t -> var_string f ^ ", " ^ vardecl_string t
+  
+
 let vdecllist_string locals = 
   
 let stmtlist_string body =
@@ -38,5 +45,10 @@ let rec expr_string = function
 let rec stmt_string = function
 
 (* modifs and note attrs and ops? *)
+
+
+
+(* hila code *)
+
 
 
