@@ -1,5 +1,10 @@
 { "type": "FeatureCollection", "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } }, "features": [ 
+{ "type": "Feature", "properties": { "Name": "Thomas", "Description": "Mon Dec  2 17:57:05 EST 2013; Location Accuracy: 71.692077" }, "geometry": { "type": "Point", "coordinates": [ -73.959747, 40.808912, 0.0 ] } },
+<<<<<<< HEAD
+{ "type": "Feature", "properties": { "Name": "Thomas", "Description": "Mon Dec  2 17:47:33 EST 2013; Location Accuracy: 79.589288" }, "geometry": { "type": "Point", "coordinates": [ -73.959652, 40.808963, 0.0 ] } },
+=======
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sun Dec  1 17:56:20 PST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -122.429938, 37.742085, 0.0 ] } },
+>>>>>>> 9a35fe80051e15c497e0aefa8bc7b8f4e173e389
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 30 21:47:05 PST 2013; Location Accuracy: 99.985103" }, "geometry": { "type": "Point", "coordinates": [ -122.862520, 38.106837, 0.0 ] } },
 <<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Nov 30 21:40:42 PST 2013; Location Accuracy: 124.621290" }, "geometry": { "type": "Point", "coordinates": [ -122.862618, 38.106827, 0.0 ] } },
