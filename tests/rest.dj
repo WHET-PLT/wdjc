@@ -4,10 +4,12 @@ song int ()
 	/* make a chord which is a rest + a note */	
 	rest r;
 	chord c;
+	int i = 3;
 
 	r = (5);
+	r = (i);
 
-	note n;
+	note n = (a, b, c ,d);
 	c = n : r;
 
 	
