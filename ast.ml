@@ -20,7 +20,7 @@ type expr =
   | ACCESSOR of string * note_attribute
   | Id of string
   | NOTE_CR of string * string * string * string
-  | Rest of string
+  | REST_CR of int
   | CHORD_CR of string list
   | Track of string
   | Binop of expr * op * expr
@@ -78,7 +78,7 @@ let rec string_of_expr = function
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) ->
       "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")"
-  | Rest(r) -> r
+  | REST_CR(r) -> "(" ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR(a, b) -> 
       a ^ " -> " ^ (
       match b with
