@@ -113,6 +113,11 @@ vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
+/* --- REST --- */
+rest_cr:
+  LPAREN LITERAL RPAREN { REST_CR( $2 ) }
+  /* later maybe we want to make this also with an id? */
+
 /*  --- NOTE  --- */
 note_cr:
   LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN
@@ -179,6 +184,7 @@ expr:
   | ID               { Id($1) }
   | chord_cr         { $1 }
   | note_cr          { $1 }
+  | rest_cr          { $1 }
   | accessor         { $1 }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
