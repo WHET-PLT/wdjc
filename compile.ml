@@ -35,18 +35,16 @@ let rec params_string formals = function
 | Note -> "note "
 | Chord -> "chord "
 | Track -> "track "
-| Rest -> "rest ") ^ loc.vName
-  
-  
+| Rest -> "rest ") ^ loc.vName 
+   
 (*variable dec loop breakdown*)
 let rec vdecllist_string locals = function
   [] -> ""
   |[t] -> vardecl_string t
   | f::t -> vardecl_string f ^ ";\n" ^ vardecl_string t
-   
-  (* let jvariables = locals in
+   let jvariables = locals in
   java fprintf "%s" jvariables; 
- *)
+
 
   
 let stmtlist_string body =
