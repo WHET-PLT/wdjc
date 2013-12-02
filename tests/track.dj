@@ -1,0 +1,8 @@
+song int ()
+{
+	track t;
+	chord c;
+	chord d;
+	t = c.d;	
+
+} 
