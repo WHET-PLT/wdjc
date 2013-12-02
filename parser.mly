@@ -194,7 +194,7 @@ expr_opt:
 expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }
-  | accessor
+  | accessor         { $1 }
   | chord_cr         { $1 }
   | note_cr          { $1 }
   | rest_cr          { $1 }
@@ -219,7 +219,7 @@ expr:
   | expr BEND        { Modifier($1, Bend) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | ID ASSIGN expr { Assign($1, $3)}
+  | ID ASSIGN expr { Assign(Id($1), $3)}
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
  /* actuals - When you call the function you use actuals_opt?? */

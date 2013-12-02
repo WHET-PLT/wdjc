@@ -40,7 +40,7 @@ type var_decl = {
 
 type var_init = {
   vDecl : var_decl;
-  vExpr : string;
+  vExpr : expr;
 }
 
 (*need to decide if we are keeping loop or not*)
@@ -70,18 +70,6 @@ type program = var_decl list * func_decl list
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
-
-let string_of_vdecl v = 
-  (match v.vType with
-    Int -> "int "
-    | Note -> "note "
-    | Chord -> "chord "
-    | Track -> "track "
-    | Rest -> "rest ") ^ v.vName
-  
-  let string_of_vinit v = 
-    string_of_vdecl v.vDecl ^ " = " ^ string_of_expr expr
-
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
@@ -93,7 +81,7 @@ let rec string_of_expr = function
       match b with
         Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
       )
-  | Assign(id, expr) -> id ^ " = " ^ string_of_expr expr
+  | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
   | CHORD_CR(note_list) -> 
       "(" ^ String.concat " : " note_list ^ ")"
   | Track(t) -> t
@@ -115,6 +103,14 @@ let rec string_of_expr = function
   | Noexpr -> ""
 (*| Array*) 
 
+let string_of_vdecl v = 
+  (match v.vType with
+    Int -> "int "
+    | Note -> "note "
+    | Chord -> "chord "
+    | Track -> "track "
+    | Rest -> "rest ") ^ v.vName
+
 (*pretty print for stmts*)
 (*TODO need to do loop*)
 let rec string_of_stmt = function
@@ -131,6 +127,8 @@ let rec string_of_stmt = function
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   (* | Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e *)
   | Vdecl(v) -> string_of_vdecl v ^ ";"
+  | Vinit(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e ^ ";"
+
  (*| Loop*)
 
 
