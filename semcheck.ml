@@ -348,6 +348,7 @@ let rec sc_function fn env =
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
+							(* Change locals *)
 							Sast.locals = List.map  ast_to_sast_type fn.locals;
 							Sast.body = body
 						}, env
@@ -357,6 +358,7 @@ let rec sc_function fn env =
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
+							(* Change locals *)
 							Sast.locals = List.map  ast_to_sast_type fn.locals;
 							Sast.body = body
 						}, new_env
