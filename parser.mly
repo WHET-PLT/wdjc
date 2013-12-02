@@ -103,15 +103,18 @@ formal_list:
 
 /* --- VARIABLE DECLARATIONS --- */
 vdecl:
-   INT ID     { { vType = Int;  vName = $2; } }
-    | NOTE ID  { { vType = Note; vName = $2; } }
-    | CHORD ID { { vType = Chord; vName = $2; } }
-    | TRACK ID { { vType = Track;  vName = $2; } }
-    | REST ID  { { vType = Rest; vName = $2; } }
+   dType ID     { { vType = $1;  vName = $2; } }
 
 vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
+
+vinit:
+    vdecl ASSIGN expr { Vinit($1, $3) }
+
+assign:
+    ID ASSIGN expr { Assign(Id($1), $3) }
+  | accessor ASSIGN expr { Assign($1, $3) }
 
 /* --- REST --- */
 rest_cr:
@@ -142,6 +145,14 @@ note_attribute:
   | VOL {Vol}
   | DUR {Dur}
   | INSTR {Instr}
+  
+dType: 
+   INT {Int}
+ | NOTE {Note}
+ | CHORD {Chord} 
+ | TRACK {Track}
+ | REST {Rest}
+
 
 /* --- MODIFIERS --- */
 /*
@@ -157,6 +168,7 @@ modifier_options:
 
 stmt:
     expr SEMI { Expr($1) }
+  | vinit SEMI { $1 }
   | vdecl SEMI { Vdecl($1) }
   | RETURN expr SEMI { Return($2) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
@@ -182,6 +194,7 @@ expr_opt:
 expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }
+  | accessor
   | chord_cr         { $1 }
   | note_cr          { $1 }
   | rest_cr          { $1 }
@@ -196,7 +209,7 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
-  | expr ARROW  expr { Binop($1, Arrow,   $3) }
+  /* | expr ARROW  expr { Binop($1, Arrow,   $3) } */
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
   | expr INCR        { Modifier($1, Incr) }

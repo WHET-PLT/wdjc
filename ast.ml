@@ -25,7 +25,7 @@ type expr =
   | Track of string
   | Binop of expr * op * expr
   | Modifier of expr * modif 
-  | Assign of string * expr
+  | Assign of expr * expr
   | Call of string * expr list
   | Noexpr
  
@@ -38,6 +38,11 @@ type var_decl = {
   vName : string;
 }
 
+type var_init = {
+  vDecl : var_decl;
+  vExpr : string;
+}
+
 (*need to decide if we are keeping loop or not*)
 type stmt =
     Block of stmt list
@@ -48,6 +53,7 @@ type stmt =
   | While of expr * stmt
   (* | Assign of var_decl * expr *)
   | Vdecl of var_decl
+  | Vinit of var_decl * expr  
  (* | Loop of expr * expr * stmt *)
 
 
@@ -72,6 +78,9 @@ let string_of_vdecl v =
     | Chord -> "chord "
     | Track -> "track "
     | Rest -> "rest ") ^ v.vName
+  
+  let string_of_vinit v = 
+    string_of_vdecl v.vDecl ^ " = " ^ string_of_expr expr
 
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
