@@ -194,11 +194,11 @@ expr_opt:
 expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }
+  | assign           { $1 }
   | accessor         { $1 }
   | chord_cr         { $1 }
   | note_cr          { $1 }
   | rest_cr          { $1 }
-  | accessor         { $1 }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
@@ -209,7 +209,6 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
-  /* | expr ARROW  expr { Binop($1, Arrow,   $3) } */
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
   | expr INCR        { Modifier($1, Incr) }
@@ -219,7 +218,6 @@ expr:
   | expr BEND        { Modifier($1, Bend) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | ID ASSIGN expr { Assign(Id($1), $3)}
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
  /* actuals - When you call the function you use actuals_opt?? */
