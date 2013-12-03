@@ -162,6 +162,14 @@ let get_binop_expr_type t1 t2 =
 	raise (Failure ("illegal operation types"))
 
 (*need to decide types to be acted on. only considers ints now.*)
+(*Serial: combine chords to make a track. Can combine notes to make chord.
+  Parallel: combine chords to make a track.
+Serial (.)
+track  = chord.chord...;
+Parallel(:)
+chord = note(:note.....);
+
+*))
 let sc_binop e1 o e2 =
 	let expr_t = get_binop_expr_type (old e1) (old e2) in
 	(match o with
@@ -228,6 +236,9 @@ let rec stmt_checker env func = function
 let rec stmt_list_checker env func = 
 	[] -> []
   | hd::tl -> let st, en = (stmt_checker env func hd) in st::(stmt_list_checker en func tl)
+
+
+(* let rec sc_local_vars func env =  *)
 
 
 (* EXPRESSIONS - EMILY *)
@@ -343,20 +354,22 @@ let rec sc_function fn env =
 				let formals = List.map (fun formal -> fst formal ) f in
 				(match f with
 					(* empty, no formals *)
-					[] -> let body = sc_stmt_list fn fn.body env in
+					[] -> let body = stmt_list_checker fn fn.body env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
+							(* Change locals *)
 							Sast.locals = List.map  ast_to_sast_type fn.locals;
 							Sast.body = body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev f)) in
-						let body = sc_stmt_list fn fn.body new_env in
+						let body = stmt_list_checker fn fn.body new_env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
+							(* Change locals *)
 							Sast.locals = List.map  ast_to_sast_type fn.locals;
 							Sast.body = body
 						}, new_env
