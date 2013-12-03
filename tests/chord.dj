@@ -13,7 +13,7 @@ song int ()
 		note n2;
 		chord p;
 
-		n2 = ( a, b, c, d );
+		n2 = ( a, b, c);
 		p = ( n1 : n2 : n3 );
 
 	}

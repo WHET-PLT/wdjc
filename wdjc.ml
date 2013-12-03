@@ -14,6 +14,6 @@ let _ =
           in print_string listing
     (* | Java -> let listing = Compile.program_string (Semcheck.sc_program program)
           in print_endline listing *)
-    | Java -> let listing = Compile.program_string program
+    (* | Java -> let listing = Compile.program_string program
               in print_endline listing
-    | Compile -> Execute.javacompile (Compile.program_string (Semcheck.sc_program program))
+    | Compile -> Execute.javacompile (Compile.program_string (Semcheck.sc_program program)) *)
