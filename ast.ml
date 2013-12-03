@@ -20,12 +20,12 @@ type expr =
   | ACCESSOR of string * note_attribute
   | Id of string
   | NOTE_CR of string * string * string * string
-  | Rest of string
+  | REST_CR of int
   | CHORD_CR of string list
   | Track of string
   | Binop of expr * op * expr
   | Modifier of expr * modif 
-  | Assign of string * expr
+  | Assign of expr * expr
   | Call of string * expr list
   | Noexpr
  
@@ -38,6 +38,11 @@ type var_decl = {
   vName : string;
 }
 
+type var_init = {
+  vDecl : var_decl;
+  vExpr : expr;
+}
+
 (*need to decide if we are keeping loop or not*)
 type stmt =
     Block of stmt list
@@ -46,8 +51,9 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
-  (*| Assign of var_decl * expr
-  | Vdecl of var_decl*)
+  (* | Assign of var_decl * expr *)
+  | Vdecl of var_decl
+  | Vinit of var_decl * expr  
  (* | Loop of expr * expr * stmt *)
 
 
@@ -56,7 +62,6 @@ type func_decl = {
     rtype : dType;
     fname : string;
     formals : var_decl list;
-    locals : var_decl list;
     body : stmt list;
   }
 
@@ -65,27 +70,18 @@ type program = var_decl list * func_decl list
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
-
-let string_of_vdecl v = 
-  (match v.vType with
-    Int -> "int "
-    | Note -> "note "
-    | Chord -> "chord "
-    | Track -> "track "
-    | Rest -> "rest ") ^ v.vName
-
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) ->
       "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")"
-  | Rest(r) -> r
+  | REST_CR(r) -> "(" ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR(a, b) -> 
       a ^ " -> " ^ (
       match b with
         Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
       )
-  | Assign(id, expr) -> id ^ " = " ^ string_of_expr expr
+  | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
   | CHORD_CR(note_list) -> 
       "(" ^ String.concat " : " note_list ^ ")"
   | Track(t) -> t
@@ -107,6 +103,14 @@ let rec string_of_expr = function
   | Noexpr -> ""
 (*| Array*) 
 
+let string_of_vdecl v = 
+  (match v.vType with
+    Int -> "int "
+    | Note -> "note "
+    | Chord -> "chord "
+    | Track -> "track "
+    | Rest -> "rest ") ^ v.vName
+
 (*pretty print for stmts*)
 (*TODO need to do loop*)
 let rec string_of_stmt = function
@@ -121,8 +125,10 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
-  (*| Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e
-  | Vdecl(v) -> string_of_vdecl v ^ ";"*)
+  (* | Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e *)
+  | Vdecl(v) -> string_of_vdecl v ^ ";\n"
+  | Vinit(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e ^ ";\n"
+
  (*| Loop*)
 
 
@@ -133,7 +139,6 @@ let string_of_fdecl fdecl =
     | Chord -> "chord "
     | Track -> "track "
     | Rest -> "rest ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 
