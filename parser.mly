@@ -14,7 +14,6 @@
 %token NOTE REST CHORD TRACK
 %token EOF
 
-
 /*ie TIMES DIVIDE is higher precedence than ASSIGN*/
 %nonassoc NOELSE
 %nonassoc ELSE
