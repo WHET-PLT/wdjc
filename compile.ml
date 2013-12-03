@@ -99,18 +99,19 @@ let rec string_of_expr = function
 
   | Assign(id, expr) -> id ^ " = " ^ string_of_expr expr (* good as is *)
 
+(* need to figure out to use ID and get the pitch array proper *)
   | CHORD_CR(note_list) -> 
       (* "(" ^ String.concat " : " note_list ^ ")" *)
    "CPhrase c = new CPhrase();\n" 
-    ^ "int[] pitchArray = new int[" note_list.length "];\n" 
+    ^ "double[] pitchArray = new double[" note_list.length "];\n" 
     ^ string_of_chord note_list 
-    ^ "c.addChord(pitchArray, C);\n"
+    ^ "c.addChord(pitchArray, C);\n" 
+
+  | Track(t) -> "private static " ^ string_of_vdecl t ^ " = new Part(" ^ (*this is were instrument fits in *)", 0, 0)'\n"
+  ^ ID(t) ^ ".addCPhrase(" ^  CHORD_CR(t) ^ ");\n"
 
 
-     
 
-
-  | Track(t) -> "private static " ^ string_of_vdecl t ^ 
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with
@@ -129,6 +130,7 @@ let rec string_of_expr = function
   | Noexpr -> ""
 (*| Array*) 
 
+(* string_of_chord creates array items for every note *)
 let index=0
 and acc="" in 
 let rec string_of_chord acc index chordList  = function
