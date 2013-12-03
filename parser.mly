@@ -117,17 +117,18 @@ assign:
 
 
 /* --- TRACK -- */
-
+track_cr:
+  LPAREN expr RPAREN { TRACK_CR( $2 ) }
 
 /* --- REST --- */
 rest_cr:
-  LPAREN LITERAL RPAREN { REST_CR( $2 ) }
+  LPAREN expr RPAREN { REST_CR( $2 ) }
   /* later maybe we want to make this also with an id? */
 
 /*  --- NOTE  --- */
 note_cr:
-  LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN
-    { NOTE_CR($2, $4, $6, $8) }
+  LPAREN expr COMMA expr COMMA expr RPAREN
+    { NOTE_CR($2, $4, $6) }
 
 /* --- CHORD --- */
 chord_cr:
@@ -202,6 +203,7 @@ expr:
   | chord_cr         { $1 }
   | note_cr          { $1 }
   | rest_cr          { $1 }
+  | track_cr         { $1 }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }

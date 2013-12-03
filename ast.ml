@@ -17,12 +17,12 @@ type op =   Add  | Sub
 (* Expression type *)
 type expr =
     Literal of int
-  | ACCESSOR of string * note_attribute
   | Id of string
-  | NOTE_CR of string * string * string * string
-  | REST_CR of int
+  | NOTE_CR of expr * expr * expr
+  | REST_CR of expr
+  | TRACK_CR of expr
   | CHORD_CR of string list
-  | Track of string
+  | ACCESSOR of string * note_attribute
   | Binop of expr * op * expr
   | Modifier of expr * modif 
   | Assign of expr * expr
@@ -73,9 +73,10 @@ type program = var_decl list * func_decl list
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
-  | NOTE_CR(a, b, c, d) ->
-      "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")"
-  | REST_CR(r) -> "(" ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
+  | NOTE_CR(a, b, c) ->
+      "(" ^ string_of_expr a ^ ", " ^ string_of_expr b ^ ", " ^ string_of_expr c ^ ")"
+  | REST_CR(r) -> "(" ^ string_of_expr r ^ ")" (* should this really be string of literal or something? *)
+  | TRACK_CR(t) -> "(" ^ string_of_expr t ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR(a, b) -> 
       a ^ " -> " ^ (
       match b with
@@ -84,7 +85,6 @@ let rec string_of_expr = function
   | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
   | CHORD_CR(note_list) -> 
       "(" ^ String.concat " : " note_list ^ ")"
-  | Track(t) -> t
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with
@@ -111,6 +111,10 @@ let string_of_vdecl v =
     | Track -> "track "
     | Rest -> "rest ") ^ v.vName
 
+(*
+let string_of_cr_type t =
+    (match )
+*)
 (*pretty print for stmts*)
 (*TODO need to do loop*)
 let rec string_of_stmt = function

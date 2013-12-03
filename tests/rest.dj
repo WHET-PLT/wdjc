@@ -9,7 +9,7 @@ song int ()
 	r = (5);
 	r = (i);
 
-	note n = (a, b, c ,d);
+	note n = (a, b, c);
 	c = n : r;
 
 	

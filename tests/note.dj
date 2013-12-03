@@ -18,7 +18,8 @@ instrument = 3;
 duration = 4;
 
 
-n = (pitchA, volume, instrument, duration);
-/* n = (1, 2, 3, 4);*/
+n = (pitchA, volume, duration);
+n = (1, 2, 3);
+n = (n1 -> pitch, volume, 4);
 	
 }
