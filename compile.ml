@@ -63,6 +63,7 @@ let imports=
 "import jm.JMC;\n" ^
 "import jm.music.data.*;\n" ^
 "import jm.utl.*;\n" 
+"public final class song implements JMC{"
 
 
 (* New code based on AST Pretty Printing *)
@@ -81,13 +82,13 @@ let rec string_of_expr = function
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) -> (* this is going to be different  *)
      (*  "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
-     "Note " ^ v.vName ^ " = new Note (" ^ a ^ ", 1);\n"
-     v.vName ".setDuration(" ^ c ");\n"
-     v.vName ".setVolume(" ^ b ");\n"
+     "Note " ^ ID(NOTE_CR(a,,b,c,d)) ^ " = new Note (" ^ a ^ ", 1);\n"
+     ID(NOTE_CR(a,,b,c,d)) ".setDuration(" ^ c ");\n"
+     ID(NOTE_CR(a,,b,c,d)) ".setVolume(" ^ b ");\n"
      (* here is where we set instrument... putting on back burner until other stuff done *)
 
 
-  | Rest(r) -> "Rest " ^ v.vName ^ " = new Rest((double)" ^ r ^ ");\n"
+  | Rest(r) -> "Rest " ID(Rest(r)) ^ " = new Rest((double)" ^ r ^ ");\n"
 
 
   | ACCESSOR(a, b) -> 
@@ -99,8 +100,17 @@ let rec string_of_expr = function
   | Assign(id, expr) -> id ^ " = " ^ string_of_expr expr (* good as is *)
 
   | CHORD_CR(note_list) -> 
-      "(" ^ String.concat " : " note_list ^ ")"
-  | Track(t) -> t
+      (* "(" ^ String.concat " : " note_list ^ ")" *)
+   "CPhrase c = new CPhrase();\n" 
+    ^ "int[] pitchArray = new int[" note_list.length "];\n" 
+    ^ string_of_chord note_list 
+    ^ "c.addChord(pitchArray, C);\n"
+
+
+     
+
+
+  | Track(t) -> "private static " ^ string_of_vdecl t ^ 
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with
@@ -118,6 +128,28 @@ let rec string_of_expr = function
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
 (*| Array*) 
+
+let index=0
+and acc="" in 
+let rec string_of_chord acc index chordList  = function
+[] -> ""
+| head::tail->  (acc ^ "pitchArray[" ^ index ^"] = " ^ ACCESSOR(head, Pitch) ^"];\n") (index+1) string_of_chord tail;;
+
+
+(* let rec sum list = match list with
+    | [] -> 0
+    | head::tail -> head + sum tail;;
+sum : int list -> int = <fun>
+# sum [1; 2; 3];; *)
+
+
+  (* let rec vdecllist_string locals = function
+  [] -> ""
+  |[t] -> vardecl_string t
+  | f::t -> vardecl_string f ^ ", " ^ vardecl_string t
+   let jvariables = locals in
+  java fprintf "%s" jvariables;  *) 
+
 
 (*pretty print for stmts*)
 (*TODO need to do loop*)
