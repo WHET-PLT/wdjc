@@ -142,7 +142,7 @@ let add_function fname rtype formals env =
 	else let fmls = List.map get_type formals in
 	(* weird parenthesis...*)
 	StringMap.add name (string_of_vartype (return) :: fmls) env.functions
-
+	(*Strinmap.add, parse locals, add to env*)
 
 
 (* SEMANTIC CHECKING FUNCTIONS *)
@@ -171,33 +171,33 @@ chord = note(:note.....);
 
 *))
 let sc_binop e1 o e2 =
-	let expr_t = get_binop_expr_type (old e1) (old e2) in
+	let expr_t = get_binop_expr_type (snd e1) (snd e2) in
 	(match o with
-	  Ast.Add -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Add, cur e2), "int") else
+	  Ast.Add -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Add, fst e2), "int") else
 		  raise (Failure ("type error: add"))
-	| Ast.Sub -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Sub, cur e2), "int") else
+	| Ast.Sub -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Sub, fst e2), "int") else
 		  raise (Failure ("type error: sub"))
-	| Ast.Mult -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Mult, cur e2), "int") else
+	| Ast.Mult -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Mult, fst e2), "int") else
 		  raise (Failure ("type error: mult"))
-	| Ast.Div -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Div, cur e2), "int") else
+	| Ast.Div -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Div, fst e2), "int") else
 		  raise (Failure ("type error: div"))
-	| Ast.Equal -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Equal, cur e2), "int") else
+	| Ast.Equal -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Equal, fst e2), "int") else
 		  raise (Failure ("type error: equal"))
-	| Ast.Neq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Neq, cur e2), "int") else
+	| Ast.Neq -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Neq, fst e2), "int") else
 		  raise (Failure ("type error: neq"))
-	| Ast.Geq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Geq, cur e2), "int") else
+	| Ast.Geq -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Geq, fst e2), "int") else
 		  raise (Failure ("type error: geq"))
-	| Ast.Leq -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Leq, cur e2), "int") else
+	| Ast.Leq -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Leq, fst e2), "int") else
 		  raise (Failure ("type error: leq"))
-	| Ast.Greater -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Greater, cur e2), "int") else
+	| Ast.Greater -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Greater, fst e2), "int") else
 		  raise (Failure ("type error: greater"))
-	| Ast.Less -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Less, cur e2), "int") else
+	| Ast.Less -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Less, fst e2), "int") else
 		  raise (Failure ("type error: less"))
-	| Ast.Ser -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Ser, cur e2), "int") else
+	| Ast.Ser -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Ser, fst e2), "int") else
 		  raise (Failure ("type error: ser"))
-	| Ast.Par -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Par, cur e2), "int") else
+	| Ast.Par -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Par, fst e2), "int") else
 		  raise (Failure ("type error: par"))
-	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop(cur e1, Sast.Arrow, cur e2), "int") else
+	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Arrow, fst e2), "int") else
 		  raise (Failure ("type error: arrow"))
 
 	)
@@ -211,7 +211,7 @@ let get_mod_expr_type t1 =
 	raise (Failure ("illegal modifier types"))
 
 let sc_modifier e1 o =
-	let expr_t = get mod_expr_type (old e1) in
+	let expr_t = get mod_expr_type (snd e1) in
 	(match o with
 	  Ast.Vib ->
 	| Ast.Trem ->
@@ -221,16 +221,25 @@ let sc_modifier e1 o =
 
 	)
 
+(*
+	locals are now vdecls, vinits. Need to pass a fuction a stmt_list and 
+	function will go through list to pull out vdecls/vinits.
+	Implemented at 365, 375. 
+
+	add_to_locals function
+*)
+
 (* STATEMENTS - TOM *)
 (* check statement *)
 (* check statement list *)
 let rec stmt_checker env func = function
 	  Ast.Block(stmt_list) -> (Sast.Block(stmt_list_checker env func stmt_list)), env
-	| Ast.Expr ->
-	| Ast.Return ->
-	| Ast.If ->
-	| Ast.For ->
-	| Ast.While ->
+	| Ast.Expr(expr) -> (Sast.Expr(fst (expr_checker env expr))), env
+	| Ast.Return(expr) -> let e = expr_checker env expr in
+						if not(snd e = string_of_vartype func.return) then raise (Failure ("Illegal return type: func type and return type must match"))
+	| Ast.If(expr, stmt1, stmt2) -> (Sast.If
+	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For
+	| Ast.While(expr, stmt) -> (Sast.While
 
 
 let rec stmt_list_checker env func = 
@@ -239,13 +248,6 @@ let rec stmt_list_checker env func =
 
 
 (* let rec sc_local_vars func env =  *)
-
-
-(* EXPRESSIONS - EMILY *)
-(* get sast type from expr + raise error if incorrect 
-let get_expr_with_type expr t env = ... - already exists as ...
-
-*)
 
 (* check the expression type can be used for
  * the corresponding argument according to definition
@@ -296,7 +298,7 @@ let rec sc_expr env = function
 (* FUNCTIONS  - EMILY *)
 (*checks function arguments, then updates env*)
 let sc_formal formal env =
-	(*currently, formals are var_decls*)
+	(*fstrently, formals are var_decls*)
 	let new_env = add_local formal.vName formal.vType env in
 	if StringMap.is_empty new_env then
 		raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
@@ -310,7 +312,7 @@ let sc_formal formal env =
 (* check function arguments *)
 
 
-(* updates formals from cur context *)
+(* updates formals from fst context *)
 let rec sc_formals formals env =
 	match formals with
 	  [] -> []
@@ -350,6 +352,7 @@ let rec sc_function fn env =
 			formals_env
 				- returns formal list appended w/ new environment as tuples
 			*)
+
 			let f = sc_formals fn.formals env in
 				let formals = List.map (fun formal -> fst formal ) f in
 				(match f with
@@ -448,11 +451,11 @@ let sc_program (globals, functions) =
 		(* make a list of globals *)
 		(* note: fun = function pattern matching *)
 		(* note: elementss returned are in form (g, e)
-			-cur global returns g
+			-fst global returns g
 			-snd global returns e
 		*)
 
-		let globals = List.map (fun global -> cur global) g in
+		let globals = List.map (fun global -> fst global) g in
 			match g with
 				(* no globals; thus our environment stays the same *)
 				[] -> (globals, (sc_functions (List.rev functions) env))
