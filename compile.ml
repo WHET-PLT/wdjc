@@ -201,25 +201,41 @@ let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) ->
-      "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")"
-  | REST_CR(r) -> "(" ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
+      (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
+      "new Note(" ^a^ ", " ^b^ ", " ^ c ^ ")"
+
+
+  | REST_CR(r) -> "new Rest((double) " ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR(a, b) -> 
-      a ^ " -> " ^ (
+      a ^ "." ^ (
       match b with
-        Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
+        Pitch -> "getPitch()" | Vol -> "getVolume" |  Dur -> "getDuration()r"
       )
+
   | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
+
   | CHORD_CR(note_list) -> 
-      "(" ^ String.concat " : " note_list ^ ")"
+      (* !!!we are going to have an issue here because chord is actually a cPhrase *)
+      (* !!!also going to have an issue with ID naming situation *)
+      "ArrayList<Note> noteArrayList = new ArrayList<Note>(); "
+      "new CPhrase("
+      List.map (fun a ->  "noteArrayList.add(" ^ a ^ ") ") note_list
+      name_CPhrase ^ ".add(noteArrayList);"  
+
+(* What exactly is track.. track cration, because that's what I'm writing it as. *)
   | Track(t) -> t
+
+
+  (* the question is whether this makes sense complete. it will work for ints but not notes etc *)
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with
       Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
       | Equal -> "==" | Neq -> "!="
-      | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
-      | Ser -> "." | Par -> ":" | Arrow -> "->") ^ " " ^
+      | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">=") ^ " " ^
       string_of_expr e2
+
+
   (*again, not sure about this section*)
   | Modifier(e1, modif) ->
       string_of_expr e1 ^
