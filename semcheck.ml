@@ -234,12 +234,14 @@ let sc_modifier e1 o =
 (* check statement list *)
 let rec stmt_checker env func = function
 	  Ast.Block(stmt_list) -> (Sast.Block(stmt_list_checker env func stmt_list)), env
-	| Ast.Expr(expr) -> (Sast.Expr(fst (expr_checker env expr))), env
+	  (*need to check expr eval*)
+	| Ast.Expr(expr) -> (Sast.Expr( (expr_checker env expr))), env
 	| Ast.Return(expr) -> let e = expr_checker env expr in
 						if not(snd e = string_of_vartype func.return) then raise (Failure ("Illegal return type: func type and return type must match"))
-	| Ast.If(expr, stmt1, stmt2) -> (Sast.If
-	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For
-	| Ast.While(expr, stmt) -> (Sast.While
+						else (Sast.Return(fst e)), env
+	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((expr_checker env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
+	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((expr_checker env expr1), (expr_checker env expr2), (expr_checker env expr3), (stmt_checker env func stmt))), env
+	| Ast.While(expr, stmt) -> (Sast.While((expr_checker env expr), stmt_checker env func stmt)), env
 
 
 let rec stmt_list_checker env func = 
