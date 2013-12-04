@@ -202,14 +202,14 @@ let rec string_of_expr = function
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) ->
       (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
-      "new Note(" ^a^ ", " ^b^ ", " ^ c ^ ")"
+      "new Note((double)" ^a^ ", " ^b^ ", " ^ c ^ ")"
 
 
   | REST_CR(r) -> "new Rest((double) " ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR(a, b) -> 
       a ^ "." ^ (
       match b with
-        Pitch -> "getPitch()" | Vol -> "getVolume" |  Dur -> "getDuration()r"
+        Pitch -> "getFrequency()" | Vol -> "getVolume" |  Dur -> "getDuration()r"
       )
 
   | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
@@ -226,7 +226,8 @@ let rec string_of_expr = function
   | Track(t) -> t
 
 
-  (* the question is whether this makes sense complete. it will work for ints but not notes etc *)
+  (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
+  (* can we write a function to figure out if note or int etc??? *)
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with
@@ -236,11 +237,15 @@ let rec string_of_expr = function
       string_of_expr e2
 
 
-  (*again, not sure about this section*)
+  (* again, not sure about this section * also are we talking about incr decr pitch? by how much? *)
   | Modifier(e1, modif) ->
       string_of_expr e1 ^
       (match modif with
-      Vib -> "^" | Trem -> "~" | Bend -> "%" | Incr -> "++" | Decr -> "--")
+      Vib -> "^" |
+      Trem -> "~" | 
+      Bend -> "%" | 
+      Incr -> "++" | 
+      Decr -> "--")
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
@@ -251,8 +256,8 @@ let string_of_vdecl v =
     Int -> "int "
     | Note -> "Note "
     | Chord -> "CPhrase "
-    | Track -> "Part ") ^ v.vName
-    | Rest -> "Note " ^ v.vName " = new Note(REST);"
+    | Track -> "Part "
+    | Rest -> "Rest ") ^ v.vName 
 
 (*pretty print for stmts*)
 (*TODO need to do loop*)
