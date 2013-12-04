@@ -39,7 +39,6 @@ type var_decl = {
 }
 
 type var_init = {
-  vType : dType;
   vDecl : var_decl;
   vExpr : expr;
 }
