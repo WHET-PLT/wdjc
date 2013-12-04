@@ -222,8 +222,8 @@ let rec string_of_expr = function
       List.map (fun a ->  "noteArrayList.add(" ^ a ^ ") ") note_list
       name_CPhrase ^ ".add(noteArrayList);"  
 
-(* What exactly is track.. track cration, because that's what I'm writing it as. *)
-  | Track(t) -> t
+(* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
+  | Track(t) -> "new Part("t", \"pianoTrack\", \"Piano\");" 
 
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
