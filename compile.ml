@@ -233,10 +233,10 @@ let rec string_of_expr = function
 let string_of_vdecl v = 
   (match v.vType with
     Int -> "int "
-    | Note -> "note "
-    | Chord -> "chord "
-    | Track -> "track "
-    | Rest -> "rest ") ^ v.vName
+    | Note -> "Note "
+    | Chord -> "CPhrase "
+    | Track -> "Part ") ^ v.vName
+    | Rest -> "Note " ^ v.vName " = new Note(REST);"
 
 (*pretty print for stmts*)
 (*TODO need to do loop*)
