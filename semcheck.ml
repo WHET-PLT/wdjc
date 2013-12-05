@@ -155,13 +155,15 @@ let add_function fname rtype formals env =
 let get_binop_expr_type t1 t2 = 
 	if t1 = "int" && t2 = "int" then "int" else
 	(*consideration for Ser and Par*)
-	if t1 = "note" && t2 = "chord" then "chord" else
+	(*if t1 = "note" && t2 = "chord" then "chord" else
 	if t1 = "chord" && t2 = "note" then "chord" else
 	if t1 = "chord" && t2 = "track" then "track" else
-	if t1 = "track" && t2 = "chord" then "track" else
+	if t1 = "track" && t2 = "chord" then "track" else*)
+	if t1 = "chord" && t2 = "chord" then "track" else (*serial*)
+	if t1 = "note" && t2 = "note" then "chord" else (*parallel*)
 	raise (Failure ("illegal operation types"))
 
-(*need to decide types to be acted on. only considers ints now.*)
+
 (*Serial: combine chords to make a track. Can combine notes to make chord.
   Parallel: combine chords to make a track.
 Serial (.)
@@ -193,9 +195,9 @@ let sc_binop e1 o e2 =
 		  raise (Failure ("type error: greater"))
 	| Ast.Less -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Less, fst e2), "int") else
 		  raise (Failure ("type error: less"))
-	| Ast.Ser -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Ser, fst e2), "int") else
+	| Ast.Ser -> if expr_t = "track" then (Sast.Binop(fst e1, Sast.Ser, fst e2), "track") else
 		  raise (Failure ("type error: ser"))
-	| Ast.Par -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Par, fst e2), "int") else
+	| Ast.Par -> if expr_t = "chord" then (Sast.Binop(fst e1, Sast.Par, fst e2), "chord") else
 		  raise (Failure ("type error: par"))
 	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Arrow, fst e2), "int") else
 		  raise (Failure ("type error: arrow"))
@@ -270,6 +272,10 @@ let rec sc_expr env = function
 	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
 	(* note creation *)
 	| Ast.NOTE_CR(s1,s2,s3,s4) ->
+	(*
+		need to get the type of each expr/id
+	| Ast.NOTE_CR(e1, e2, e3, e4) -> 
+	*)
 	(* Rest *)
 	| Ast.Rest(s) -> 
 	(*  chord create *)
