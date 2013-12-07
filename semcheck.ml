@@ -278,11 +278,11 @@ let sc_func_arg lst expr arg_t =
 (* returns expr + its type 
 meat of this part taken from sast.ml
 *)
-let rec sc_expr env = function
+let rec sc_expr env expr = function
 	(* literal *)
-	Ast.Literal(i) -> Sast.Literal(i), "int"
+	Ast.Literal(i) -> Sast.Literal(i)
 	(* accessor *)
-	| Ast.ACCCESSOR(id, note_attr) -> Sast.ACCCESSOR( (get_variable_type id env), note_attr), "int"
+	| Ast.ACCESSOR(id, note_attr) -> Sast.ACCESSOR( (isnote id env), (sc_expr note_attr) ), "int"
 	(* id *)
 	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
 	(* note creation *)
