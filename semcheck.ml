@@ -274,11 +274,12 @@ let rec sc_expr env = function
 	| Ast.NOTE_CR(s1,s2,s3,s4) ->
 	(*
 		need to get the type of each expr/id
-	| Ast.NOTE_CR(e1, e2, e3, e4) -> 
+	| Ast.NOTE_CR(i1, i2, i3, i4) -> (Sast.NOTE_CR((get_variable_type i1 env), (get_variable_type i2 env), (get_variable_type i3 env), (get_variable_type i4 env))), "note"
 	*)
 	(* Rest *)
 	| Ast.Rest(s) -> 
 	(*  chord create *)
+	(*list of notes*)
 	| Ast.CHORD_CR(str_lst) ->
 	(* track *)
 	| Ast.Track(s) ->

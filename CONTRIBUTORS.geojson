@@ -1,4 +1,5 @@
 { "type": "FeatureCollection", "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } }, "features": [ 
+{ "type": "Feature", "properties": { "Name": "Thomas", "Description": "Sat Dec  7 12:28:03 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.961175, 40.809374, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Thu Dec  5 18:12:40 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964895, 40.806147, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Tue Dec  3 22:18:44 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.964845, 40.806128, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "Thomas", "Description": "Tue Dec  3 17:37:03 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.959889, 40.808947, 0.0 ] } },
