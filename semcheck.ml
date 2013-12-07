@@ -62,10 +62,25 @@ let get_type = function
 (* search for variable types by name; return type or exception *)
 let get_variable_type name env = 
 	let typ = get_variable_name name env in
-	if typ = "" then raise (Failure ("undefined variable: " ^ name))
+	if typ = "" then raise (Failure ("wrong type used: " ^ name))
 	else typ
 
+let isnote name env =
+	let typ = get_variable_type name env in
+	if typ = "note" then name
+	else raise (Failure ("wrong type used: " ^ name))
+	
+let ischord name env =
+	let typ = get_variable_type name env in
+	if typ = "chord" then name
+	else raise (Failure ("wrong type used: " ^ name))
 
+let istrack name env =
+	let typ = get_variable_type name env in
+	if typ = "track" then name
+	else raise (Failure ("wrong type used: " ^ name))
+		
+		
 
 (* HELPFUL FUNCTIONS TO GET AND ADD VARIABLES (GLOBAL & LOCAL), FUNCIONS TO ENVIRONMENT *)
 
@@ -267,7 +282,7 @@ let rec sc_expr env = function
 	(* literal *)
 	Ast.Literal(i) -> Sast.Literal(i), "int"
 	(* accessor *)
-	| Ast.ACCCESSOR(id, note_attr) -> 
+	| Ast.ACCCESSOR(id, note_attr) -> Sast.ACCCESSOR( (get_variable_type id env), note_attr), "int"
 	(* id *)
 	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
 	(* note creation *)
