@@ -38,6 +38,11 @@ type var_decl_t = {
   vName : string;
 }
 
+type var_init = {
+  vDecl : var_decl_t;
+  vExpr : expr_t;
+}
+
 (*need to decide if we are keeping loop or not*)
 type stmt_t =
     Block of stmt_t list
@@ -46,9 +51,8 @@ type stmt_t =
   | If of expr_t * stmt_t * stmt_t
   | For of expr_t * expr_t * expr_t * stmt_t
   | While of expr_t * stmt_t
-  (*| Assign of var_decl * expr
-  | Vdecl of var_decl*)
- (* | Loop of expr * expr * stmt *)
+  | Vdecl of var_decl_t
+  | Vinit of var_decl_t * expr_t
 
 
 (* funciton declaration *)
@@ -56,7 +60,6 @@ type func_decl_t = {
     rtype : dType_t;
     fname : string;
     formals : var_decl_t list;
-    locals : var_decl_t list;
     body : stmt_t list;
   }
 

@@ -259,7 +259,8 @@ let rec stmt_checker env func = function
 	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((expr_checker env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
 	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((expr_checker env expr1), (expr_checker env expr2), (expr_checker env expr3), (stmt_checker env func stmt))), env
 	| Ast.While(expr, stmt) -> (Sast.While((expr_checker env expr), stmt_checker env func stmt)), env
-
+	| Ast.Vdecl(vardecl) -> (Sast.Vdecl()), env
+	| Ast.Vinit(varinit) -> (Sast.Vinit()), env
 
 let rec stmt_list_checker env func = 
 	[] -> []
