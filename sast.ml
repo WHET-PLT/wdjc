@@ -17,12 +17,12 @@ type op_t =   Add  | Sub
 (* Expression type *)
 type expr_t =
     Literal of int
-  | ACCESSOR of string * note_attribute_t
   | Id of string
   | NOTE_CR of string * string * string * string
   | Rest of string
   | CHORD_CR of string list
-  | Track of string
+  | TRACK_CR of string
+  | ACCESSOR of string * note_attribute_t
   | Binop of expr_t * op_t * expr_t
   | Modifier of expr_t * modif_t 
   | Assign of string * expr_t

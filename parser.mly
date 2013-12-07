@@ -14,7 +14,6 @@
 %token NOTE REST CHORD TRACK
 %token EOF
 
-
 /*ie TIMES DIVIDE is higher precedence than ASSIGN*/
 %nonassoc NOELSE
 %nonassoc ELSE
@@ -48,56 +47,48 @@ program:
 /*  --- FUNCTION --- */
 fdecl:
 
-  ID INT LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+  ID INT LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Int;
        fname = $1;
 	     formals = $4;
-	     locals = List.rev $7;
-	     body = List.rev $8 
+	     body = List.rev $7
     }}
-    | ID NOTE LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    | ID NOTE LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Note;
        fname = $1;
        formals = $4;
-       locals = List.rev $7;
-       body = List.rev $8 
+       body = List.rev $7
     }}
-    | ID CHORD LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    | ID CHORD LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Chord;
        fname = $1;
        formals = $4;
-       locals = List.rev $7;
-       body = List.rev $8 
+       body = List.rev $7
     }}
 
-    | ID REST LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    | ID REST LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Rest;
        fname = $1;
        formals = $4;
-       locals = List.rev $7;
-       body = List.rev $8 
+       body = List.rev $7
     }}
-    | ID TRACK LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+    | ID TRACK LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
        rtype = Track;
        fname = $1;
        formals = $4;
-       locals = List.rev $7;
-       body = List.rev $8 
+       body = List.rev $7
     }}
 
 /* --- FORMALS --- */
 /* formals to be vdecl */
 formal:
-    INT ID        { { vType = Int;  vName = $2; } }
-    | NOTE ID     { { vType = Note; vName = $2; } }
-    | CHORD ID     { { vType = Chord; vName = $2; } }
-    | TRACK ID      { { vType = Track;  vName = $2; } }
-    | REST ID     { { vType = Rest; vName = $2; } }
+  vdecl { $1 }
+
 
 /* optional function arguments */
 formals_opt:
@@ -111,20 +102,33 @@ formal_list:
 
 /* --- VARIABLE DECLARATIONS --- */
 vdecl:
-   INT ID SEMI    { { vType = Int;  vName = $2; } }
-    | NOTE ID SEMI  { { vType = Note; vName = $2; } }
-    | CHORD ID SEMI { { vType = Chord; vName = $2; } }
-    | TRACK ID SEMI { { vType = Track;  vName = $2; } }
-    | REST ID SEMI  { { vType = Rest; vName = $2; } }
+   dType ID     { { vType = $1;  vName = $2; } }
 
 vdecl_list:
     /* nothing */    { [] }
   | vdecl_list vdecl { $2 :: $1 }
 
+vinit:
+    vdecl ASSIGN expr { Vinit($1, $3) }
+
+assign:
+    ID ASSIGN expr { Assign(Id($1), $3) }
+  | accessor ASSIGN expr { Assign($1, $3) }
+
+
+/* --- TRACK -- */
+track_cr:
+  LPAREN expr RPAREN { TRACK_CR( $2 ) }
+
+/* --- REST --- */
+rest_cr:
+  LPAREN expr RPAREN { REST_CR( $2 ) }
+  /* later maybe we want to make this also with an id? */
+
 /*  --- NOTE  --- */
 note_cr:
-  LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN
-    { NOTE_CR($2, $4, $6, $8) }
+  LPAREN expr COMMA expr COMMA expr RPAREN
+    { NOTE_CR($2, $4, $6) }
 
 /* --- CHORD --- */
 chord_cr:
@@ -145,6 +149,14 @@ note_attribute:
   | VOL {Vol}
   | DUR {Dur}
   | INSTR {Instr}
+  
+dType: 
+   INT {Int}
+ | NOTE {Note}
+ | CHORD {Chord} 
+ | TRACK {Track}
+ | REST {Rest}
+
 
 /* --- MODIFIERS --- */
 /*
@@ -160,6 +172,8 @@ modifier_options:
 
 stmt:
     expr SEMI { Expr($1) }
+  | vinit SEMI { $1 }
+  | vdecl SEMI { Vdecl($1) }
   | RETURN expr SEMI { Return($2) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
@@ -184,9 +198,12 @@ expr_opt:
 expr:
     LITERAL          { Literal($1) }
   | ID               { Id($1) }
+  | assign           { $1 }
+  | accessor         { $1 }
   | chord_cr         { $1 }
   | note_cr          { $1 }
-  | accessor         { $1 }
+  | rest_cr          { $1 }
+  | track_cr         { $1 }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
@@ -197,7 +214,6 @@ expr:
   | expr LEQ    expr { Binop($1, Leq,   $3) }
   | expr GT     expr { Binop($1, Greater,  $3) }
   | expr GEQ    expr { Binop($1, Geq,   $3) }
-  | expr ARROW  expr { Binop($1, Arrow,   $3) }
   | expr SERIAL expr { Binop($1, Ser, $3) }
   | expr PARALLEL expr { Binop ($1, Par, $3) }
   | expr INCR        { Modifier($1, Incr) }
@@ -207,7 +223,6 @@ expr:
   | expr BEND        { Modifier($1, Bend) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | ID ASSIGN expr { Assign($1, $3)}
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
  /* actuals - When you call the function you use actuals_opt?? */
