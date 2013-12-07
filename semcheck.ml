@@ -286,7 +286,7 @@ let rec sc_expr env expr = function
 	(* id *)
 	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
 	(* note creation *)
-	| Ast.NOTE_CR(s1,s2,s3,s4) ->
+	| Ast.NOTE_CR(s1,s2,s3,s4) -> Sast.NOTE_CR
 	(*
 		need to get the type of each expr/id
 	| Ast.NOTE_CR(i1, i2, i3, i4) -> (Sast.NOTE_CR((get_variable_type i1 env), (get_variable_type i2 env), (get_variable_type i3 env), (get_variable_type i4 env))), "note"
