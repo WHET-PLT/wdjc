@@ -63,11 +63,15 @@ let imports=
 "import jm.JMC;\n" ^
 "import jm.music.data.*;\n" ^
 "import jm.utl.*;\n" 
-"public final class song implements JMC{"
+"public class DJ{\n public static void main(Strings[] args){\n
+Song newSong = new Song();
+newSong.composeSong();\n}
+public class Song implements JMC{ \n
+"
 
 
 (* New code based on AST Pretty Printing *)
-
+(* 
 let string_of_vdecl v = 
   (match v.vType with
     Int -> "int "
@@ -76,8 +80,8 @@ let string_of_vdecl v =
     | Track -> "Part "
     | Rest -> "Rest ") ^ v.vName in 
 
-
-let rec string_of_expr = function
+ *)
+(* let rec string_of_expr = function
     Literal(l) -> (* string_of_int  *) l
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) -> (* this is going to be different  *)
@@ -132,7 +136,7 @@ let rec string_of_expr = function
   | Noexpr -> ""
 (*| Array*) 
 
-(* string_of_chord creates array items for every note *)
+string_of_chord creates array items for every note
 let index=0
 and acc="" in 
 let rec string_of_chord acc index chordList  = function
@@ -188,7 +192,7 @@ let string_of_fdecl fdecl =
 (*pretty print for program*)
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)  
+  String.concat "\n" (List.map string_of_fdecl funcs)  *) 
 
 (* ------------------------------------------------------------------------------------------------------------- *)
 
@@ -244,8 +248,8 @@ let rec string_of_expr = function
       Vib -> "^" |
       Trem -> "~" | 
       Bend -> "%" | 
-      Incr -> "++" | 
-      Decr -> "--")
+      Incr -> ".setPitch((" ^ string_of_expr e1 ^".getPitch()) + 50)"  | 
+      Decr -> ".setPitch((" ^ string_of_expr e1 ^".getPitch())  -50)")
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
@@ -281,19 +285,23 @@ let rec string_of_stmt = function
 
 
 let string_of_fdecl fdecl =
-   (match fdecl.rtype with
+   "public " (match fdecl.rtype with
     Int -> "int "
-    | Note -> "note "
-    | Chord -> "chord "
-    | Track -> "track "
-    | Rest -> "rest ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
+    | Note -> "Note "
+    | Chord -> "Chord "
+    | Track -> "Track "
+    | Rest -> "Rest "
+    | _ -> "void") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
+
 
 (*pretty print for program*)
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)  
+
+let finalImports = "\n} \n}"
 
 
 
