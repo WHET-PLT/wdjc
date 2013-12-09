@@ -18,7 +18,7 @@ type op_t =   Add  | Sub
 type expr_t =
     Literal of int
   | Id of string
-  | NOTE_CR of string * string * string * string
+  | NOTE_CR of string * string * string
   | Rest of string
   | CHORD_CR of string list
   | TRACK_CR of string
@@ -65,5 +65,79 @@ type func_decl_t = {
 
 (*ast is a list of variables and list of function dels*)
 type program_t = var_decl_t list * func_decl_t list
+
+
+let rec string_of_expr_t = function
+    Literal(l) -> string_of_int l
+  | Id(s) -> s
+  | NOTE_CR(a, b, c) ->
+      "(" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
+  | REST_CR(r) -> "(" ^ string_of_expr_t r ^ ")" 
+  | TRACK_CR(t) -> "(" ^ string_of_expr_t t ^ ")" 
+  | ACCESSOR(a, b) -> 
+      a ^ " -> " ^ (
+      match b with
+        Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
+      )
+  | Assign(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
+  | CHORD_CR(note_list) -> 
+      "(" ^ String.concat " : " note_list ^ ")"
+  | Binop(e1, o, e2) ->
+      string_of_expr_t e1 ^ " " ^
+      (match o with
+      Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
+      | Equal -> "==" | Neq -> "!="
+      | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
+      | Ser -> "." | Par -> ":" | Arrow -> "->") ^ " " ^
+      string_of_expr_t e2
+  | Modifier(e1, modif) ->
+      string_of_expr_t e1 ^
+      (match modif with
+      Vib -> "^" | Trem -> "~" | Bend -> "%" | Incr -> "++" | Decr -> "--")
+  | Call(f, el) ->
+      f ^ "(" ^ String.concat ", " (List.map string_of_expr_t el) ^ ")"
+  | Noexpr -> ""
+
+
+let string_of_vdecl_t v = 
+  (match v.vType with
+    Int -> "int "
+    | Note -> "note "
+    | Chord -> "chord "
+    | Track -> "track "
+    | Rest -> "rest ") ^ v.vName
+
+
+let rec string_of_stmt_t = function
+    Block(stmts) ->
+      "{\n" ^ String.concat "" (List.map string_of_stmt_t stmts) ^ "}\n"
+  | Expr(expr) -> string_of_expr_t expr ^ ";\n";
+  | Return(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
+  | If(e, s, Block([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
+  | If(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
+      string_of_stmt_t s1 ^ "else\n" ^ string_of_stmt_t s2
+  | For(e1, e2, e3, s) ->
+      "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
+      string_of_expr_t e3  ^ ") " ^ string_of_stmt_t s
+  | While(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
+  | Vdecl(v) -> string_of_vdecl_t v ^ ";\n"
+  | Vinit(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
+
+
+let string_of_fdecl_t fdecl =
+   (match fdecl.rtype with
+    Int -> "int "
+    | Note -> "note "
+    | Chord -> "chord "
+    | Track -> "track "
+    | Rest -> "rest ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals) ^ ")\n{\n" ^
+  String.concat "" (List.map string_of_stmt_t fdecl.body) ^
+  "}\n"
+
+(*pretty print for program*)
+let string_of_program_t (vars, funcs) =
+  String.concat "" (List.map string_of_vdecl_t vars) ^ "\n" ^
+  String.concat "\n" (List.map string_of_fdecl funcs)  
+
 
 
