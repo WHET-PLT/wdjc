@@ -79,6 +79,11 @@ let istrack name env =
 	let typ = get_variable_type name env in
 	if typ = "track" then name
 	else raise (Failure ("wrong type used: " ^ name))
+	
+let istrack name env =
+	let typ = get_variable_type name env in
+	if typ = "track" then name
+	else raise (Failure ("wrong type used: " ^ name))
 		
 		
 
@@ -287,7 +292,7 @@ let rec sc_expr env expr = function
 	(* id *)
 	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
 	(* note creation *)
-	| Ast.NOTE_CR(s1,s2,s3,s4) -> Sast.NOTE_CR
+	| Ast.NOTE_CR(s1,s2,s3) -> Sast.NOTE_CR( (isint s1), (sc_expr s2), (sc_expr s3) ), 
 	(*
 		need to get the type of each expr/id
 	| Ast.NOTE_CR(i1, i2, i3, i4) -> (Sast.NOTE_CR((get_variable_type i1 env), (get_variable_type i2 env), (get_variable_type i3 env), (get_variable_type i4 env))), "note"
