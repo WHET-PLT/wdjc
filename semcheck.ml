@@ -254,18 +254,41 @@ let sc_modifier e1 o =
 (* STATEMENTS - TOM *)
 (* check statement *)
 (* check statement list *)
+(* ARE WE ACTUALLY RETURNING THE ENVIRONMENT HERE *)
 let rec stmt_checker env func = function
 	  Ast.Block(stmt_list) -> (Sast.Block(stmt_list_checker env func stmt_list)), env
 	  (*need to check expr eval*)
-	| Ast.Expr(expr) -> (Sast.Expr( (expr_checker env expr))), env
-	| Ast.Return(expr) -> let e = expr_checker env expr in
+	| Ast.Expr(expr) -> (Sast.Expr( (sc_expr env expr))), env
+	| Ast.Return(expr) -> let e = sc_expr env expr in
 						if not(snd e = string_of_vartype func.return) then raise (Failure ("Illegal return type: func type and return type must match"))
 						else (Sast.Return(fst e)), env
 	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((expr_checker env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
 	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((expr_checker env expr1), (expr_checker env expr2), (expr_checker env expr3), (stmt_checker env func stmt))), env
 	| Ast.While(expr, stmt) -> (Sast.While((expr_checker env expr), stmt_checker env func stmt)), env
-	| Ast.Vdecl(vardecl) -> (Sast.Vdecl()), env
-	| Ast.Vinit(varinit) -> (Sast.Vinit()), env
+	| Ast.Vdecl(vardecl) -> 
+		let new_env = add_local vardecl.vName vardecl.vType env in 
+		Sast.Vdecl(vardecl), new_env
+	(* does checking *)
+	| Ast.Vinit(varinit) -> 
+		let new_init = check_vinit_type varinit in 
+			let new_vardecl = new_init.vardecl in
+				let new_env = add_local new_vardecl.vType new_vardecl.vName in 
+		Sast.Vinit(varinit), new_env
+	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
+	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (stmt_checker env func stmt))), env
+	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), stmt_checker env func stmt)), env
+	| Ast.Vdecl(vardecl) -> (Sast.Vdecl(vardecl)), env
+	| Ast.Vinit(varinit) -> (Sast.Vinit(check_vinit_type env varinit)), env
+
+
+let rec check_vinit_type varinit env =
+	if sc_expr env varinit.vExpr == varinit.vType
+	then varinit else
+	raise (Failure("expr type does not match delcarartion type"))
+
+	(*if check_expr_type (vinit.expr) == "vinit.vdecl.type"
+		then vinit
+		else raise*)
 
 let rec stmt_list_checker env func = 
 	[] -> []
@@ -387,23 +410,27 @@ let rec sc_function fn env =
 				let formals = List.map (fun formal -> fst formal ) f in
 				(match f with
 					(* empty, no formals *)
-					[] -> let body = stmt_list_checker fn fn.body env in
+					[] -> let body, statement_with_locals_env = stmt_list_checker fn fn.body env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
-							(* Change locals *)
+							(* Change locals 
 							Sast.locals = List.map  ast_to_sast_type fn.locals;
+							*)
+							Sast.locals = statement_with_locals_env
 							Sast.body = body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev f)) in
-						let body = stmt_list_checker fn fn.body new_env in
+						let body, statement_with_locals_env = stmt_list_checker fn fn.body new_env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
-							(* Change locals *)
+							(* Change locals 
 							Sast.locals = List.map  ast_to_sast_type fn.locals;
+							*)
+							Sast.locals = statement_with_locals_env
 							Sast.body = body
 						}, new_env
 				)
