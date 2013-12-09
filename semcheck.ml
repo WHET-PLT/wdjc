@@ -261,10 +261,13 @@ let rec stmt_checker env func = function
 	| Ast.While(expr, stmt) -> (Sast.While((expr_checker env expr), stmt_checker env func stmt)), env
 	| Ast.Vdecl(vardecl) -> 
 		let new_env = add_local vardecl.vName vardecl.vType env in 
-		(Sast.Vdecl()), new_env
+		Sast.Vdecl(vardecl), new_env
+	(* does checking *)
 	| Ast.Vinit(varinit) -> 
-		let new_env = add_local varinit.vdecl.vName varinit.vdecl.vType env in 
-		(Sast.Vinit()), new_env
+		let new_init = check_vinit_type varinit in 
+			let new_vardecl = new_init.vardecl in
+				let new_env = add_local new_vardecl.vType new_vardecl.vName in 
+		Sast.Vinit(varinit), new_env
 	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
 	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (stmt_checker env func stmt))), env
 	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), stmt_checker env func stmt)), env
@@ -272,8 +275,8 @@ let rec stmt_checker env func = function
 	| Ast.Vinit(varinit) -> (Sast.Vinit(check_vinit_type env varinit)), env
 
 
-let rec check_vinit_type env varinit =
-	if sc_expr env varinit.vExpr = varinit.vType
+let rec check_vinit_type varinit env =
+	if sc_expr env varinit.vExpr == varinit.vType
 	then varinit else
 	raise (Failure("expr type does not match delcarartion type"))
 
