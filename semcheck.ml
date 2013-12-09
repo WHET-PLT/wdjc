@@ -256,7 +256,6 @@ let rec stmt_checker env func = function
 	| Ast.Return(expr) -> let e = sc_expr env expr in
 						if not(snd e = string_of_vartype func.return) then raise (Failure ("Illegal return type: func type and return type must match"))
 						else (Sast.Return(fst e)), env
-<<<<<<< HEAD
 	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((expr_checker env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
 	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((expr_checker env expr1), (expr_checker env expr2), (expr_checker env expr3), (stmt_checker env func stmt))), env
 	| Ast.While(expr, stmt) -> (Sast.While((expr_checker env expr), stmt_checker env func stmt)), env
@@ -266,7 +265,6 @@ let rec stmt_checker env func = function
 	| Ast.Vinit(varinit) -> 
 		let new_env = add_local varinit.vdecl.vName varinit.vdecl.vType env in 
 		(Sast.Vinit()), new_env
-=======
 	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
 	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (stmt_checker env func stmt))), env
 	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), stmt_checker env func stmt)), env
@@ -282,7 +280,6 @@ let rec check_vinit_type env varinit =
 	(*if check_expr_type (vinit.expr) == "vinit.vdecl.type"
 		then vinit
 		else raise*)
->>>>>>> 61bbb4a61c9c7a99b38f84b63f1107a1a178bdc0
 
 let rec stmt_list_checker env func = 
 	[] -> []
