@@ -249,6 +249,7 @@ let sc_modifier e1 o =
 (* STATEMENTS - TOM *)
 (* check statement *)
 (* check statement list *)
+(* ARE WE ACTUALLY RETURNING THE ENVIRONMENT HERE *)
 let rec stmt_checker env func = function
 	  Ast.Block(stmt_list) -> (Sast.Block(stmt_list_checker env func stmt_list)), env
 	  (*need to check expr eval*)
@@ -404,23 +405,27 @@ let rec sc_function fn env =
 				let formals = List.map (fun formal -> fst formal ) f in
 				(match f with
 					(* empty, no formals *)
-					[] -> let body = stmt_list_checker fn fn.body env in
+					[] -> let body, statement_with_locals_env = stmt_list_checker fn fn.body env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
-							(* Change locals *)
+							(* Change locals 
 							Sast.locals = List.map  ast_to_sast_type fn.locals;
+							*)
+							Sast.locals = statement_with_locals_env
 							Sast.body = body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev f)) in
-						let body = stmt_list_checker fn fn.body new_env in
+						let body, statement_with_locals_env = stmt_list_checker fn fn.body new_env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
-							(* Change locals *)
+							(* Change locals 
 							Sast.locals = List.map  ast_to_sast_type fn.locals;
+							*)
+							Sast.locals = statement_with_locals_env
 							Sast.body = body
 						}, new_env
 				)
