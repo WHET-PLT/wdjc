@@ -191,7 +191,7 @@ track  = chord.chord...;
 Parallel(:)
 chord = note(:note.....);
 
-*))
+*)
 let sc_binop e1 o e2 =
 	let expr_t = get_binop_expr_type (snd e1) (snd e2) in
 	(match o with

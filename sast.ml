@@ -15,11 +15,12 @@ type op_t =   Add  | Sub
 
 (* Expression type *)
 (* Expression type *)
+(*
 type expr_t =
     Literal of int
   | Id of string
   | NOTE_CR of string * string * string
-  | Rest of string
+  | REST_CR of string
   | CHORD_CR of string list
   | TRACK_CR of string
   | ACCESSOR of string * note_attribute_t
@@ -28,7 +29,22 @@ type expr_t =
   | Assign of string * expr_t
   | Call of string * expr_t list
   | Noexpr
- 
+*)
+type expr_t =
+    Literal of int
+  | Id of string
+  | NOTE_CR of expr_t * expr_t * expr_t
+  | REST_CR of expr_t
+  | TRACK_CR of expr_t
+  | CHORD_CR of string list
+  | ACCESSOR of string * note_attribute_t
+  | Binop of expr_t * op_t * expr_t
+  | Modifier of expr_t * modif_t
+  | Assign of expr_t * expr_t
+  | Call of string * expr_t list
+  | Noexpr
+
+
   (* | Array of expr list *)
   (*an array can be a list of expressions*)
 
@@ -137,7 +153,7 @@ let string_of_fdecl_t fdecl =
 (*pretty print for program*)
 let string_of_program_t (vars, funcs) =
   String.concat "" (List.map string_of_vdecl_t vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)  
+  String.concat "\n" (List.map string_of_fdecl_t funcs)  
 
 
 

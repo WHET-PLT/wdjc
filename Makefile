@@ -42,8 +42,10 @@ ast.cmo:
 ast.cmx:
 compile.cmo: ast.cmo 
 compile.cmx: ast.cmx 
-wdjc.cmo: scanner.cmo parser.cmi compile.cmo ast.cmo 
-wdjc.cmx: scanner.cmx parser.cmx compile.cmx ast.cmx 
+semcheck.cmo: ast.cmi sast.cmi
+semcheck.cmx: ast.cmx sast.cmx
+wdjc.cmo: scanner.cmo parser.cmi compile.cmo ast.cmo sast.cmo semcheck.cmo 
+wdjc.cmx: scanner.cmx parser.cmx compile.cmx ast.cmx sast.cmx semcheck.cmx
 parser.cmo: ast.cmo parser.cmi 
 parser.cmx: ast.cmx parser.cmi 
 scanner.cmo: parser.cmi 
