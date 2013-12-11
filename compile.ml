@@ -63,9 +63,10 @@ let imports=
 "import jm.JMC;\n" ^
 "import jm.music.data.*;\n" ^
 "import jm.utl.*;\n" 
-"public class DJ{\n public static void main(Strings[] args){\n
+"public class DJ{\n 
+public static void main(Strings[] args){\n
 Song newSong = new Song();
-newSong.composeSong();\n}
+newSong.composeSong();// make this in later method. \n} 
 public class Song implements JMC{ \n
 "
 
@@ -245,9 +246,9 @@ let rec string_of_expr = function
   | Modifier(e1, modif) ->
       string_of_expr e1 ^
       (match modif with
-      Vib -> "^" |
-      Trem -> "~" | 
-      Bend -> "%" | 
+      Vib -> " " |
+      Trem -> " " | 
+      Bend -> " " | 
       Incr -> ".setPitch((" ^ string_of_expr e1 ^".getPitch()) + 50)"  | 
       Decr -> ".setPitch((" ^ string_of_expr e1 ^".getPitch())  -50)")
   | Call(f, el) ->
@@ -288,8 +289,8 @@ let string_of_fdecl fdecl =
    "public " (match fdecl.rtype with
     Int -> "int "
     | Note -> "Note "
-    | Chord -> "Chord "
-    | Track -> "Track "
+    | Chord -> "CPhrase "
+    | Track -> "Part "
     | Rest -> "Rest "
     | _ -> "void") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
