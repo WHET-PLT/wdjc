@@ -224,6 +224,7 @@ let sc_binop e1 o e2 =
 
 	)
 
+(*
 (*need to discuss actions of modifiers. do they go through every note in
   a chord? Can they be applied to just a single note?*)
 let get_mod_expr_type t1 =
@@ -243,6 +244,8 @@ let sc_modifier e1 o =
 
 	)
 
+*)
+
 (*
 	locals are now vdecls, vinits. Need to pass a fuction a stmt_list and 
 	function will go through list to pull out vdecls/vinits.
@@ -255,16 +258,16 @@ let sc_modifier e1 o =
 (* check statement *)
 (* check statement list *)
 (* ARE WE ACTUALLY RETURNING THE ENVIRONMENT HERE *)
-let rec stmt_checker env func = function
-	  Ast.Block(stmt_list) -> (Sast.Block(stmt_list_checker env func stmt_list)), env
+let rec sc_stmt env func = function
+	  Ast.Block(stmt_list) -> (Sast.Block(sc_stmt_list env func stmt_list)), env
 	  (*need to check expr eval*)
 	| Ast.Expr(expr) -> (Sast.Expr( (sc_expr env expr))), env
 	| Ast.Return(expr) -> let e = sc_expr env expr in
 						if not(snd e = string_of_vartype func.return) then raise (Failure ("Illegal return type: func type and return type must match"))
 						else (Sast.Return(fst e)), env
-	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((expr_checker env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
-	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((expr_checker env expr1), (expr_checker env expr2), (expr_checker env expr3), (stmt_checker env func stmt))), env
-	| Ast.While(expr, stmt) -> (Sast.While((expr_checker env expr), stmt_checker env func stmt)), env
+	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (sc_stmt env func stmt1), (sc_stmt env func stmt2))), env
+	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (sc_stmt env func stmt))), env
+	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), sc_stmt env func stmt)), env
 	| Ast.Vdecl(vardecl) -> 
 		let new_env = add_local vardecl.vName vardecl.vType env in 
 		Sast.Vdecl(vardecl), new_env
@@ -274,12 +277,16 @@ let rec stmt_checker env func = function
 			let new_vardecl = new_init.vardecl in
 				let new_env = add_local new_vardecl.vType new_vardecl.vName in 
 		Sast.Vinit(varinit), new_env
-	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (stmt_checker env func stmt1), (stmt_checker env func stmt2))), env
-	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (stmt_checker env func stmt))), env
-	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), stmt_checker env func stmt)), env
+(*	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (sc_stmt env func stmt1), (sc_stmt env func stmt2))), env
+	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (sc_stmt env func stmt))), env
+	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), sc_stmt env func stmt)), env
 	| Ast.Vdecl(vardecl) -> (Sast.Vdecl(vardecl)), env
 	| Ast.Vinit(varinit) -> (Sast.Vinit(check_vinit_type env varinit)), env
+*)
 
+and sc_stmt_list env func = function
+	[] -> []
+| hd::tl -> let st, en = (sc_stmt env func hd) in st::(sc_stmt_list en func tl)
 
 let rec check_vinit_type varinit env =
 	if sc_expr env varinit.vExpr == varinit.vType
@@ -289,10 +296,6 @@ let rec check_vinit_type varinit env =
 	(*if check_expr_type (vinit.expr) == "vinit.vdecl.type"
 		then vinit
 		else raise*)
-
-let rec stmt_list_checker env func = 
-	[] -> []
-  | hd::tl -> let st, en = (stmt_checker env func hd) in st::(stmt_list_checker en func tl)
 
 
 (* let rec sc_local_vars func env =  *)
@@ -315,23 +318,26 @@ let rec sc_expr env expr = function
 	(* id *)
 	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
 	(* note creation *)
-	| Ast.NOTE_CR(s1,s2,s3) -> Sast.NOTE_CR( (isint s1), (sc_expr s2), (sc_expr s3) ), 
+	| Ast.NOTE_CR(s1,s2,s3) -> Sast.NOTE_CR( (sc_expr s1), (sc_expr s2), (sc_expr s3) ), "note"
 	(*
 		need to get the type of each expr/id
 	| Ast.NOTE_CR(i1, i2, i3, i4) -> (Sast.NOTE_CR((get_variable_type i1 env), (get_variable_type i2 env), (get_variable_type i3 env), (get_variable_type i4 env))), "note"
 	*)
 	(* Rest *)
-	| Ast.Rest(s) -> 
+	| Ast.Rest(s) -> Sast.REST_CR(), "rest"
 	(*  chord create *)
 	(*list of notes*)
-	| Ast.CHORD_CR(str_lst) ->
+	| Ast.CHORD_CR(str_lst) -> Sast.CHORD_CR(), "chord"
 	(* track *)
-	| Ast.Track(s) ->
+	| Ast.TRACK_CR(s) -> Sast.TRACK_CR
 	(* binop *)
  	| Ast.Binop(e1, op, e2) ->
  		sc_binop (sc_expr env e1) op (sc_sexpr env e2)
 	(* Assign *)
-	| Ast.Assign(s, exp) -> 
+	(*
+	| Ast.Assign(st, exp) -> let typ = get_variable_type env st in
+		Sast.Assign(st, (get_expr_type env exp typ)), 
+ 	*)
  	(* Call 
  	| Ast.call(func, expr_list) ->
  		let args = get_function func env in
@@ -344,7 +350,9 @@ let rec sc_expr env expr = function
 	*)
  	| Ast.Noexpr -> Sast.Noexpr, "void" (* do we even have void type *)
 
-
+let get_expr_type env expr typ =
+	let e = sc_expr env expr in
+	if not((snd e) = typ) then raise (Failure ("type error")) else (fst e)
 
 
 
@@ -410,7 +418,7 @@ let rec sc_function fn env =
 				let formals = List.map (fun formal -> fst formal ) f in
 				(match f with
 					(* empty, no formals *)
-					[] -> let body, statement_with_locals_env = stmt_list_checker fn fn.body env in
+					[] -> let body, statement_with_locals_env = sc_stmt_list fn fn.body env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
@@ -422,7 +430,7 @@ let rec sc_function fn env =
 							Sast.body = body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev f)) in
-						let body, statement_with_locals_env = stmt_list_checker fn fn.body new_env in
+						let body, statement_with_locals_env = sc_stmt_list fn fn.body new_env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
