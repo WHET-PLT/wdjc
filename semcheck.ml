@@ -329,7 +329,7 @@ let rec sc_expr env expr = function
 	(*list of notes*)
 	| Ast.CHORD_CR(str_lst) -> Sast.CHORD_CR(), "chord"
 	(* track *)
-	| Ast.TRACK_CR(s) -> Sast.TRACK_CR
+	| Ast.TRACK_CR(s) -> Sast.TRACK_CR(), "track"
 	(* binop *)
  	| Ast.Binop(e1, op, e2) ->
  		sc_binop (sc_expr env e1) op (sc_sexpr env e2)
@@ -338,7 +338,7 @@ let rec sc_expr env expr = function
 	| Ast.Assign(st, exp) -> let typ = get_variable_type env st in
 		Sast.Assign(st, (get_expr_type env exp typ)), 
  	*)
- 	(* Call 
+ 	(* Call
  	| Ast.call(func, expr_list) ->
  		let args = get_function func env in
  			(match args with
