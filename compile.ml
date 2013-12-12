@@ -285,22 +285,22 @@ let rec string_of_stmt_t = function
  (*| Loop*)
 
 
-let string_of_fdecl fdecl =
+let string_of_fdecl_t fdecl =
    "public " (match fdecl.rtype with
     Int -> "int "
     | Note -> "Note "
     | Chord -> "CPhrase "
     | Track -> "Part "
     | Rest -> "Rest "
-    | _ -> "void") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_stmt fdecl.body) ^
+    | _ -> "void") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals) ^ ")\n{\n" ^
+  String.concat "" (List.map string_of_stmt_t fdecl.body) ^
   "}\n"
 
 
 (*pretty print for program*)
-let string_of_program (vars, funcs) =
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)  
+let string_of_program_t (vars, funcs) =
+  String.concat "" (List.map string_of_vdecl_t vars) ^ "\n" ^
+  String.concat "\n" (List.map string_of_fdecl_t funcs)  
 
 let finalImports = "\n} \n}"
 
