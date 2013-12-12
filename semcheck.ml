@@ -161,7 +161,7 @@ let add_function fname rtype formals env =
 	if StringMap.mem fname env.functions then StringMap.empty
 	else let fmls = List.map get_type formals in
 	(* weird parenthesis...*)
-	StringMap.add fname (string_of_vartype (return) :: fmls) env.functions
+	StringMap.add fname (string_of_vartype (rtype) :: fmls) env.functions
 	(*Strinmap.add, parse locals, add to env*)
 
 
@@ -258,7 +258,7 @@ let sc_modifier e1 o =
 (* check statement *)
 (* check statement list *)
 (* ARE WE ACTUALLY RETURNING THE ENVIRONMENT HERE *)
-let rec sc_stmt  func env = function
+(* let rec sc_stmt  func env = function
 	  Ast.Block(stmt_list) -> (Sast.Block(sc_stmt_list env func stmt_list)), env
 	  (*need to check expr eval*)
 	| Ast.Expr(expr) -> (Sast.Expr( (sc_expr env expr))), env
@@ -276,7 +276,7 @@ let rec sc_stmt  func env = function
 		let new_init = check_vinit_type varinit in 
 			let new_vardecl = new_init.vardecl in
 				let new_env = add_local new_vardecl.vType new_vardecl.vName in 
-		Sast.Vinit(varinit), new_env
+		Sast.Vinit(varinit), new_env *)
 (*	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (sc_stmt env func stmt1), (sc_stmt env func stmt2))), env
 	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (sc_stmt env func stmt))), env
 	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), sc_stmt env func stmt)), env
@@ -287,43 +287,12 @@ let rec sc_stmt  func env = function
 
 
 
-
-
-
-
-and sc_stmt_list func env = 
-	(* match func.body with
-	[] -> []
-	| _ ->  *) (* ignore type_stmt_list func env func.body; *) build_stmt_list func.body
-	
-
-let rec type_stmt_list func env = function
-		[] -> []
-	| hd::tl -> let st, new_env = (type_stmt func env hd) in st::(type_stmt_list func new_env tl)
-
-
-let rec build_stmt_list stmt_list = 
-	match stmt_list with
-	[] -> []
-	| hd::tl -> let sast_stmt_list = (build_stmt hd) in sast_stmt_list::(build_stmt_list tl) (* returns SAST body which is a SAST stmt list *)
-
-let rec build_stmt = function
-	  Ast.Block(stmt_list) -> Sast.Block( (build_stmt_list stmt_list) )
-	| Ast.Expr(expr) -> Sast.Expr( (build_expr expr) )
-	| Ast.Return(expr) -> Sast.Return( (build_expr expr) )
-	| Ast.If(expr, stmt1, stmt2) -> Sast.If( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
-	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
-	| Ast.While(expr, stmt) -> Sast.While( (build_expr expr), (build_stmt stmt) )
-	| Ast.Vdecl(vardecl) -> Sast.Vdecl( vardecl )
-	| Ast.Vinit(varinit) -> Sast.Vinit( varinit )
-
-let rec build_expr_list expr_list = 
+let build_expr_list expr_list = 
 	match expr_list with
 	[] -> []
 	| hd::tl -> let sast_expr_list = (build_expr hd) in sast_expr_list::(build_expr_list tl)
 
-
-let rec build_expr expr = function
+and build_expr expr = function
 	  Ast.Literal(i) -> Sast.Literal(i)
     | Ast.Id(i) -> Sast.Id(i)
 	| Ast.ACCESSOR(expr, note_attr) -> Sast.ACCESSOR( (build_expr expr), (build_expr note_attr) )
@@ -335,6 +304,35 @@ let rec build_expr expr = function
 	| Ast.Assign(expr1, expr2) -> Sast.Assign( (build_expr expr1), (build_expr expr2) ) 
   	| Ast.Call(str, expr_list) -> Sast.Call( str, (build_expr_list expr_list) )
  	| Ast.Noexpr -> Sast.Noexpr
+
+let rec build_stmt_list stmt_list = 
+	match stmt_list with
+	[] -> []
+	| hd::tl -> let sast_stmt_list = (build_stmt hd) in sast_stmt_list::(build_stmt_list tl) (* returns SAST body which is a SAST stmt list *)
+	
+and build_stmt = function
+	  Ast.Block(stmt_list) -> Sast.Block( (build_stmt_list stmt_list) )
+	| Ast.Expr(expr) -> Sast.Expr( (build_expr expr) )
+	| Ast.Return(expr) -> Sast.Return( (build_expr expr) )
+	| Ast.If(expr, stmt1, stmt2) -> Sast.If( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
+	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
+	| Ast.While(expr, stmt) -> Sast.While( (build_expr expr), (build_stmt stmt) )
+	| Ast.Vdecl(vardecl) -> Sast.Vdecl( vardecl )
+	| Ast.Vinit(decl, expr) -> Sast.Vinit( (build_stmt decl), (build_expr expr) )
+
+let sc_stmt_list func env = 
+	(* match func.body with
+	[] -> []
+	| _ ->  *) (* ignore type_stmt_list func env func.body; *) 
+	build_stmt_list func.body
+	
+
+let rec type_stmt_list func env = function
+		[] -> []
+	| hd::tl -> let st, new_env = (type_stmt func env hd) in st::(type_stmt_list func new_env tl)
+	
+
+
 
 
 
