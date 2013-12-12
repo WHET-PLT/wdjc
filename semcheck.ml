@@ -528,7 +528,7 @@ let rec sc_functions fns env =
 	[] -> []
 	(* otherwise, go through and create a list of function, environment
 	pairs; the last element in the list is the most up-to-date env *)
-	| h::t -> let f, e = (sc_function h env) in (f, e)::(sc_functions t e)
+	| h::t -> let f, e = (sc_function h env) in f::(sc_functions t e)
 
 
 (* TOM - I don't know what this is so I didn't want to change it *)
@@ -595,16 +595,23 @@ let sc_program (globals, functions) =
 			-snd global returns e
 		*)
 
-		let global = List.map (fun glob -> fst glob) g in
+		let globals = List.map (fun global -> fst global) g in
 			match g with
 				(* no globals; thus our environment stays the same *)
-				[] -> (global, (sc_functions (List.rev functions) env))
-				(* 
-				e - most up-to-date environment with all globals
-				*)
+				[] -> (globals, (sc_functions (List.rev functions) env))
 				| _ -> let new_env = snd (List.hd (List.rev g)) in 
-					(global, (sc_functions (List.rev functions) new_env))
+						(*let new_functions = (fst(List.rev (sc_functions (List.rev functions) new_env))) in
+							new_globals,  new_functions*)
+						(globals, (sc_functions (List.rev functions) new_env))
 
 
+(*         let globals = List.map (fun global -> fst global) g in
+        match g with
+        (* no globals *)
+         [] -> (globals, (check_functions env (List.rev funcs)))
+        (* get the envirnment from the last global *)
+        | _ -> let e = snd (List.hd (List.rev g)) in (globals, (check_functions e (List.rev funcs)))
 
+
+ *)
 
