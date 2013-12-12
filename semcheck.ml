@@ -11,6 +11,8 @@
 open Ast
 open Sast
 
+
+
 (*NOTE:
 	map.find: returns the value associated with a key
 	map.mem: checks if value exists for a given key
@@ -30,41 +32,41 @@ type env = {
 
 (* var type -> string *)
 let string_of_vartype = function
-   Int -> "int"
-   | Note -> "note"
-   | Chord -> "chord"
-   | Track -> "track"
+   Ast.Int -> "int"
+   | Ast.Note -> "note"
+   | Ast.Chord -> "chord"
+   | Ast.Track -> "track"
 
 (* ast -> sast type*)
 let ast_to_sast_note_attr = function
-	Ast.Pitch -> Sast.Pitch
-	| Ast.Vol -> Sast.Vol
-	| Ast.Dur -> Sast.Dur
+	Ast.Pitch -> Sast.Pitch_t
+	| Ast.Vol -> Sast.Vol_t
+	| Ast.Dur -> Sast.Dur_t
 	| _ -> raise (Failure ("Mismatch type"))
   
 (* ast -> sast type*)
 let ast_to_sast_op = function
-	  Ast.Add -> Sast.Add
-	| Ast.Sub -> Sast.Sub
-	| Ast.Mult -> Sast.Mult
-	| Ast.Div -> Sast.Div
-	| Ast.Ser -> Sast.Ser
-	| Ast.Par -> Sast.Par
-	| Ast.Arrow -> Sast.Arrow
-	| Ast.Equal -> Sast.Equal
-	| Ast.Neq -> Sast.Neq
-	| Ast.Geq -> Sast.Geq
-	| Ast.Leq -> Sast.Leq
-	| Ast.Greater -> Sast.Greater
-	| Ast.Less -> Sast.Less
+	  Ast.Add -> Sast.Add_t
+	| Ast.Sub -> Sast.Sub_t
+	| Ast.Mult -> Sast.Mult_t
+	| Ast.Div -> Sast.Div_t
+	| Ast.Ser -> Sast.Ser_t
+	| Ast.Par -> Sast.Par_t
+	| Ast.Arrow -> Sast.Arrow_t
+	| Ast.Equal -> Sast.Equal_t
+	| Ast.Neq -> Sast.Neq_t
+	| Ast.Geq -> Sast.Geq_t
+	| Ast.Leq -> Sast.Leq_t
+	| Ast.Greater -> Sast.Greater_t
+	| Ast.Less -> Sast.Less_t
 	| _ -> raise (Failure ("Mismatch type"))
 
 (* ast -> sast type*)
 let ast_to_sast_type = function
-   Ast.Int -> Sast.Int
-   | Ast.Note -> Sast.Note
-   | Ast.Chord -> Sast.Chord
-   | Ast.Track -> Sast.Track
+   Ast.Int -> Sast.Int_t
+   | Ast.Note -> Sast.Note_t
+   | Ast.Chord -> Sast.Chord_t
+   | Ast.Track -> Sast.Track_t
    | _ -> raise (Failure ("Mismatch type"))
    (* 
 let ast_to_sast_vdecl vdecl = 
@@ -77,7 +79,8 @@ ast to sast *)
 
 (*need for locals, formals, and global variabes*)
 let convert_types vardecl = 
-Sast.Vdecl( {vType=(vardecl.vType); vName=vardecl.vName;} )
+(* Sast.Vdecl_t( {vType_t= (ast_to_sast_type vardecl.vType); vName_t=vardecl.vName;} ) *)
+( {vType_t= (ast_to_sast_type vardecl.vType); vName_t=vardecl.vName;} )
 
  (* TYPES - do we need this? *)
 let get_type = function
@@ -220,31 +223,31 @@ chord = note(:note.....);
 let sc_binop e1 o e2 =
 	let expr_t = get_binop_expr_type (snd e1) (snd e2) in
 	(match o with
-	  Ast.Add -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Add, fst e2), "int") else
+	  Ast.Add -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Add_t, fst e2), "int") else
 		  raise (Failure ("type error: add"))
-	| Ast.Sub -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Sub, fst e2), "int") else
+	| Ast.Sub -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Sub_t, fst e2), "int") else
 		  raise (Failure ("type error: sub"))
-	| Ast.Mult -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Mult, fst e2), "int") else
+	| Ast.Mult -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Mult_t, fst e2), "int") else
 		  raise (Failure ("type error: mult"))
-	| Ast.Div -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Div, fst e2), "int") else
+	| Ast.Div -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Div_t, fst e2), "int") else
 		  raise (Failure ("type error: div"))
-	| Ast.Equal -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Equal, fst e2), "int") else
+	| Ast.Equal -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Equal_t, fst e2), "int") else
 		  raise (Failure ("type error: equal"))
-	| Ast.Neq -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Neq, fst e2), "int") else
+	| Ast.Neq -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Neq_t, fst e2), "int") else
 		  raise (Failure ("type error: neq"))
-	| Ast.Geq -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Geq, fst e2), "int") else
+	| Ast.Geq -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Geq_t, fst e2), "int") else
 		  raise (Failure ("type error: geq"))
-	| Ast.Leq -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Leq, fst e2), "int") else
+	| Ast.Leq -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Leq_t, fst e2), "int") else
 		  raise (Failure ("type error: leq"))
-	| Ast.Greater -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Greater, fst e2), "int") else
+	| Ast.Greater -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Greater_t, fst e2), "int") else
 		  raise (Failure ("type error: greater"))
-	| Ast.Less -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Less, fst e2), "int") else
+	| Ast.Less -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Less_t, fst e2), "int") else
 		  raise (Failure ("type error: less"))
-	| Ast.Ser -> if expr_t = "track" then (Sast.Binop(fst e1, Sast.Ser, fst e2), "track") else
+	| Ast.Ser -> if expr_t = "track" then (Sast.Binop_t(fst e1, Sast.Ser_t, fst e2), "track") else
 		  raise (Failure ("type error: ser"))
-	| Ast.Par -> if expr_t = "chord" then (Sast.Binop(fst e1, Sast.Par, fst e2), "chord") else
+	| Ast.Par -> if expr_t = "chord" then (Sast.Binop_t(fst e1, Sast.Par_t, fst e2), "chord") else
 		  raise (Failure ("type error: par"))
-	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop(fst e1, Sast.Arrow, fst e2), "int") else
+	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Arrow_t, fst e2), "int") else
 		  raise (Failure ("type error: arrow"))
 
 	)
@@ -312,17 +315,17 @@ let sc_modifier e1 o =
 
 
 let rec build_expr = function
-	  Ast.Literal(i) -> Sast.Literal(i)
-    | Ast.Id(i) -> Sast.Id(i)
-	| Ast.ACCESSOR(expr, note_attr) -> Sast.ACCESSOR( (build_expr expr), (ast_to_sast_note_attr note_attr) )
-	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
-	| Ast.REST_CR(expr) -> Sast.REST_CR( (build_expr expr) )
-	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR( (build_expr_list expr_list) )
-	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR( (build_expr_list expr_list) )
- 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
-	| Ast.Assign(expr1, expr2) -> Sast.Assign( (build_expr expr1), (build_expr expr2) ) 
-  	| Ast.Call(str, expr_list) -> Sast.Call( str, (build_expr_list expr_list) )
- 	| Ast.Noexpr -> Sast.Noexpr
+	  Ast.Literal(i) -> Sast.Literal_t(i)
+    | Ast.Id(i) -> Sast.Id_t(i)
+	| Ast.ACCESSOR(expr, note_attr) -> Sast.ACCESSOR_t( (build_expr expr), (ast_to_sast_note_attr note_attr) )
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR_t( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
+	| Ast.REST_CR(expr) -> Sast.REST_CR_t( (build_expr expr) )
+	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR_t( (build_expr_list expr_list) )
+	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR_t( (build_expr_list expr_list) )
+ 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
+	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
+  	| Ast.Call(str, expr_list) -> Sast.Call_t( str, (build_expr_list expr_list) )
+ 	| Ast.Noexpr -> Sast.Noexpr_t
 
 and build_expr_list expr_list = 
 	match expr_list with
@@ -330,14 +333,14 @@ and build_expr_list expr_list =
 	| hd::tl -> let sast_expr_list = (build_expr hd) in sast_expr_list::(build_expr_list tl)
 
 let rec build_stmt = function
-	  Ast.Block(stmt_list) -> Sast.Block( (build_stmt_list stmt_list) )
-	| Ast.Expr(expr) -> Sast.Expr( (build_expr expr) )
-	| Ast.Return(expr) -> Sast.Return( (build_expr expr) )
-	| Ast.If(expr, stmt1, stmt2) -> Sast.If( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
-	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
-	| Ast.While(expr, stmt) -> Sast.While( (build_expr expr), (build_stmt stmt) )
-	| Ast.Vdecl( vardecl ) -> Sast.Vdecl( {vType=(ast_to_sast_type vardecl.vType); vName=vardecl.vName;} )
-	| Ast.Vinit(decl, expr) -> Sast.Vinit( {vType=(ast_to_sast_type decl.vType); vName=decl.vName;} , (build_expr expr) )
+	  Ast.Block(stmt_list) -> Sast.Block_t( (build_stmt_list stmt_list) )
+	| Ast.Expr(expr) -> Sast.Expr_t( (build_expr expr) )
+	| Ast.Return(expr) -> Sast.Return_t( (build_expr expr) )
+	| Ast.If(expr, stmt1, stmt2) -> Sast.If_t( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
+	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For_t( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
+	| Ast.While(expr, stmt) -> Sast.While_t( (build_expr expr), (build_stmt stmt) )
+	| Ast.Vdecl( vardecl ) -> Sast.Vdecl_t( {vType_t=(ast_to_sast_type vardecl.vType); vName_t=vardecl.vName;} )
+	| Ast.Vinit(decl, expr) -> Sast.Vinit_t( {vType_t=(ast_to_sast_type decl.vType); vName_t=decl.vName;} , (build_expr expr) )
 
 and build_stmt_list stmt_list = 
 	match stmt_list with
@@ -448,6 +451,7 @@ let sc_formal formal env =
 
 
 (* updates formals from fst context *)
+(* in = function formals + env *)
 let rec sc_formals formals env =
 	match formals with
 	  [] -> []
@@ -498,18 +502,18 @@ let rec sc_function fn env =
 					(* empty, no formals *)
 					[] -> let body = build_stmt_list fn.body in
 						{
-							Sast.rtype = ast_to_sast_type fn.rtype;
-							Sast.fname = fn.fname;
-							Sast.formals = formals_list; (* ie empty *)
-							Sast.body = body
+							Sast.rtype_t = ast_to_sast_type fn.rtype;
+							Sast.fname_t = fn.fname;
+							Sast.formals_t = formals_list; (* ie empty *)
+							Sast.body_t = body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev f)) in
 						let body = build_stmt_list fn.body in
 						{
-							Sast.rtype = ast_to_sast_type fn.rtype;
-							Sast.fname = fn.fname;
-							Sast.formals = formals_list; (* ie empty *)
-							Sast.body = body
+							Sast.rtype_t = ast_to_sast_type fn.rtype;
+							Sast.fname_t = fn.fname;
+							Sast.formals_t = formals_list; (* ie empty *)
+							Sast.body_t = body
 						}, new_env
 				)
 		|_ -> raise (Failure ("The last statement must be a return statement"))
@@ -590,7 +594,7 @@ let sc_program (globals, functions) =
 			-snd global returns e
 		*)
 
-		let global = List.map (fun global -> fst globals) g in
+		let global = List.map (fun glob -> fst glob) g in
 			match g with
 				(* no globals; thus our environment stays the same *)
 				[] -> (global, (sc_functions (List.rev functions) env))
