@@ -207,28 +207,28 @@ let rec string_of_expr_t = function
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) ->
       (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
-      "new Note((double)" ^ string_of_expr_t a^ ", " ^ string_of_expr_t b^ ", " ^ string_of_expr_t c ^ ")"
+      "new Note((double)" ^ a^ ", " ^  b^ ", " ^  c ^ ")"
 
 
   | REST_CR(r) -> "new Rest((double) " ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR(a, b) -> 
       a ^ "." ^ (
       match b with
-        Pitch -> "getFrequency()" | Vol -> "getVolume" |  Dur -> "getDuration()r"
+        Pitch -> "getFrequency()" | Vol -> "getVolume" |  Dur -> "getDuration()"
       )
 
-  | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
+  | Assign(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
 
   | CHORD_CR(note_list) -> 
       (* !!!we are going to have an issue here because chord is actually a cPhrase *)
       (* !!!also going to have an issue with ID naming situation *)
       "ArrayList<Note> noteArrayList = new ArrayList<Note>(); "
       "new CPhrase("
-      List.map (fun a ->  "noteArrayList.add(" ^ a ^ ") ") note_list
+      List.map (fun a ->  "noteArrayList.add(" ^ a ^ ") ") string_of_expr_t note_list
       name_CPhrase ^ ".add(noteArrayList);"  
 
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
-  | Track(t) -> "new Part();" 
+  | Track(t) -> "new Part(\" ^ string_of_expr_t t ^\");" 
 
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
