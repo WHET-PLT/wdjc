@@ -205,95 +205,95 @@ let string_of_program (vars, funcs) =
 let rec string_of_expr_t = function
     Literal_t(l) -> string_of_int l
   | Id_t(s) -> s
-  | NOTE_CR(a, b, c, d) ->
+  | NOTE_CR_t(a, b, c) ->
       (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
-      "new Note((double)" ^ a^ ", " ^  b^ ", " ^  c ^ ")"
+      "new Note((double)" ^ string_of_expr_t a^ ", " ^  string_of_expr_t b^ ", " ^  string_of_expr_t c ^ ")"
 
 
-  | REST_CR(r) -> "new Rest((double) " ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
-  | ACCESSOR(a, b) -> 
-      a ^ "." ^ (
+  | REST_CR_t(r) -> "new Rest((double) " ^ string_of_expr_t r ^ ")" (* should this really be string of literal or something? *)
+  | ACCESSOR_t(a, b) -> 
+      string_of_expr_t a ^ "." ^ (
       match b with
-        Pitch -> "getFrequency()" | Vol -> "getVolume" |  Dur -> "getDuration()"
+        Pitch_t -> "getFrequency()" | Vol_t -> "getVolume()" |  Dur_t -> "getDuration()"
       )
 
-  | Assign(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
+  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
 
-  | CHORD_CR(note_list) -> 
+  | CHORD_CR_t(note_list) -> 
       (* !!!we are going to have an issue here because chord is actually a cPhrase *)
       (* !!!also going to have an issue with ID naming situation *)
-      "ArrayList<Note> noteArrayList = new ArrayList<Note>(); "
-      "new CPhrase("
-      List.map (fun a ->  "noteArrayList.add(" ^ a ^ ") ") string_of_expr_t note_list
-      name_CPhrase ^ ".add(noteArrayList);"  
+      " new CPhrase();\n" ^
+      "ArrayList<Note> noteArrayList = new ArrayList<Note>(); " ^
+      List.map (fun a ->  "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n")  note_list
+      name_CPhrase ^ ".add(noteArrayList);" 
 
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
-  | Track(t) -> "new Part( \"" ^ string_of_expr_t t ^ "\");" 
+  | TRACK_CR_t(t) -> "new Part( \"" ^ string_of_expr_t t ^ "\");" 
 
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
   (* can we write a function to figure out if note or int etc??? *)
-  | Binop(e1, o, e2) ->
+  | Binop_t(e1, o, e2) ->
       string_of_expr_t e1 ^ " " ^
       (match o with
-      Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
-      | Equal -> "==" | Neq -> "!="
-      | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">=") ^ " " ^
+      Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
+      | Equal_t -> "==" | Neq_t -> "!="
+      | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">=") ^ " " ^
       string_of_expr_t e2
 
 
   (* again, not sure about this section * also are we talking about incr decr pitch? by how much? *)
-  | Modifier(e1, modif) ->
+  | Modifier_t(e1, modif) ->
       string_of_expr_t e1 ^
       (match modif with
-      Vib -> " " |
-      Trem -> " " | 
-      Bend -> " " | 
-      Incr -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch()) + 50)"  | 
-      Decr -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch())  -50)")
-  | Call(f, el) ->
+      Vib_t -> " " |
+      Trem_t -> " " | 
+      Bend_t -> " " | 
+      Incr_t -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch()) + 50)"  | 
+      Decr_t -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch())  -50)")
+  | Call_t(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr_t el) ^ ")"
-  | Noexpr -> ""
+  | Noexpr_t -> ""
 (*| Array*) 
 
 let string_of_vdecl_t v = 
-  (match v.vType with
-    Int -> "int "
-    | Note -> "Note "
-    | Chord -> "CPhrase "
-    | Track -> "Part "
-    | Rest -> "Rest ") ^ v.vName 
+  (match v.vType_t with
+    Int_t -> "int "
+    | Note_t -> "Note "
+    | Chord_t -> "CPhrase "
+    | Track_t -> "Part "
+    | Rest _t-> "Rest ") ^ v.vName_t 
 
 (*pretty print for stmts*)
 (*TODO need to do loop*)
 let rec string_of_stmt_t = function
-    Block(stmts) ->
+    Block_t(stmts) ->
       "{\n" ^ String.concat "" (List.map string_of_stmt_t stmts) ^ "}\n"
-  | Expr(expr) -> string_of_expr_t expr ^ ";\n";
-  | Return(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
-  | If(e, s, Block([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
-  | If(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
+  | Expr_t(expr) -> string_of_expr_t expr ^ ";\n";
+  | Return_t(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
+  | If_t(e, s, Block([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
+  | If(_te, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
       string_of_stmt_t s1 ^ "else\n" ^ string_of_stmt_t s2
-  | For(e1, e2, e3, s) ->
+  | For_t(e1, e2, e3, s) ->
       "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
       string_of_expr_t e3  ^ ") " ^ string_of_stmt_t s
-  | While(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
+  | While_t(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
   (* | Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e *)
-  | Vdecl(v) -> string_of_vdecl_t v ^ ";\n"
-  | Vinit(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
+  | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
+  | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
 
  (*| Loop*)
 
 
 let string_of_fdecl_t fdecl =
-   "public " (match fdecl.rtype with
-    Int -> "int "
-    | Note -> "Note "
-    | Chord -> "CPhrase "
-    | Track -> "Part "
-    | Rest -> "Rest "
-    | _ -> "void") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals) ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_stmt_t fdecl.body) ^
+   "public " (match fdecl.rtype_t with
+    Int_t -> "int "
+    | Note_t -> "Note "
+    | Chord_t -> "CPhrase "
+    | Track_t -> "Part "
+    | Rest_t -> "Rest "
+    | _ -> "void") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+  String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^
   "}\n"
 
 
