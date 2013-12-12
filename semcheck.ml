@@ -258,7 +258,7 @@ let sc_modifier e1 o =
 (* check statement *)
 (* check statement list *)
 (* ARE WE ACTUALLY RETURNING THE ENVIRONMENT HERE *)
-let rec sc_stmt env func = function
+let rec sc_stmt  func env = function
 	  Ast.Block(stmt_list) -> (Sast.Block(sc_stmt_list env func stmt_list)), env
 	  (*need to check expr eval*)
 	| Ast.Expr(expr) -> (Sast.Expr( (sc_expr env expr))), env
@@ -284,9 +284,61 @@ let rec sc_stmt env func = function
 	| Ast.Vinit(varinit) -> (Sast.Vinit(check_vinit_type env varinit)), env
 *)
 
-and sc_stmt_list env func = function
+
+
+
+
+
+
+
+and sc_stmt_list func env = 
+	(* match func.body with
 	[] -> []
-| hd::tl -> let st, en = (sc_stmt env func hd) in st::(sc_stmt_list en func tl)
+	| _ ->  *) (* ignore type_stmt_list func env func.body; *) build_stmt_list func.body
+	
+
+let rec type_stmt_list func env = function
+		[] -> []
+	| hd::tl -> let st, new_env = (type_stmt func env hd) in st::(type_stmt_list func new_env tl)
+
+
+let rec build_stmt_list stmt_list = 
+	match stmt_list with
+	[] -> []
+	| hd::tl -> let sast_stmt_list = (build_stmt hd) in sast_stmt_list::(build_stmt_list tl) (* returns SAST body which is a SAST stmt list *)
+
+let rec build_stmt = function
+	  Ast.Block(stmt_list) -> Sast.Block( (build_stmt_list stmt_list) )
+	| Ast.Expr(expr) -> Sast.Expr( (build_expr expr) )
+	| Ast.Return(expr) -> Sast.Return( (build_expr expr) )
+	| Ast.If(expr, stmt1, stmt2) -> Sast.If( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
+	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
+	| Ast.While(expr, stmt) -> Sast.While( (build_expr expr), (build_stmt stmt) )
+	| Ast.Vdecl(vardecl) -> Sast.Vdecl( vardecl )
+	| Ast.Vinit(varinit) -> Sast.Vinit( varinit )
+
+let rec build_expr_list expr_list = 
+	match expr_list with
+	[] -> []
+	| hd::tl -> let sast_expr_list = (build_expr hd) in sast_expr_list::(build_expr_list tl)
+
+
+let rec build_expr expr = function
+	  Ast.Literal(i) -> Sast.Literal(i)
+    | Ast.Id(i) -> Sast.Id(i)
+	| Ast.ACCESSOR(expr, note_attr) -> Sast.ACCESSOR( (build_expr expr), (build_expr note_attr) )
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
+	| Ast.Rest(expr) -> Sast.REST_CR( (build_expr expr) )
+	| Ast.CHORD_CR(expr_lst) -> Sast.CHORD_CR( (build_expr_list expr_list) )
+	| Ast.TRACK_CR(expr) -> Sast.TRACK_CR( (build_expr_list expr_list) )
+ 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop( (build_expr expr1), op, (build_expr expr2) )
+	| Ast.Assign(expr1, expr2) -> Sast.Assign( (build_expr expr1), (build_expr expr2) ) 
+  	| Ast.Call(str, expr_list) -> Sast.Call( str, (build_expr_list expr_list) )
+ 	| Ast.Noexpr -> Sast.Noexpr
+
+
+
+
 
 let rec check_vinit_type varinit env =
 	if sc_expr env varinit.vExpr == varinit.vType
@@ -310,11 +362,11 @@ let sc_func_arg lst expr arg_t =
 (* returns expr + its type 
 meat of this part taken from sast.ml
 *)
-let rec sc_expr env expr = function
+let rec sc_expr expr = function
 	(* literal *)
 	Ast.Literal(i) -> Sast.Literal(i)
 	(* accessor *)
-	| Ast.ACCESSOR(id, note_attr) -> Sast.ACCESSOR( (isnote id env), (sc_expr note_attr) ), "int"
+	| Ast.ACCESSOR(id, note_attr) -> Sast.ACCESSOR( (isnote id env), (sc_expr note_attr) )
 	(* id *)
 	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
 	(* note creation *)
@@ -400,7 +452,7 @@ let rec sc_function fn env =
 			new_fn_sm - new function stringmap
 			 *)
 			let new_func_sm =
-				add_function fn.rtype fn.fname fn.formals fn.locals env in
+				add_function fn.fname fn.rtype fn.formals env in
 				if StringMap.is_empty env_new then raise (Failure ("function " 
 					^ fn.fName ^ " is already defined."))
 				else let env =
@@ -418,27 +470,19 @@ let rec sc_function fn env =
 				let formals = List.map (fun formal -> fst formal ) f in
 				(match f with
 					(* empty, no formals *)
-					[] -> let body, statement_with_locals_env = sc_stmt_list fn fn.body env in
+					[] -> let body = sc_stmt_list fn env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
-							(* Change locals 
-							Sast.locals = List.map  ast_to_sast_type fn.locals;
-							*)
-							Sast.locals = statement_with_locals_env
 							Sast.body = body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev f)) in
-						let body, statement_with_locals_env = sc_stmt_list fn fn.body new_env in
+						let body = sc_stmt_list fn new_env in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
 							Sast.formals = formals; (* ie empty *)
-							(* Change locals 
-							Sast.locals = List.map  ast_to_sast_type fn.locals;
-							*)
-							Sast.locals = statement_with_locals_env
 							Sast.body = body
 						}, new_env
 				)

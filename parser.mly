@@ -118,7 +118,12 @@ assign:
 
 /* --- TRACK -- */
 track_cr:
-  LPAREN expr RPAREN { TRACK_CR( $2 ) }
+    LPAREN RPAREN { CHORD_CR ([]) }
+    | LPAREN track_list RPAREN { TRACK_CR ( List.rev $2 ) }
+
+track_list:
+    expr { [$1] }
+    | track_list SERIAL expr { $3 :: $1 }
 
 /* --- REST --- */
 rest_cr:
@@ -136,12 +141,12 @@ chord_cr:
     | LPAREN chord_list RPAREN { CHORD_CR ( List.rev $2 ) }
 
 chord_list:
-    ID { [$1] }
-    | chord_list PARALLEL ID { $3 :: $1 }
+    expr { [$1] }
+    | chord_list PARALLEL expr { $3 :: $1 }
 
 /* --- ACCESSOR --- */
 accessor:
-  ID ARROW note_attribute { ACCESSOR($1, $3) }
+  expr ARROW note_attribute { ACCESSOR($1, $3) }
 
 /* List of note attributes */
 note_attribute:

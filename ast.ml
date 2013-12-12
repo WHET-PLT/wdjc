@@ -20,9 +20,9 @@ type expr =
   | Id of string
   | NOTE_CR of expr * expr * expr
   | REST_CR of expr
-  | TRACK_CR of expr
-  | CHORD_CR of string list
-  | ACCESSOR of string * note_attribute
+  | TRACK_CR of expr list
+  | CHORD_CR of expr list
+  | ACCESSOR of expr * note_attribute
   | Binop of expr * op * expr
   | Modifier of expr * modif 
   | Assign of expr * expr
@@ -76,15 +76,16 @@ let rec string_of_expr = function
   | NOTE_CR(a, b, c) ->
       "(" ^ string_of_expr a ^ ", " ^ string_of_expr b ^ ", " ^ string_of_expr c ^ ")"
   | REST_CR(r) -> "(" ^ string_of_expr r ^ ")" (* should this really be string of literal or something? *)
-  | TRACK_CR(t) -> "(" ^ string_of_expr t ^ ")" (* should this really be string of literal or something? *)
+  | TRACK_CR(expr_list) -> 
+      "(" ^ String.concat " . " (List.map string_of_expr expr_list) ^ ")"
   | ACCESSOR(a, b) -> 
-      a ^ " -> " ^ (
+      (string_of_expr a) ^ " -> " ^ (
       match b with
         Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
       )
   | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
-  | CHORD_CR(note_list) -> 
-      "(" ^ String.concat " : " note_list ^ ")"
+  | CHORD_CR(expr_list) -> 
+      "(" ^ String.concat " : " (List.map string_of_expr expr_list) ^ ")"
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with
