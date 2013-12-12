@@ -12,5 +12,6 @@ int pitchA;
 /* declaration + initialization */
 pitchB = 900;
 
+return 1;
 
 }

@@ -4,7 +4,7 @@ song int () {
 	int p;
 	p = n -> pitch;
 	p = n -> dur;
-	p = n -> instr;
 	p = n -> vol;
 
+	return 1;
 }

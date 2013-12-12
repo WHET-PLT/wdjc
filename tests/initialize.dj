@@ -3,4 +3,6 @@ song track ( ) {
 
 int pitchA = 60;
 
+return track();
+
 }

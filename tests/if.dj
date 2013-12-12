@@ -32,4 +32,6 @@ song int ()
 	{
 		i = i + 1;
 	}
+	return 1;
+
 }

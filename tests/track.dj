@@ -4,5 +4,6 @@ song int ()
 	chord c;
 	chord d;
 	t = c.d;	
+	return 1;
 
 } 

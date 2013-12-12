@@ -104,9 +104,11 @@ formal_list:
 vdecl:
    dType ID     { { vType = $1;  vName = $2; } }
 
+/*
 vdecl_list:
-    /* nothing */    { [] }
+   */ /* nothing *//*    { [] }
   | vdecl_list vdecl { $2 :: $1 }
+*/
 
 vinit:
     vdecl ASSIGN expr { Vinit($1, $3) }
@@ -118,31 +120,31 @@ assign:
 
 /* --- TRACK -- */
 track_cr:
-    LPAREN RPAREN { CHORD_CR ([]) }
-    | LPAREN track_list RPAREN { TRACK_CR ( List.rev $2 ) }
+    TRACK LPAREN RPAREN { TRACK_CR ([]) }
+    | TRACK LPAREN track_list RPAREN { TRACK_CR ( List.rev $3 ) }
 
 track_list:
     expr { [$1] }
-    | track_list SERIAL expr { $3 :: $1 }
+    | track_list COMMA expr { $3 :: $1 }
 
 /* --- REST --- */
 rest_cr:
-  LPAREN expr RPAREN { REST_CR( $2 ) }
+  REST LPAREN expr RPAREN { REST_CR( $3 ) }
   /* later maybe we want to make this also with an id? */
 
 /*  --- NOTE  --- */
 note_cr:
-  LPAREN expr COMMA expr COMMA expr RPAREN
-    { NOTE_CR($2, $4, $6) }
+  NOTE LPAREN expr COMMA expr COMMA expr RPAREN
+    { NOTE_CR($3, $5, $7) }
 
 /* --- CHORD --- */
 chord_cr:
-    LPAREN RPAREN { CHORD_CR ([]) }
-    | LPAREN chord_list RPAREN { CHORD_CR ( List.rev $2 ) }
+    CHORD LPAREN RPAREN { CHORD_CR ([]) }
+    | CHORD LPAREN chord_list RPAREN { CHORD_CR ( List.rev $3 ) }
 
 chord_list:
     expr { [$1] }
-    | chord_list PARALLEL expr { $3 :: $1 }
+    | chord_list COMMA expr { $3 :: $1 }
 
 /* --- ACCESSOR --- */
 accessor:
