@@ -13,7 +13,6 @@ rule token = parse
 | ','      		{ COMMA }
 | '^'			{ VIB }
 | '~'			{ TREM }
-| '%'			{ BEND }
 | '+'			{ PLUS }
 | "++"			{ INCR }
 | '-'			{ MINUS }
