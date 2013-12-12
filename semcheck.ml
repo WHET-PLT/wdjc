@@ -590,15 +590,15 @@ let sc_program (globals, functions) =
 			-snd global returns e
 		*)
 
-		let globals = List.map (fun global -> fst global) g in
+		let global = List.map (fun global -> fst globals) g in
 			match g with
 				(* no globals; thus our environment stays the same *)
-				[] -> (globals, (sc_functions (List.rev functions) env))
+				[] -> (global, (sc_functions (List.rev functions) env))
 				(* 
 				e - most up-to-date environment with all globals
 				*)
 				| _ -> let new_env = snd (List.hd (List.rev g)) in 
-					(globals, (sc_functions (List.rev functions) new_env))
+					(global, (sc_functions (List.rev functions) new_env))
 
 
 
