@@ -1,4 +1,4 @@
-open sast
+open Sast
 
 (* need ast to java main body string *)
 (* need body string to file ('java') *)
@@ -58,17 +58,17 @@ let rec stmt_string = function *)
 
 
 let imports=
-"import java.util.LinkedList;\n" ^
-"import java.util.List;\n" ^
-"import jm.JMC;\n" ^
-"import jm.music.data.*;\n" ^
-"import jm.utl.*;\n" 
-"public class DJ{\n 
-public static void main(Strings[] args){\n
-Song newSong = new Song();
-newSong.composeSong();// make this in later method. \n} 
-public class Song implements JMC{ \n
-"
+  "import java.util.LinkedList;\n" ^
+  "import java.util.List;\n" ^
+  "import jm.JMC;\n" ^
+  "import jm.music.data.*;\n" ^
+  "import jm.utl.*;\n" ^
+  "public class DJ{\n 
+  public static void main(Strings[] args){\n
+  Song newSong = new Song();
+  newSong.composeSong();// make this in later method. \n} 
+  public class Song implements JMC{ \n
+  "
 
 
 (* New code based on AST Pretty Printing *)
@@ -203,8 +203,8 @@ let string_of_program (vars, funcs) =
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
 let rec string_of_expr_t = function
-    Literal(l) -> string_of_int l
-  | Id(s) -> s
+    Literal_t(l) -> string_of_int l
+  | Id_t(s) -> s
   | NOTE_CR(a, b, c, d) ->
       (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
       "new Note((double)" ^ a^ ", " ^  b^ ", " ^  c ^ ")"
