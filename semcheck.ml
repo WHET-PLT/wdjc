@@ -8,8 +8,9 @@
 	-converts from ast to sast
 
 *)
-open Ast
 open Sast
+open Ast
+
 
 
 
