@@ -37,10 +37,27 @@ let string_of_vartype = function
 
 (* ast -> sast type*)
 let ast_to_sast_note_attr = function
-  Ast.Pitch -> Sast.Pitch
-  | Ast.Vol -> Sast.Vol
-  | Ast.Dur -> Sast.Dur
-  | _ -> raise (Failure ("Mismatch type"))
+	Ast.Pitch -> Sast.Pitch
+	| Ast.Vol -> Sast.Vol
+	| Ast.Dur -> Sast.Dur
+	| _ -> raise (Failure ("Mismatch type"))
+  
+(* ast -> sast type*)
+let ast_to_sast_op = function
+	  Ast.Add -> Sast.Add
+	| Ast.Sub -> Sast.Sub
+	| Ast.Mult -> Sast.Mult
+	| Ast.Div -> Sast.Div
+	| Ast.Ser -> Sast.Ser
+	| Ast.Par -> Sast.Par
+	| Ast.Arrow -> Sast.Arrow
+	| Ast.Equal -> Sast.Equal
+	| Ast.Neq -> Sast.Neq
+	| Ast.Geq -> Sast.Geq
+	| Ast.Leq -> Sast.Leq
+	| Ast.Greater -> Sast.Greater
+	| Ast.Less -> Sast.Less
+	| _ -> raise (Failure ("Mismatch type"))
 
 (* ast -> sast type*)
 let ast_to_sast_type = function
@@ -49,6 +66,11 @@ let ast_to_sast_type = function
    | Ast.Chord -> Sast.Chord
    | Ast.Track -> Sast.Track
    | _ -> raise (Failure ("Mismatch type"))
+   (* 
+let ast_to_sast_vdecl vdecl = 
+	let sast_type = (* ast_to_sast_type *) vdecl.vType in
+		Sast.var_decl_t( {vType=sast_type; vName=vdecl.vName;} )
+ *)
 
 (* we may need a variable total conversion from
 ast to sast *)
@@ -292,23 +314,20 @@ let sc_modifier e1 o =
 
 
 
-let rec build_expr expr = function
+let rec build_expr = function
 	  Ast.Literal(i) -> Sast.Literal(i)
     | Ast.Id(i) -> Sast.Id(i)
-	| Ast.ACCESSOR(expr, note_attr) -> 
-		let expr_s = build_expr expr in 
-			let note_attr_t = ast_to_sast_note_attr note_attr in
-				Sast.ACCESSOR( expr_s, note_attr_t )
+	| Ast.ACCESSOR(expr, note_attr) -> Sast.ACCESSOR( (build_expr expr), (ast_to_sast_note_attr note_attr) )
 	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
 	| Ast.REST_CR(expr) -> Sast.REST_CR( (build_expr expr) )
-	| Ast.CHORD_CR(expr_lst) -> Sast.CHORD_CR( (build_expr_list expr_list) )
-	| Ast.TRACK_CR(expr) -> Sast.TRACK_CR( (build_expr_list expr_list) )
- 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop( (build_expr expr1), op, (build_expr expr2) )
+	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR( (build_expr_list expr_list) )
+	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR( (build_expr_list expr_list) )
+ 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
 	| Ast.Assign(expr1, expr2) -> Sast.Assign( (build_expr expr1), (build_expr expr2) ) 
   	| Ast.Call(str, expr_list) -> Sast.Call( str, (build_expr_list expr_list) )
  	| Ast.Noexpr -> Sast.Noexpr
 
-let rec build_expr_list expr_list = 
+and build_expr_list expr_list = 
 	match expr_list with
 	[] -> []
 	| hd::tl -> let sast_expr_list = (build_expr hd) in sast_expr_list::(build_expr_list tl)
@@ -320,10 +339,10 @@ let rec build_stmt = function
 	| Ast.If(expr, stmt1, stmt2) -> Sast.If( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
 	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
 	| Ast.While(expr, stmt) -> Sast.While( (build_expr expr), (build_stmt stmt) )
-	| Ast.Vdecl(vardecl) -> Sast.Vdecl( vardecl )
-	| Ast.Vinit(decl, expr) -> Sast.Vinit( (build_stmt decl), (build_expr expr) )
+	| Ast.Vdecl( vardecl ) -> Sast.Vdecl( {vType=(ast_to_sast_type vardecl.vType); vName=vardecl.vName;} )
+	| Ast.Vinit(decl, expr) -> Sast.Vinit( {vType=(ast_to_sast_type decl.vType); vName=decl.vName;} , (build_expr expr) )
 
-let rec build_stmt_list stmt_list = 
+and build_stmt_list stmt_list = 
 	match stmt_list with
 	[] -> []
 	| hd::tl -> let sast_stmt_list = (build_stmt hd) in sast_stmt_list::(build_stmt_list tl) (* returns SAST body which is a SAST stmt list *)
