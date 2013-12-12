@@ -486,7 +486,7 @@ let rec sc_function fn env =
 							Sast.body = body
 						}, new_env
 				)
-			|_ -> raise (Failure ("The last statement must be a return statement"))
+		|_ -> raise (Failure ("The last statement must be a return statement"))
 			(*let f = sc_formals fn.formals env i stopped fu nv stuff at ln 196*)
 
 
