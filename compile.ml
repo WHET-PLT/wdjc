@@ -202,12 +202,12 @@ let string_of_program (vars, funcs) =
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
-let rec string_of_expr = function
+let rec string_of_expr_t = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
   | NOTE_CR(a, b, c, d) ->
       (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
-      "new Note((double)" ^a^ ", " ^b^ ", " ^ c ^ ")"
+      "new Note((double)" ^ string_of_expr_t a^ ", " ^ string_of_expr_t b^ ", " ^ string_of_expr_t c ^ ")"
 
 
   | REST_CR(r) -> "new Rest((double) " ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
@@ -228,7 +228,7 @@ let rec string_of_expr = function
       name_CPhrase ^ ".add(noteArrayList);"  
 
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
-  | Track(t) -> "new Part("t", \"pianoTrack\", \"Piano\");" 
+  | Track(t) -> "new Part();" 
 
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
@@ -256,7 +256,7 @@ let rec string_of_expr = function
   | Noexpr -> ""
 (*| Array*) 
 
-let string_of_vdecl v = 
+let string_of_vdecl_t v = 
   (match v.vType with
     Int -> "int "
     | Note -> "Note "
@@ -266,7 +266,7 @@ let string_of_vdecl v =
 
 (*pretty print for stmts*)
 (*TODO need to do loop*)
-let rec string_of_stmt = function
+let rec string_of_stmt_t = function
     Block(stmts) ->
       "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
   | Expr(expr) -> string_of_expr expr ^ ";\n";
