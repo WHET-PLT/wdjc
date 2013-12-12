@@ -48,19 +48,19 @@ let ast_to_sast_type = function
 ast to sast *)
 
 (*need for locals, formals, and global variabes*)
-let convert_types tp = 
+(* let convert_types tp = 
 {
-	Sast.vartype = ast_to_sast_type tp.vartype;
+	Sast.dType_t = ast_to_sast_type tp.vartype;
 	Sast.varname = tp.varname;
-}
+} *)
 
-(* TYPES - do we need this?
+ (* TYPES - do we need this? *)
 let get_type = function
-	var -> string_of_vartype var.vartype
-	*)
+	var -> string_of_vartype var.vType
+	
 
 (* search for variable types by name; return type or exception *)
-let get_variable_type name env = 
+(* let get_variable_type name env = 
 	let typ = get_variable_name name env in
 	if typ = "" then raise (Failure ("wrong type used: " ^ name))
 	else typ
@@ -84,7 +84,7 @@ let istrack name env =
 	let typ = get_variable_type name env in
 	if typ = "track" then name
 	else raise (Failure ("wrong type used: " ^ name))
-		
+	 *)	
 		
 
 (* HELPFUL FUNCTIONS TO GET AND ADD VARIABLES (GLOBAL & LOCAL), FUNCIONS TO ENVIRONMENT *)
@@ -123,9 +123,9 @@ let get_function fname env =
 	Checks to see if the name is in env's local list.
 	If it doesn't contain it, it adds it to the env's local list.
 *)
-let add_local var_type name env =
+(* let add_local var_type name env =
 	if StringMap.mem name env.locals then StringMap.empty
-	else StringMap.add name (string_of_vartype vtype) env.locals
+	else StringMap.add name (string_of_vartype vtype) env.locals *)
 
 (*
 	add_global var_type name env
@@ -136,7 +136,7 @@ let add_local var_type name env =
 	Checks to see if the name is in the env's global list.
 	If it dlesn't contain it, it adds it to the env's global list.
 *)
-let add_global var_type name env =
+(* let add_global var_type name env =
 	(* if name exists in env.globals, return empty stringmap *)
 	if StringMap.mem name env.globals then StringMap.empty
 	(*  else; add to env.globals:
@@ -144,7 +144,7 @@ let add_global var_type name env =
 		value = vartype 
 	*)
 	else StringMap.add name (string_of_vartype vtype) env.globals
-
+ *)
 (*
 	CONFUSED ON THE GET_TYPE 
 	add_function fname return formals env
@@ -158,10 +158,10 @@ let add_global var_type name env =
 		name, vartype of return, formals to environemt's function
 *)
 let add_function fname rtype formals env =
-	if StringMap.mem name env.functions then StringMap.empty
+	if StringMap.mem fname env.functions then StringMap.empty
 	else let fmls = List.map get_type formals in
 	(* weird parenthesis...*)
-	StringMap.add name (string_of_vartype (return) :: fmls) env.functions
+	StringMap.add fname (string_of_vartype (return) :: fmls) env.functions
 	(*Strinmap.add, parse locals, add to env*)
 
 
@@ -451,8 +451,10 @@ let rec sc_function fn env =
 			change name possibly to something more intuitive
 			new_fn_sm - new function stringmap
 			 *)
+			in
 			let new_func_sm =
 				add_function fn.fname fn.rtype fn.formals env in
+				(* WHAT is env_new -- newfuncsm? *)
 				if StringMap.is_empty env_new then raise (Failure ("function " 
 					^ fn.fName ^ " is already defined."))
 				else let env =
@@ -460,12 +462,13 @@ let rec sc_function fn env =
 						locals = env.locals;
 						globals = env.globals;
 						functions = new_func_sm (* new function env *)
-					} in
+					} 
+				
 			(* check formal arguments with sc_formals 
 			formals_env
 				- returns formal list appended w/ new environment as tuples
 			*)
-
+			in
 			let f = sc_formals fn.formals env in
 				let formals = List.map (fun formal -> fst formal ) f in
 				(match f with
@@ -497,7 +500,7 @@ let rec sc_functions fns env =
 	[] -> []
 	(* otherwise, go through and create a list of function, environment
 	pairs; the last element in the list is the most up-to-date env *)
-	| h:t -> let f, e = (sc_function h env) in (f, e)::(sc_functions t e)
+	| h::t -> let f, e = (sc_function h env) in (f, e)::(sc_functions t e)
 
 
 (* TOM - I don't know what this is so I didn't want to change it *)
