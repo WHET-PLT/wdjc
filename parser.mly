@@ -153,7 +153,6 @@ note_attribute:
   PITCH {Pitch}
   | VOL {Vol}
   | DUR {Dur}
-  | INSTR {Instr}
   
 dType: 
    INT {Int}

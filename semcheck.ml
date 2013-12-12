@@ -35,6 +35,12 @@ let string_of_vartype = function
    | Chord -> "chord"
    | Track -> "track"
 
+(* ast -> sast type*)
+let ast_to_sast_note_attr = function
+  Ast.Pitch -> Sast.Pitch
+  | Ast.Vol -> Sast.Vol
+  | Ast.Dur -> Sast.Dur
+  | _ -> raise (Failure ("Mismatch type"))
 
 (* ast -> sast type*)
 let ast_to_sast_type = function
@@ -286,18 +292,15 @@ let sc_modifier e1 o =
 
 
 
-
-let build_expr_list expr_list = 
-	match expr_list with
-	[] -> []
-	| hd::tl -> let sast_expr_list = (build_expr hd) in sast_expr_list::(build_expr_list tl)
-
-and build_expr expr = function
+let rec build_expr expr = function
 	  Ast.Literal(i) -> Sast.Literal(i)
     | Ast.Id(i) -> Sast.Id(i)
-	| Ast.ACCESSOR(expr, note_attr) -> Sast.ACCESSOR( (build_expr expr), (build_expr note_attr) )
+	| Ast.ACCESSOR(expr, note_attr) -> 
+		let expr_s = build_expr expr in 
+			let note_attr_t = ast_to_sast_note_attr note_attr in
+				Sast.ACCESSOR( expr_s, note_attr_t )
 	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
-	| Ast.Rest(expr) -> Sast.REST_CR( (build_expr expr) )
+	| Ast.REST_CR(expr) -> Sast.REST_CR( (build_expr expr) )
 	| Ast.CHORD_CR(expr_lst) -> Sast.CHORD_CR( (build_expr_list expr_list) )
 	| Ast.TRACK_CR(expr) -> Sast.TRACK_CR( (build_expr_list expr_list) )
  	| Ast.Binop(expr1, op, expr2) -> Sast.Binop( (build_expr expr1), op, (build_expr expr2) )
@@ -305,12 +308,12 @@ and build_expr expr = function
   	| Ast.Call(str, expr_list) -> Sast.Call( str, (build_expr_list expr_list) )
  	| Ast.Noexpr -> Sast.Noexpr
 
-let rec build_stmt_list stmt_list = 
-	match stmt_list with
+let rec build_expr_list expr_list = 
+	match expr_list with
 	[] -> []
-	| hd::tl -> let sast_stmt_list = (build_stmt hd) in sast_stmt_list::(build_stmt_list tl) (* returns SAST body which is a SAST stmt list *)
-	
-and build_stmt = function
+	| hd::tl -> let sast_expr_list = (build_expr hd) in sast_expr_list::(build_expr_list tl)
+
+let rec build_stmt = function
 	  Ast.Block(stmt_list) -> Sast.Block( (build_stmt_list stmt_list) )
 	| Ast.Expr(expr) -> Sast.Expr( (build_expr expr) )
 	| Ast.Return(expr) -> Sast.Return( (build_expr expr) )
@@ -319,6 +322,11 @@ and build_stmt = function
 	| Ast.While(expr, stmt) -> Sast.While( (build_expr expr), (build_stmt stmt) )
 	| Ast.Vdecl(vardecl) -> Sast.Vdecl( vardecl )
 	| Ast.Vinit(decl, expr) -> Sast.Vinit( (build_stmt decl), (build_expr expr) )
+
+let rec build_stmt_list stmt_list = 
+	match stmt_list with
+	[] -> []
+	| hd::tl -> let sast_stmt_list = (build_stmt hd) in sast_stmt_list::(build_stmt_list tl) (* returns SAST body which is a SAST stmt list *)
 
 let sc_stmt_list func env = 
 	(* match func.body with

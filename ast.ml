@@ -2,7 +2,7 @@
 type modif = Vib | Trem | Bend | Incr | Decr
 
 (* Not sure if I should make this a string *)
-type note_attribute = Pitch | Vol | Dur | Instr
+type note_attribute = Pitch | Vol | Dur
 
 (*our data types*)
 type dType = Int | Note | Chord | Track | Rest 
@@ -81,7 +81,7 @@ let rec string_of_expr = function
   | ACCESSOR(a, b) -> 
       (string_of_expr a) ^ " -> " ^ (
       match b with
-        Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
+        Pitch -> "pitch" | Vol -> "vol" | Dur -> "dur"
       )
   | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
   | CHORD_CR(expr_list) -> 
