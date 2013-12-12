@@ -76,11 +76,8 @@ let ast_to_sast_vdecl vdecl =
 ast to sast *)
 
 (*need for locals, formals, and global variabes*)
-(* let convert_types tp = 
-{
-	Sast.dType_t = ast_to_sast_type tp.vartype;
-	Sast.varname = tp.varname;
-} *)
+let convert_types vardecl = 
+Sast.Vdecl( {vType=(vardecl.vType); vName=vardecl.vName;} )
 
  (* TYPES - do we need this? *)
 let get_type = function
@@ -151,9 +148,9 @@ let get_function fname env =
 	Checks to see if the name is in env's local list.
 	If it doesn't contain it, it adds it to the env's local list.
 *)
-(* let add_local var_type name env =
+let add_local var_type name env =
 	if StringMap.mem name env.locals then StringMap.empty
-	else StringMap.add name (string_of_vartype vtype) env.locals *)
+	else StringMap.add name (string_of_vartype var_type) env.locals
 
 (*
 	add_global var_type name env
@@ -164,15 +161,15 @@ let get_function fname env =
 	Checks to see if the name is in the env's global list.
 	If it dlesn't contain it, it adds it to the env's global list.
 *)
-(* let add_global var_type name env =
+let add_global var_type name env =
 	(* if name exists in env.globals, return empty stringmap *)
 	if StringMap.mem name env.globals then StringMap.empty
 	(*  else; add to env.globals:
 		key = name
 		value = vartype 
 	*)
-	else StringMap.add name (string_of_vartype vtype) env.globals
- *)
+	else StringMap.add name (string_of_vartype var_type) env.globals
+
 (*
 	CONFUSED ON THE GET_TYPE 
 	add_function fname return formals env
@@ -347,23 +344,23 @@ and build_stmt_list stmt_list =
 	[] -> []
 	| hd::tl -> let sast_stmt_list = (build_stmt hd) in sast_stmt_list::(build_stmt_list tl) (* returns SAST body which is a SAST stmt list *)
 
-let sc_stmt_list func env = 
+(* let sc_stmt_list func env = 
 	(* match func.body with
 	[] -> []
 	| _ ->  *) (* ignore type_stmt_list func env func.body; *) 
-	build_stmt_list func.body
+	build_stmt_list func.body *)
 	
-
+(* 
 let rec type_stmt_list func env = function
 		[] -> []
 	| hd::tl -> let st, new_env = (type_stmt func env hd) in st::(type_stmt_list func new_env tl)
 	
+ *)
 
 
 
 
-
-
+(* 
 
 let rec check_vinit_type varinit env =
 	if sc_expr env varinit.vExpr == varinit.vType
@@ -373,7 +370,7 @@ let rec check_vinit_type varinit env =
 	(*if check_expr_type (vinit.expr) == "vinit.vdecl.type"
 		then vinit
 		else raise*)
-
+ *)
 
 (* let rec sc_local_vars func env =  *)
 
@@ -386,7 +383,7 @@ let sc_func_arg lst expr arg_t =
 
 (* returns expr + its type 
 meat of this part taken from sast.ml
-*)
+*)(* 
 let rec sc_expr expr = function
 	(* literal *)
 	Ast.Literal(i) -> Sast.Literal(i)
@@ -396,10 +393,10 @@ let rec sc_expr expr = function
 	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
 	(* note creation *)
 	| Ast.NOTE_CR(s1,s2,s3) -> Sast.NOTE_CR( (sc_expr s1), (sc_expr s2), (sc_expr s3) ), "note"
-	(*
+	
 		need to get the type of each expr/id
 	| Ast.NOTE_CR(i1, i2, i3, i4) -> (Sast.NOTE_CR((get_variable_type i1 env), (get_variable_type i2 env), (get_variable_type i3 env), (get_variable_type i4 env))), "note"
-	*)
+	
 	(* Rest *)
 	| Ast.Rest(s) -> Sast.REST_CR(), "rest"
 	(*  chord create *)
@@ -411,7 +408,7 @@ let rec sc_expr expr = function
  	| Ast.Binop(e1, op, e2) ->
  		sc_binop (sc_expr env e1) op (sc_sexpr env e2)
 	(* Assign *)
-	(*
+	(* *)
 	| Ast.Assign(st, exp) -> let typ = get_variable_type env st in
 		Sast.Assign(st, (get_expr_type env exp typ)), 
  	*)
@@ -424,22 +421,22 @@ let rec sc_expr expr = function
  					try List.fold_left2 sc_func_arg [] (List.map (sc_expr env) expr_list)
  				with 
  			)
-	*)
+(* 	*)
  	| Ast.Noexpr -> Sast.Noexpr, "void" (* do we even have void type *)
-
-let get_expr_type env expr typ =
+ *)
+(* let get_expr_type env expr typ =
 	let e = sc_expr env expr in
 	if not((snd e) = typ) then raise (Failure ("type error")) else (fst e)
 
-
+ *)
 
 (* FUNCTIONS  - EMILY *)
 (*checks function arguments, then updates env*)
 let sc_formal formal env =
 	(*fstrently, formals are var_decls*)
-	let new_env = add_local formal.vName formal.vType env in
+	let new_env = add_local formal.vType formal.vName env in
 	if StringMap.is_empty new_env then
-		raise (Failure ("formals_checker: variable " ^ formal.varname ^ "is already defined"))
+		raise (Failure ("formals_checker: variable " ^ formal.vName ^ "is already defined"))
 	else let env = 
 		{
 			locals = new_env; 
@@ -454,7 +451,7 @@ let sc_formal formal env =
 let rec sc_formals formals env =
 	match formals with
 	  [] -> []
-	| h::t -> let f, new_e = (sc_formal h env) in (f, e)::(sc_formals t new_e) 
+	| h::t -> let f, new_e = (sc_formal h env) in (f, new_e)::(sc_formals t new_e) 
 
 
 (* sc_function
@@ -480,8 +477,8 @@ let rec sc_function fn env =
 			let new_func_sm =
 				add_function fn.fname fn.rtype fn.formals env in
 				(* WHAT is env_new -- newfuncsm? *)
-				if StringMap.is_empty env_new then raise (Failure ("function " 
-					^ fn.fName ^ " is already defined."))
+				if StringMap.is_empty new_func_sm then raise (Failure ("function " 
+					^ fn.fname ^ " is already defined."))
 				else let env =
 					{
 						locals = env.locals;
@@ -494,23 +491,24 @@ let rec sc_function fn env =
 				- returns formal list appended w/ new environment as tuples
 			*)
 			in
-			let f = sc_formals fn.formals env in
-				let formals = List.map (fun formal -> fst formal ) f in
-				(match f with
+			let f = sc_formals fn.formals env in (* f is tuple (formals, env) *)
+				(* formals = list of formals *)
+				let formals_list = List.map (fun formal -> fst formal ) f in
+				(match formals_list with
 					(* empty, no formals *)
-					[] -> let body = sc_stmt_list fn env in
+					[] -> let body = build_stmt_list fn.body in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
-							Sast.formals = formals; (* ie empty *)
+							Sast.formals = formals_list; (* ie empty *)
 							Sast.body = body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev f)) in
-						let body = sc_stmt_list fn new_env in
+						let body = build_stmt_list fn.body in
 						{
 							Sast.rtype = ast_to_sast_type fn.rtype;
 							Sast.fname = fn.fname;
-							Sast.formals = formals; (* ie empty *)
+							Sast.formals = formals_list; (* ie empty *)
 							Sast.body = body
 						}, new_env
 				)
