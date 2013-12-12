@@ -6,12 +6,13 @@ song int ()
 	chord c;
 	int i = 3;
 
-	r = (5);
-	r = (i);
+	r = rest (5);
+	r = rest (i);
 
-	note n = (a, b, c ,d);
+	note n = note (a, b, c);
 	c = n : r;
 
-	
+	return 1;
+
 
 } 

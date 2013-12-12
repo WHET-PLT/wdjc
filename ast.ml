@@ -2,7 +2,7 @@
 type modif = Vib | Trem | Bend | Incr | Decr
 
 (* Not sure if I should make this a string *)
-type note_attribute = Pitch | Vol | Dur | Instr
+type note_attribute = Pitch | Vol | Dur
 
 (*our data types*)
 type dType = Int | Note | Chord | Track | Rest 
@@ -17,12 +17,12 @@ type op =   Add  | Sub
 (* Expression type *)
 type expr =
     Literal of int
-  | ACCESSOR of string * note_attribute
   | Id of string
-  | NOTE_CR of string * string * string * string
-  | REST_CR of int
-  | CHORD_CR of string list
-  | Track of string
+  | NOTE_CR of expr * expr * expr
+  | REST_CR of expr
+  | TRACK_CR of expr list
+  | CHORD_CR of expr list
+  | ACCESSOR of expr * note_attribute
   | Binop of expr * op * expr
   | Modifier of expr * modif 
   | Assign of expr * expr
@@ -73,18 +73,19 @@ type program = var_decl list * func_decl list
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Id(s) -> s
-  | NOTE_CR(a, b, c, d) ->
-      "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")"
-  | REST_CR(r) -> "(" ^ string_of_int r ^ ")" (* should this really be string of literal or something? *)
+  | NOTE_CR(a, b, c) ->
+      "(" ^ string_of_expr a ^ ", " ^ string_of_expr b ^ ", " ^ string_of_expr c ^ ")"
+  | REST_CR(r) -> "(" ^ string_of_expr r ^ ")" (* should this really be string of literal or something? *)
+  | TRACK_CR(expr_list) -> 
+      "(" ^ String.concat " . " (List.map string_of_expr expr_list) ^ ")"
   | ACCESSOR(a, b) -> 
-      a ^ " -> " ^ (
+      (string_of_expr a) ^ " -> " ^ (
       match b with
-        Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
+        Pitch -> "pitch" | Vol -> "vol" | Dur -> "dur"
       )
   | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
-  | CHORD_CR(note_list) -> 
-      "(" ^ String.concat " : " note_list ^ ")"
-  | Track(t) -> t
+  | CHORD_CR(expr_list) -> 
+      "(" ^ String.concat " : " (List.map string_of_expr expr_list) ^ ")"
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^
       (match o with
@@ -111,6 +112,10 @@ let string_of_vdecl v =
     | Track -> "track "
     | Rest -> "rest ") ^ v.vName
 
+(*
+let string_of_cr_type t =
+    (match )
+*)
 (*pretty print for stmts*)
 (*TODO need to do loop*)
 let rec string_of_stmt = function

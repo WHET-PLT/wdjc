@@ -1,4 +1,4 @@
-song chord( ) {
+song chord ( ) {
 
 /*
 Simple note text.
@@ -7,18 +7,19 @@ Simple note text.
 
 int pitchA;
 int volume;
-int instrument;
 int volume;
 int duration;
 
 
 pitchA = 1;
 volume = 2;
-instrument = 3;
 duration = 4;
 
 
-n = (pitchA, volume, instrument, duration);
-/* n = (1, 2, 3, 4);*/
+n = note (pitchA, volume, duration);
+n = note (1, 2, 3);
+n = note (n1 -> pitch, volume, 4);
+
+return chord(n1, n2);
 	
 }

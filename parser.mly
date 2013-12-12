@@ -104,9 +104,11 @@ formal_list:
 vdecl:
    dType ID     { { vType = $1;  vName = $2; } }
 
+/*
 vdecl_list:
-    /* nothing */    { [] }
+   */ /* nothing *//*    { [] }
   | vdecl_list vdecl { $2 :: $1 }
+*/
 
 vinit:
     vdecl ASSIGN expr { Vinit($1, $3) }
@@ -117,37 +119,42 @@ assign:
 
 
 /* --- TRACK -- */
+track_cr:
+    TRACK LPAREN RPAREN { TRACK_CR ([]) }
+    | TRACK LPAREN track_list RPAREN { TRACK_CR ( List.rev $3 ) }
 
+track_list:
+    expr { [$1] }
+    | track_list COMMA expr { $3 :: $1 }
 
 /* --- REST --- */
 rest_cr:
-  LPAREN LITERAL RPAREN { REST_CR( $2 ) }
+  REST LPAREN expr RPAREN { REST_CR( $3 ) }
   /* later maybe we want to make this also with an id? */
 
 /*  --- NOTE  --- */
 note_cr:
-  LPAREN ID COMMA ID COMMA ID COMMA ID RPAREN
-    { NOTE_CR($2, $4, $6, $8) }
+  NOTE LPAREN expr COMMA expr COMMA expr RPAREN
+    { NOTE_CR($3, $5, $7) }
 
 /* --- CHORD --- */
 chord_cr:
-    LPAREN RPAREN { CHORD_CR ([]) }
-    | LPAREN chord_list RPAREN { CHORD_CR ( List.rev $2 ) }
+    CHORD LPAREN RPAREN { CHORD_CR ([]) }
+    | CHORD LPAREN chord_list RPAREN { CHORD_CR ( List.rev $3 ) }
 
 chord_list:
-    ID { [$1] }
-    | chord_list PARALLEL ID { $3 :: $1 }
+    expr { [$1] }
+    | chord_list COMMA expr { $3 :: $1 }
 
 /* --- ACCESSOR --- */
 accessor:
-  ID ARROW note_attribute { ACCESSOR($1, $3) }
+  expr ARROW note_attribute { ACCESSOR($1, $3) }
 
 /* List of note attributes */
 note_attribute:
   PITCH {Pitch}
   | VOL {Vol}
   | DUR {Dur}
-  | INSTR {Instr}
   
 dType: 
    INT {Int}
@@ -202,6 +209,7 @@ expr:
   | chord_cr         { $1 }
   | note_cr          { $1 }
   | rest_cr          { $1 }
+  | track_cr         { $1 }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }

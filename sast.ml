@@ -1,17 +1,17 @@
 (* SAST *)
-type modif_t = Vib | Trem | Bend | Incr | Decr
+type modif_t = Vib_t | Trem_t | Bend_t | Incr_t | Decr_t
 
 (* Not sure if I should make this a string *)
-type note_attribute_t = Pitch | Vol | Dur | Instr
+type note_attribute_t = Pitch_t | Vol_t | Dur_t
 
-type dType_t = Int | Note | Chord | Track | Rest 
+type dType_t = Int_t | Note_t | Chord_t | Track_t | Rest_t 
 
 (* operation types *)
-type op_t =   Add  | Sub
-          | Mult | Div 
-          | Ser  | Par  
-          | Arrow
-          | Equal | Neq | Geq | Leq | Greater | Less
+type op_t =   Add_t  | Sub_t
+          | Mult_t | Div_t 
+          | Ser_t  | Par_t  
+          | Arrow_t
+          | Equal_t | Neq_t | Geq_t | Leq_t | Greater_t | Less_t
 
 (* Expression type *)
 (* Expression type *)
@@ -31,18 +31,18 @@ type expr_t =
   | Noexpr
 *)
 type expr_t =
-    Literal of int
-  | Id of string
-  | NOTE_CR of expr_t * expr_t * expr_t
-  | REST_CR of expr_t
-  | TRACK_CR of expr_t
-  | CHORD_CR of expr_t list
-  | ACCESSOR of expr_t * note_attribute_t
-  | Binop of expr_t * op_t * expr_t
-  | Modifier of expr_t * modif_t
-  | Assign of expr_t * expr_t
-  | Call of string * expr_t list
-  | Noexpr
+    Literal_t of int
+  | Id_t of string
+  | NOTE_CR_t of expr_t * expr_t * expr_t
+  | REST_CR_t of expr_t
+  | TRACK_CR_t of expr_t list
+  | CHORD_CR_t of expr_t list
+  | ACCESSOR_t of expr_t * note_attribute_t
+  | Binop_t of expr_t * op_t * expr_t
+  | Modifier_t of expr_t * modif_t
+  | Assign_t of expr_t * expr_t
+  | Call_t of string * expr_t list
+  | Noexpr_t
 
 
   (* | Array of expr list *)
@@ -50,33 +50,33 @@ type expr_t =
 
 (*variable declaration*)
 type var_decl_t = {
-  vType : dType_t;
-  vName : string;
+  vType_t : dType_t;
+  vName_t : string;
 }
 
-type var_init = {
-  vDecl : var_decl_t;
-  vExpr : expr_t;
+type var_init_t = {
+  vDecl_t : var_decl_t;
+  vExpr_t : expr_t;
 }
 
 (*need to decide if we are keeping loop or not*)
 type stmt_t =
-    Block of stmt_t list
-  | Expr of expr_t
-  | Return of expr_t
-  | If of expr_t * stmt_t * stmt_t
-  | For of expr_t * expr_t * expr_t * stmt_t
-  | While of expr_t * stmt_t
-  | Vdecl of var_decl_t
-  | Vinit of var_decl_t * expr_t
+    Block_t of stmt_t list
+  | Expr_t of expr_t
+  | Return_t of expr_t
+  | If_t of expr_t * stmt_t * stmt_t
+  | For_t of expr_t * expr_t * expr_t * stmt_t
+  | While_t of expr_t * stmt_t
+  | Vdecl_t of var_decl_t
+  | Vinit_t of var_decl_t * expr_t
 
 
 (* funciton declaration *)
 type func_decl_t = {
-    rtype : dType_t;
-    fname : string;
-    formals : var_decl_t list;
-    body : stmt_t list;
+    rtype_t : dType_t;
+    fname_t : string;
+    formals_t : var_decl_t list;
+    body_t : stmt_t list;
   }
 
 (*ast is a list of variables and list of function dels*)
@@ -84,70 +84,72 @@ type program_t = var_decl_t list * func_decl_t list
 
 
 let rec string_of_expr_t = function
-    Literal(l) -> string_of_int l
-  | Id(s) -> s
-  | NOTE_CR(a, b, c) ->
+    Literal_t(l) -> string_of_int l
+  | Id_t(s) -> s
+  | NOTE_CR_t(a, b, c) ->
       "(" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
-  | REST_CR(r) -> "(" ^ string_of_expr_t r ^ ")" 
-  | TRACK_CR(t) -> "(" ^ string_of_expr_t t ^ ")" 
-  | ACCESSOR(a, b) -> 
+  | REST_CR_t(r) -> "(" ^ string_of_expr_t r ^ ")" 
+  | TRACK_CR_t(track_list) -> 
+  "(" ^ String.concat " : " (List.map string_of_expr_t track_list) ^ ")"
+ 
+  | ACCESSOR_t(a, b) -> 
       (string_of_expr_t a) ^ " -> " ^ (
       match b with
-        Pitch -> "pitch" | Vol -> "vol" | Instr -> "instr" | Dur -> "dur"
+        Pitch_t -> "pitch" | Vol_t -> "vol" | Dur_t -> "dur"
       )
-  | Assign(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
-  | CHORD_CR(note_list) -> 
+  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
+  | CHORD_CR_t(note_list) -> 
       "(" ^ String.concat " : " (List.map string_of_expr_t note_list) ^ ")"
-  | Binop(e1, o, e2) ->
+  | Binop_t(e1, o, e2) ->
       string_of_expr_t e1 ^ " " ^
       (match o with
-      Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
-      | Equal -> "==" | Neq -> "!="
-      | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
-      | Ser -> "." | Par -> ":" | Arrow -> "->") ^ " " ^
+      Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
+      | Equal_t -> "==" | Neq_t -> "!="
+      | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">="
+      | Ser_t -> "." | Par_t -> ":" | Arrow_t -> "->") ^ " " ^
       string_of_expr_t e2
-  | Modifier(e1, modif) ->
+  | Modifier_t(e1, modif) ->
       string_of_expr_t e1 ^
       (match modif with
-      Vib -> "^" | Trem -> "~" | Bend -> "%" | Incr -> "++" | Decr -> "--")
-  | Call(f, el) ->
+      Vib_t -> "^" | Trem_t -> "~" | Bend_t -> "%" | Incr_t -> "++" | Decr_t -> "--")
+  | Call_t(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr_t el) ^ ")"
-  | Noexpr -> ""
+  | Noexpr_t -> ""
 
 
 let string_of_vdecl_t v = 
-  (match v.vType with
-    Int -> "int "
-    | Note -> "note "
-    | Chord -> "chord "
-    | Track -> "track "
-    | Rest -> "rest ") ^ v.vName
+  (match v.vType_t with
+    Int_t -> "int "
+    | Note_t -> "note "
+    | Chord_t -> "chord "
+    | Track_t -> "track "
+    | Rest_t -> "rest ") ^ v.vName_t
 
 
 let rec string_of_stmt_t = function
-    Block(stmts) ->
+    Block_t(stmts) ->
       "{\n" ^ String.concat "" (List.map string_of_stmt_t stmts) ^ "}\n"
-  | Expr(expr) -> string_of_expr_t expr ^ ";\n";
-  | Return(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
-  | If(e, s, Block([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
-  | If(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
+  | Expr_t(expr) -> string_of_expr_t expr ^ ";\n";
+  | Return_t(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
+  | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
+  | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
       string_of_stmt_t s1 ^ "else\n" ^ string_of_stmt_t s2
-  | For(e1, e2, e3, s) ->
+  | For_t(e1, e2, e3, s) ->
       "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
       string_of_expr_t e3  ^ ") " ^ string_of_stmt_t s
-  | While(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
-  | Vdecl(v) -> string_of_vdecl_t v ^ ";\n"
-  | Vinit(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
+  | While_t(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
+  | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
+  | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
 
 
 let string_of_fdecl_t fdecl =
-   (match fdecl.rtype with
-    Int -> "int "
-    | Note -> "note "
-    | Chord -> "chord "
-    | Track -> "track "
-    | Rest -> "rest ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals) ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_stmt_t fdecl.body) ^
+   (match fdecl.rtype_t with
+    Int_t -> "int "
+    | Note_t -> "note "
+    | Chord_t -> "chord "
+    | Track_t -> "track "
+    | Rest_t -> "rest ") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+  String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^
   "}\n"
 
 (*pretty print for program*)

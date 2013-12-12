@@ -6,5 +6,7 @@ Incr and Decr
 
  int i;
  i ++;
+ return 1;
+
  
 }

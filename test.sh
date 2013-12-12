@@ -14,6 +14,6 @@ for file in ./tests/*.dj
 do
 	echo $file
 	echo ------------------------
-	$WDJC -a < $file
+	$WDJC -s < $file
 	echo
 done
