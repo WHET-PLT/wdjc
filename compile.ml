@@ -228,31 +228,31 @@ let rec string_of_expr_t = function
       name_CPhrase ^ ".add(noteArrayList);"  
 
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
-  | Track(t) -> "new Part(\" ^ string_of_expr_t t ^\");" 
+  | Track(t) -> "new Part( \"" ^ string_of_expr_t t ^ "\");" 
 
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
   (* can we write a function to figure out if note or int etc??? *)
   | Binop(e1, o, e2) ->
-      string_of_expr e1 ^ " " ^
+      string_of_expr_t e1 ^ " " ^
       (match o with
       Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
       | Equal -> "==" | Neq -> "!="
       | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">=") ^ " " ^
-      string_of_expr e2
+      string_of_expr_t e2
 
 
   (* again, not sure about this section * also are we talking about incr decr pitch? by how much? *)
   | Modifier(e1, modif) ->
-      string_of_expr e1 ^
+      string_of_expr_t e1 ^
       (match modif with
       Vib -> " " |
       Trem -> " " | 
       Bend -> " " | 
-      Incr -> ".setPitch((" ^ string_of_expr e1 ^".getPitch()) + 50)"  | 
-      Decr -> ".setPitch((" ^ string_of_expr e1 ^".getPitch())  -50)")
+      Incr -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch()) + 50)"  | 
+      Decr -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch())  -50)")
   | Call(f, el) ->
-      f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
+      f ^ "(" ^ String.concat ", " (List.map string_of_expr_t el) ^ ")"
   | Noexpr -> ""
 (*| Array*) 
 
@@ -268,19 +268,19 @@ let string_of_vdecl_t v =
 (*TODO need to do loop*)
 let rec string_of_stmt_t = function
     Block(stmts) ->
-      "{\n" ^ String.concat "" (List.map string_of_stmt stmts) ^ "}\n"
-  | Expr(expr) -> string_of_expr expr ^ ";\n";
-  | Return(expr) -> "return " ^ string_of_expr expr ^ ";\n";
-  | If(e, s, Block([])) -> "if (" ^ string_of_expr e ^ ")\n" ^ string_of_stmt s
-  | If(e, s1, s2) ->  "if (" ^ string_of_expr e ^ ")\n" ^
-      string_of_stmt s1 ^ "else\n" ^ string_of_stmt s2
+      "{\n" ^ String.concat "" (List.map string_of_stmt_t stmts) ^ "}\n"
+  | Expr(expr) -> string_of_expr_t expr ^ ";\n";
+  | Return(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
+  | If(e, s, Block([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
+  | If(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
+      string_of_stmt_t s1 ^ "else\n" ^ string_of_stmt_t s2
   | For(e1, e2, e3, s) ->
-      "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
-      string_of_expr e3  ^ ") " ^ string_of_stmt s
-  | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+      "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
+      string_of_expr_t e3  ^ ") " ^ string_of_stmt_t s
+  | While(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
   (* | Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e *)
-  | Vdecl(v) -> string_of_vdecl v ^ ";\n"
-  | Vinit(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e ^ ";\n"
+  | Vdecl(v) -> string_of_vdecl_t v ^ ";\n"
+  | Vinit(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
 
  (*| Loop*)
 
