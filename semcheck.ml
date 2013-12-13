@@ -162,7 +162,7 @@ let get_function fname env =
 	If it doesn't contain it, it adds it to the env's local list.
 *)
 let add_local var_type name env =
-	if StringMap.mem name env.locals then StringMap.empty
+	if StringMap.mem name env.locals then raise (Failure ("formals_checker: variable " ^ name ^ "is already defined"))
 	else StringMap.add name (string_of_vartype var_type) env.locals
 
 (*
@@ -176,7 +176,7 @@ let add_local var_type name env =
 *)
 let add_global var_type name env =
 	(* if name exists in env.globals, return empty stringmap *)
-	if StringMap.mem name env.globals then StringMap.empty
+	if StringMap.mem name env.globals then raise (Failure ("global variable " ^ name ^ " is already defined."))
 	(*  else; add to env.globals:
 		key = name
 		value = vartype 
@@ -196,7 +196,7 @@ let add_global var_type name env =
 		name, vartype of return, formals to environemt's function
 *)
 let add_function fname rtype formals env =
-	if StringMap.mem fname env.functions then StringMap.empty
+	if StringMap.mem fname env.functions then raise (Failure ("function " ^ fname ^ " is already defined."))
 	else let fmls = List.map get_type formals in
 	(* weird parenthesis...*)
 	StringMap.add fname (string_of_vartype (rtype) :: fmls) env.functions
@@ -448,12 +448,10 @@ let rec sc_expr expr = function
 (*checks function arguments, then updates env*)
 let sc_formal formal env =
 	(*fstrently, formals are var_decls*)
-	let new_env = add_local formal.vType formal.vName env in
-	if StringMap.is_empty new_env then
-		raise (Failure ("formals_checker: variable " ^ formal.vName ^ "is already defined"))
-	else let env = 
+	let new_locals_stringmap = add_local formal.vType formal.vName env in
+		let env = 
 		{
-			locals = new_env; 
+			locals = new_locals_stringmap; 
 			globals = env.globals; 
 			functions = env.functions 
 		} in
@@ -466,7 +464,7 @@ let sc_formal formal env =
 let rec sc_formals formals env =
 	match formals with
 	  [] -> []
-	| h::t -> let f, new_e = (sc_formal h env) in (f, new_e)::(sc_formals t new_e) 
+	| h::t -> let f, new_env = (sc_formal h env) in (f, new_env)::(sc_formals t new_env) 
 
 
 (* sc_function
@@ -476,6 +474,7 @@ let rec sc_formals formals env =
 let rec sc_function fn env = 
 	match List.hd (List.rev fn.body) with
 		(* check there is a return statement at the end of the function *)
+		(* TODO only song needs a return! *)
 		Return(_) -> 
 			(* updating this function's personal envirnment *)
 			let local_env = 
@@ -489,16 +488,12 @@ let rec sc_function fn env =
 			new_fn_sm - new function stringmap
 			 *)
 			in
-			let new_func_sm =
-				add_function fn.fname fn.rtype fn.formals env in
-				(* WHAT is env_new -- newfuncsm? *)
-				if StringMap.is_empty new_func_sm then raise (Failure ("function " 
-					^ fn.fname ^ " is already defined."))
-				else let env =
+			let new_function_stringmap = add_function fn.fname fn.rtype fn.formals env in
+				let env =
 					{
 						locals = env.locals;
 						globals = env.globals;
-						functions = new_func_sm (* new function env *)
+						functions = new_function_stringmap (* new function env *)
 					} 
 				
 			(* check formal arguments with sc_formals 
@@ -506,25 +501,25 @@ let rec sc_function fn env =
 				- returns formal list appended w/ new environment as tuples
 			*)
 			in
-			let f = sc_formals fn.formals env in (* f is tuple (formals, env) *)
+			let function_environment_tuple_list = sc_formals fn.formals env in (* f is tuple (formals, env) *)
 				(* formals = list of formals *)
-				let formals_list = List.map (fun formal -> fst formal ) f in
+				let formals_list = List.map (fun formal -> fst formal ) function_environment_tuple_list in
 				(match formals_list with
 					(* empty, no formals *)
-					[] -> let body = build_stmt_list fn.body in
+					[] -> let sast_body = build_stmt_list fn.body in
 						{
 							Sast.rtype_t = ast_to_sast_type fn.rtype;
 							Sast.fname_t = fn.fname;
 							Sast.formals_t = formals_list; (* ie empty *)
-							Sast.body_t = body
+							Sast.body_t = sast_body
 						}, env
-					|_ -> let new_env = snd (List.hd (List.rev f)) in
-						let body = build_stmt_list fn.body in
+					|_ -> let new_env = snd (List.hd (List.rev function_environment_tuple_list)) in
+						let sast_body = build_stmt_list fn.body in
 						{
 							Sast.rtype_t = ast_to_sast_type fn.rtype;
 							Sast.fname_t = fn.fname;
 							Sast.formals_t = formals_list; (* ie empty *)
-							Sast.body_t = body
+							Sast.body_t = sast_body
 						}, new_env
 				)
 		|_ -> raise (Failure ("The last statement must be a return statement"))
@@ -555,15 +550,11 @@ let rec functions_update env funcs =
 (* sem check global *)
 let sc_global global env = 
 	(* add_global returns updated stringmap *)
-	let new_global_sm = add_global global.vType global.vName env in
-		(* if already exists in the add_global, don't add it; crash program *)
-		if StringMap.is_empty new_global_sm then raise (Failure ("global variable " ^ 
-			global.vName ^ " is already defined."))
-		(* update env with globals from r *)
-		else let env = 
+	let new_global_stringmap = add_global global.vType global.vName env in
+		let env = 
 			{
 				locals = env.locals; 
-				globals = new_global_sm;
+				globals = new_global_stringmap;
 				functions = env.functions
 			} in
 		(* 
