@@ -364,12 +364,41 @@ and build_stmt_list stmt_list =
 	| _ ->  *) (* ignore type_stmt_list func env func.body; *) 
 	build_stmt_list func.body *)
 	
-let rec type_stmt func env stmt =
-	stmt, env
+let rec type_expr typestring env expr =
+	env
 
-let rec type_stmt_list func env = function
+and type_expr_list typestring env = function
 		[] -> []
-	| hd::tl -> let st, new_env = (type_stmt func env hd) in st::(type_stmt_list func new_env tl)
+	| hd::tl -> let new_env = (type_expr hd env) in type_expr_list typestring new_env tl
+	
+
+(* function matches a STATEMENT *)
+let rec type_stmt func env stmt =
+	match stmt with 
+	  Ast.Block(stmt_list) -> type_stmt_list func env stmt_list
+	| Ast.Expr(expr) -> type_expr "junk" env expr
+	| Ast.Return(expr) -> type_expr (string_of_vartype func.rtype) env expr
+	(* reordered! expr comes last (after stmts) becuase its the only one that can change the environment outside the block *)
+	| Ast.If(expr, stmt1, stmt2) -> let fenv1 = type_stmt func env stmt1 in 
+										let fenv2 = type_stmt func env stmt2 in 
+											type_expr "boolean" env expr
+	(* expr1=assign, expr2=boolean, expr3=junk *)
+	| Ast.For(expr1, expr2, expr3, stmt) -> let for_env = type_expr "int" env expr1 in 
+												let fenv1 = type_expr "junk" for_env expr2 in
+													let fenv2 = type_expr "junk" for_env expr3 in
+														let fenv3 = type_stmt func for_env stmt in
+															env
+	(* (type_expr expr1), (type_expr expr2), type_expr "junk" env expr, (type_stmt stmt) *)
+	| Ast.While(expr, stmt) -> let while_env = type_expr "boolean" env expr in 
+									let fenv = type_stmt func while_env stmt in
+										env
+	| Ast.Vdecl(vardecl) -> add_local vardecl.vType vardecl.vName env
+	| Ast.Vinit(vardecl, expr) -> let new_env = add_local vardecl.vType vardecl.vName env in
+									type_expr (string_of_vartype vardecl.vType) new_env expr
+									
+and type_stmt_list func env = function
+		[] -> []
+	| hd::tl -> let new_env = (type_stmt func env hd) in type_stmt_list func new_env tl
 	
 
 
@@ -508,7 +537,7 @@ let rec sc_function fn env =
 				let formals_list = List.map (fun formal -> fst formal ) function_environment_tuple_list in
 				(match formals_list with
 					(* empty, no formals *)
-					[] -> let sast_body = ignore type_stmt_list; build_stmt_list fn.body in
+					[] -> let sast_body = ignore type_stmt_list fn env fn.body; build_stmt_list fn.body in
 						{
 							Sast.rtype_t = ast_to_sast_type fn.rtype;
 							Sast.fname_t = fn.fname;
@@ -516,7 +545,7 @@ let rec sc_function fn env =
 							Sast.body_t = sast_body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev function_environment_tuple_list)) in
-						let sast_body = ignore type_stmt_list; build_stmt_list fn.body in
+						let sast_body = ignore type_stmt_list fn new_env fn.body; build_stmt_list fn.body in
 						{
 							Sast.rtype_t = ast_to_sast_type fn.rtype;
 							Sast.fname_t = fn.fname;
