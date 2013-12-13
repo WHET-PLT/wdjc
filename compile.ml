@@ -202,7 +202,7 @@ let string_of_program (vars, funcs) =
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
-let rec string_of_expr_t = function
+let rec string_of_expr_t ?opt_name = function
     Literal_t(l) -> string_of_int l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
@@ -253,7 +253,6 @@ let rec string_of_expr_t = function
       (match modif with
       Vib_t -> " " |
       Trem_t -> " " | 
-      Bend_t -> " " | 
       Incr_t -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch()) + 50)"  | 
       Decr_t -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch())  -50)")
   | Call_t(f, el) ->
