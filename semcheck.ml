@@ -35,6 +35,7 @@ type env = {
 let string_of_vartype = function
    Ast.Int -> "int"
    | Ast.Note -> "note"
+   | Ast.Rest -> "rest"
    | Ast.Chord -> "chord"
    | Ast.Track -> "track"
 
