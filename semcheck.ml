@@ -364,12 +364,14 @@ and build_stmt_list stmt_list =
 	| _ ->  *) (* ignore type_stmt_list func env func.body; *) 
 	build_stmt_list func.body *)
 	
-(* 
+let rec type_stmt func env stmt =
+	stmt, env
+
 let rec type_stmt_list func env = function
 		[] -> []
 	| hd::tl -> let st, new_env = (type_stmt func env hd) in st::(type_stmt_list func new_env tl)
 	
- *)
+
 
 
 
@@ -506,7 +508,7 @@ let rec sc_function fn env =
 				let formals_list = List.map (fun formal -> fst formal ) function_environment_tuple_list in
 				(match formals_list with
 					(* empty, no formals *)
-					[] -> let sast_body = build_stmt_list fn.body in
+					[] -> let sast_body = ignore type_stmt_list; build_stmt_list fn.body in
 						{
 							Sast.rtype_t = ast_to_sast_type fn.rtype;
 							Sast.fname_t = fn.fname;
@@ -514,7 +516,7 @@ let rec sc_function fn env =
 							Sast.body_t = sast_body
 						}, env
 					|_ -> let new_env = snd (List.hd (List.rev function_environment_tuple_list)) in
-						let sast_body = build_stmt_list fn.body in
+						let sast_body = ignore type_stmt_list; build_stmt_list fn.body in
 						{
 							Sast.rtype_t = ast_to_sast_type fn.rtype;
 							Sast.fname_t = fn.fname;
