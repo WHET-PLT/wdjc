@@ -7,7 +7,7 @@ Simple note text.
 
 int pitchA;
 int volume;
-int volume;
+/* int volume; */
 int duration;
 
 

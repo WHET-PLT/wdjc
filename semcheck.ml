@@ -138,7 +138,7 @@ let istrack name env =
 let get_variable_name vname env = 
 	try StringMap.find vname env.locals
 	with Not_found -> try StringMap.find vname env.globals
-	with Not_found -> raise (Failure ("undeclared variable " ^ vname))
+	with Not_found -> raise (Failure ("Undeclared variable " ^ vname))
 
 
 (* 
@@ -150,7 +150,7 @@ let get_variable_name vname env =
 *)
 let get_function fname env =
 	try StringMap.find fname env.functions
-	with Not_found -> raise (Failure ("undeclared variable " ^ fname))
+	with Not_found -> raise (Failure ("Undeclared function " ^ fname))
 
 
 (*
@@ -162,7 +162,7 @@ let get_function fname env =
 	If it doesn't contain it, it adds it to the env's local list.
 *)
 let add_local var_type name env =
-	if StringMap.mem name env.locals then raise (Failure ("formals_checker: variable " ^ name ^ "is already defined"))
+	if StringMap.mem name env.locals then raise (Failure ("Local variable " ^ name ^ "is already defined"))
 	else StringMap.add name (string_of_vartype var_type) env.locals
 
 (*
@@ -176,7 +176,7 @@ let add_local var_type name env =
 *)
 let add_global var_type name env =
 	(* if name exists in env.globals, return empty stringmap *)
-	if StringMap.mem name env.globals then raise (Failure ("global variable " ^ name ^ " is already defined."))
+	if StringMap.mem name env.globals then raise (Failure ("Global variable " ^ name ^ " is already defined."))
 	(*  else; add to env.globals:
 		key = name
 		value = vartype 
@@ -369,7 +369,7 @@ let rec type_expr typestring env expr =
 
 and type_expr_list typestring env = function
 		[] -> []
-	| hd::tl -> let new_env = (type_expr hd env) in type_expr_list typestring new_env tl
+	| hd::tl -> let new_env = (type_expr typestring env hd) in type_expr_list typestring new_env tl
 	
 
 (* function matches a STATEMENT *)
@@ -392,12 +392,25 @@ let rec type_stmt func env stmt =
 	| Ast.While(expr, stmt) -> let while_env = type_expr "boolean" env expr in 
 									let fenv = type_stmt func while_env stmt in
 										env
-	| Ast.Vdecl(vardecl) -> add_local vardecl.vType vardecl.vName env
-	| Ast.Vinit(vardecl, expr) -> let new_env = add_local vardecl.vType vardecl.vName env in
-									type_expr (string_of_vartype vardecl.vType) new_env expr
-									
+	| Ast.Vdecl(vardecl) -> let new_locals_stringmap = add_local vardecl.vType vardecl.vName env in
+								let new_env = 
+									{
+										locals = new_locals_stringmap; 
+										globals = env.globals; 
+										functions = env.functions 
+									} in
+									new_env
+	| Ast.Vinit(vardecl, expr) -> let new_locals_stringmap = add_local vardecl.vType vardecl.vName env in
+									let new_env = 
+										{
+											locals = new_locals_stringmap; 
+											globals = env.globals; 
+											functions = env.functions 
+										} in
+										type_expr (string_of_vartype vardecl.vType) new_env expr
+										
 and type_stmt_list func env = function
-		[] -> []
+	  [] -> env
 	| hd::tl -> let new_env = (type_stmt func env hd) in type_stmt_list func new_env tl
 	
 
@@ -537,21 +550,23 @@ let rec sc_function fn env =
 				let formals_list = List.map (fun formal -> fst formal ) function_environment_tuple_list in
 				(match formals_list with
 					(* empty, no formals *)
-					[] -> let sast_body = ignore type_stmt_list fn env fn.body; build_stmt_list fn.body in
-						{
-							Sast.rtype_t = ast_to_sast_type fn.rtype;
-							Sast.fname_t = fn.fname;
-							Sast.formals_t = formals_list; (* ie empty *)
-							Sast.body_t = sast_body
-						}, env
+					[] -> let junk = type_stmt_list fn env fn.body in
+							let sast_body = build_stmt_list fn.body in
+								{
+									Sast.rtype_t = ast_to_sast_type fn.rtype;
+									Sast.fname_t = fn.fname;
+									Sast.formals_t = formals_list; (* ie empty *)
+									Sast.body_t = sast_body
+								}, env
 					|_ -> let new_env = snd (List.hd (List.rev function_environment_tuple_list)) in
-						let sast_body = ignore type_stmt_list fn new_env fn.body; build_stmt_list fn.body in
-						{
-							Sast.rtype_t = ast_to_sast_type fn.rtype;
-							Sast.fname_t = fn.fname;
-							Sast.formals_t = formals_list; (* ie empty *)
-							Sast.body_t = sast_body
-						}, new_env
+							let junk = type_stmt_list fn new_env fn.body in
+								let sast_body = build_stmt_list fn.body in
+									{
+										Sast.rtype_t = ast_to_sast_type fn.rtype;
+										Sast.fname_t = fn.fname;
+										Sast.formals_t = formals_list; (* ie empty *)
+										Sast.body_t = sast_body
+									}, new_env
 				)
 		|_ -> raise (Failure ("The last statement must be a return statement"))
 			(*let f = sc_formals fn.formals env i stopped fu nv stuff at ln 196*)
