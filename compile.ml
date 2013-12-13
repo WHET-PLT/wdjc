@@ -202,7 +202,8 @@ let string_of_program (vars, funcs) =
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
-let rec string_of_expr_t ?opt_name = function
+let rec string_of_expr_t ?(opt_name="null") expr = 
+  match expr with
     Literal_t(l) -> string_of_int l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
@@ -217,13 +218,19 @@ let rec string_of_expr_t ?opt_name = function
         Pitch_t -> "getFrequency()" | Vol_t -> "getVolume()" |  Dur_t -> "getDuration()"
       )
 
-  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
+  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t ~opt_name:(string_of_expr_t id) expr (*implementation of optional name param *)
 
   | CHORD_CR_t(note_list) -> 
       (* !!!we are going to have an issue here because chord is actually a cPhrase *)
       (* !!!also going to have an issue with ID naming situation *)
       " new CPhrase();\n" ^
-      "ArrayList<Note> noteArrayList = new ArrayList<Note>(); "
+      "ArrayList<Note> noteArrayList = new ArrayList<Note>();\n" ^
+
+      (* String.concat "\nnoteArrayList.add(" (List.map string_of_expr_t note_list) ^ ");\n" ^ *)
+      String.concat "," (List.map string_of_expr_t note_list) ^ 
+      (* List.map (fun note -> "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n") note_list *)
+      opt_name ^ ".add(noteArrayList);\n"
+
       (*List.map (fun a ->  "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n")  note_list
       name_CPhrase ^ ".add(noteArrayList);" *)
 
