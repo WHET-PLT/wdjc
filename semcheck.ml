@@ -35,6 +35,7 @@ type env = {
 let string_of_vartype = function
    Ast.Int -> "int"
    | Ast.Note -> "note"
+   | Ast.Rest -> "rest"
    | Ast.Chord -> "chord"
    | Ast.Track -> "track"
 
@@ -43,7 +44,7 @@ let ast_to_sast_note_attr = function
 	Ast.Pitch -> Sast.Pitch_t
 	| Ast.Vol -> Sast.Vol_t
 	| Ast.Dur -> Sast.Dur_t
-	| _ -> raise (Failure ("Mismatch type"))
+	| _ -> raise (Failure ("Mismatch Note Attribute Type"))
   
 (* ast -> sast type*)
 let ast_to_sast_op = function
@@ -60,15 +61,23 @@ let ast_to_sast_op = function
 	| Ast.Leq -> Sast.Leq_t
 	| Ast.Greater -> Sast.Greater_t
 	| Ast.Less -> Sast.Less_t
-	| _ -> raise (Failure ("Mismatch type"))
+	| _ -> raise (Failure ("Mismatch Operator Type"))
+	
+let ast_to_sast_mod = function
+	  Ast.Vib -> Sast.Vib_t
+	| Ast.Trem -> Sast.Trem_t
+	| Ast.Incr -> Sast.Incr_t
+	| Ast.Decr -> Sast.Decr_t
+	| _ -> raise (Failure ("Mismatch Modifier Type"))
 
 (* ast -> sast type*)
 let ast_to_sast_type = function
    Ast.Int -> Sast.Int_t
    | Ast.Note -> Sast.Note_t
+   | Ast.Rest -> Sast.Rest_t
    | Ast.Chord -> Sast.Chord_t
    | Ast.Track -> Sast.Track_t
-   | _ -> raise (Failure ("Mismatch type"))
+   | _ -> raise (Failure ("Mismatch Variable Type Type"))
    (* 
 let ast_to_sast_vdecl vdecl = 
 	let sast_type = (* ast_to_sast_type *) vdecl.vType in
@@ -323,7 +332,8 @@ let rec build_expr = function
 	| Ast.REST_CR(expr) -> Sast.REST_CR_t( (build_expr expr) )
 	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR_t( (build_expr_list expr_list) )
 	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR_t( (build_expr_list expr_list) )
- 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
+	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
+	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
 	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
   	| Ast.Call(str, expr_list) -> Sast.Call_t( str, (build_expr_list expr_list) )
  	| Ast.Noexpr -> Sast.Noexpr_t
