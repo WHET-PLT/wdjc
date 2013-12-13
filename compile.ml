@@ -223,12 +223,16 @@ let rec string_of_expr_t = function
       (* !!!we are going to have an issue here because chord is actually a cPhrase *)
       (* !!!also going to have an issue with ID naming situation *)
       " new CPhrase();\n" ^
-      "ArrayList<Note> noteArrayList = new ArrayList<Note>(); " ^
-      List.map (fun a ->  "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n")  note_list
-      name_CPhrase ^ ".add(noteArrayList);" 
+      "ArrayList<Note> noteArrayList = new ArrayList<Note>(); "
+      (*List.map (fun a ->  "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n")  note_list
+      name_CPhrase ^ ".add(noteArrayList);" *)
 
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
-  | TRACK_CR_t(t) -> "new Part( \"" ^ string_of_expr_t t ^ "\");" 
+  | TRACK_CR_t(track_list) ->  
+      (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
+      " new Part();\n" ^
+      "ArrayList<> phraseArrayList = new ArrayList<>();" 
+  (* Create function for this here. figure out if arraylist will work with this..  *)
 
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
@@ -238,7 +242,8 @@ let rec string_of_expr_t = function
       (match o with
       Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
       | Equal_t -> "==" | Neq_t -> "!="
-      | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">=") ^ " " ^
+      | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">=" 
+      | Ser_t -> "" | Par_t -> "" | Arrow_t -> "") ^ " " ^
       string_of_expr_t e2
 
 
@@ -262,7 +267,7 @@ let string_of_vdecl_t v =
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
-    | Rest _t-> "Rest ") ^ v.vName_t 
+    | Rest_t-> "Rest ") ^ v.vName_t 
 
 (*pretty print for stmts*)
 (*TODO need to do loop*)
@@ -271,8 +276,8 @@ let rec string_of_stmt_t = function
       "{\n" ^ String.concat "" (List.map string_of_stmt_t stmts) ^ "}\n"
   | Expr_t(expr) -> string_of_expr_t expr ^ ";\n";
   | Return_t(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
-  | If_t(e, s, Block([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
-  | If(_te, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
+  | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
+  | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
       string_of_stmt_t s1 ^ "else\n" ^ string_of_stmt_t s2
   | For_t(e1, e2, e3, s) ->
       "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
@@ -286,7 +291,7 @@ let rec string_of_stmt_t = function
 
 
 let string_of_fdecl_t fdecl =
-   "public " (match fdecl.rtype_t with
+   "public " ^ (match fdecl.rtype_t with
     Int_t -> "int "
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
