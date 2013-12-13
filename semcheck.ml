@@ -382,16 +382,27 @@ let rec type_expr typestring env expr =
 					     	"expression was of type " ^ id_type ^ ".\n" ^
 					   		"an expression of type " ^ typestring ^ " was expected."))
 					else env
-(* 	| Ast.ACCESSOR(expr, note_attr) -> Sast.ACCESSOR_t( (build_expr expr), (ast_to_sast_note_attr note_attr) )
-	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR_t( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
-	| Ast.REST_CR(expr) -> Sast.REST_CR_t( (build_expr expr) )
-	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR_t( (build_expr_list expr_list) )
-	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR_t( (build_expr_list expr_list) )
+	| Ast.ACCESSOR(expr, note_attr) -> let junk = type_expr "note" env expr in 
+										if typestring != "int"
+				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
+				  						     	"expression was of type int.\n" ^
+				  						   		"an expression of type " ^ typestring ^ " was expected."))
+					  					else env
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> let junk = type_expr "int" env expr1 in 
+											let junk = type_expr "int" env expr2 in 
+												let junk = type_expr "int" env expr3 in 
+													env
+	| Ast.REST_CR(expr) -> let junk = type_expr "int" env expr in
+							env
+	| Ast.CHORD_CR(expr_list) -> let junk = type_expr_list "note" env expr_list in
+									env
+	| Ast.TRACK_CR(expr_list) -> let junk = type_expr_list "chord" env expr_list in
+									env
 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
 	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
 	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
   	| Ast.Call(str, expr_list) -> Sast.Call_t( str, (build_expr_list expr_list) )
- 	| Ast.Noexpr -> Sast.Noexpr_t *)
+ 	| Ast.Noexpr -> Sast.Noexpr_t
 
 and type_expr_list typestring env = function
 		[] -> []
