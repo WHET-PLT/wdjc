@@ -14,7 +14,8 @@ song int ()
 		chord p;
 
 		n2 = note ( a, b, c);
-		p = chord ( n1 : n2 , n3 );
+		p = chord ( n1 , n2 , n3 );
+		/* p = p : n3; */
 
 		return 1;
 
