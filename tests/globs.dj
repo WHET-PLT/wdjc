@@ -1,4 +1,4 @@
-int global = 5;
+int global
 
 song int ( ) {
 
@@ -6,6 +6,7 @@ song int ( ) {
 Simple arithmetic test.
 Can test comments too.
  */
+global = 5;
 print(1+1);
 return global;
 

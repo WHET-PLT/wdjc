@@ -65,6 +65,7 @@ type func_decl = {
     body : stmt list;
   }
 
+
 (*ast is a list of variables and list of function dels*)
 type program = var_decl list * func_decl list
 
