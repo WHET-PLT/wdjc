@@ -138,7 +138,12 @@ let istrack name env =
 let get_variable_name vname env = 
 	try StringMap.find vname env.locals
 	with Not_found -> try StringMap.find vname env.globals
-	with Not_found -> raise (Failure ("Undeclared variable " ^ vname))
+						with Not_found -> raise (Failure ("Undeclared variable " ^ vname))
+
+let get_variable_type vname env = 
+	try StringMap.find vname env.locals
+	with Not_found -> try StringMap.find vname env.globals
+						with Not_found -> raise (Failure ("Untyped variable " ^ vname))
 
 
 (* 
@@ -365,7 +370,28 @@ and build_stmt_list stmt_list =
 	build_stmt_list func.body *)
 	
 let rec type_expr typestring env expr =
-	env
+	match expr with
+	  Ast.Literal(i) -> if typestring != "int"
+  						then raise (Failure ("Mismatch Expression type: \n" ^ 
+  						     	"expression was of type int.\n" ^
+  						   		"an expression of type " ^ typestring ^ " was expected."))
+	  					else env
+    | Ast.Id(i) -> let id_type = get_variable_type i env in
+    				if typestring != id_type
+					then raise (Failure ("Mismatch Expression type: \n" ^ 
+					     	"expression was of type " ^ id_type ^ ".\n" ^
+					   		"an expression of type " ^ typestring ^ " was expected."))
+					else env
+(* 	| Ast.ACCESSOR(expr, note_attr) -> Sast.ACCESSOR_t( (build_expr expr), (ast_to_sast_note_attr note_attr) )
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR_t( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
+	| Ast.REST_CR(expr) -> Sast.REST_CR_t( (build_expr expr) )
+	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR_t( (build_expr_list expr_list) )
+	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR_t( (build_expr_list expr_list) )
+	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
+	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
+	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
+  	| Ast.Call(str, expr_list) -> Sast.Call_t( str, (build_expr_list expr_list) )
+ 	| Ast.Noexpr -> Sast.Noexpr_t *)
 
 and type_expr_list typestring env = function
 		[] -> []
