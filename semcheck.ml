@@ -364,7 +364,31 @@ and build_stmt_list stmt_list =
 	| _ ->  *) (* ignore type_stmt_list func env func.body; *) 
 	build_stmt_list func.body *)
 
-let rec type_binop typestring env expr1 op expr2 =
+let is_id expr = 
+	match expr with
+	  Ast.Id(i) -> []
+	| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+	    		"LHS of assign must be of type ID."))
+	
+let rec match_expr_list_types env types_list expr_list = 
+	match expr_list with
+		  [] -> (match types_list with
+					[] -> []
+					| _ -> raise (Failure ("Mismatch arguments number: function expects more arguments than supplied.")))
+		| hd::tl -> ignore (type_expr (List.hd types_list) env hd); match_expr_list_types env (List.tl types_list) tl
+			
+and type_call typestring env name_str expr_list =
+	let func_types_list = try StringMap.find name_str env.functions
+						  with Not_found -> raise (Failure ("Undefined function: " ^ name_str)) 
+		in
+		let rtype = (List.hd func_types_list) in
+		if rtype != typestring
+		then raise (Failure ("Mismatch Expression type: \n" ^ 
+			     	"function has return type " ^ rtype ^ ".\n" ^
+			   		"an expression of type " ^ typestring ^ " was expected."))
+		else match_expr_list_types env (List.tl func_types_list) expr_list 
+
+and type_binop typestring env expr1 op expr2 =
 	match op with
 	  Ast.Add -> ignore (type_expr "int" env expr1); 
 	  			 ignore (type_expr "int" env expr2);
@@ -467,10 +491,14 @@ and type_expr typestring env expr =
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
 					  					else env
 	| Ast.Modifier(expr, m) -> ignore (type_expr "primitive" env expr); env
-
-	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
-  	| Ast.Call(str, expr_list) -> Sast.Call_t( str, (build_expr_list expr_list) )
- 	| Ast.Noexpr -> Sast.Noexpr_t
+	| Ast.Assign(expr1, expr2) -> ignore (is_id expr1);
+								  ignore (type_expr typestring env expr1);
+								  ignore (type_expr typestring env expr2);
+								  (* TODO update environment with initialized boolean *)
+								  env
+  	| Ast.Call(name_str, expr_list) -> ignore (type_call typestring env name_str expr_list); 
+  										env
+ 	| Ast.Noexpr -> env
 
 and type_expr_list typestring env = function
 		[] -> []
