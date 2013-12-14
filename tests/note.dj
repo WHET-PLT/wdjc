@@ -9,6 +9,9 @@ int pitchA;
 int volume;
 /* int volume; */
 int duration;
+note n;
+note n1;
+note n2;
 
 
 pitchA = 1;

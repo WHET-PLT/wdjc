@@ -6,6 +6,7 @@ song int ( ) {
 
 
 int pitchA;
+int pitchB;
 /* pitchA = 60; */
 
 

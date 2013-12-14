@@ -432,15 +432,15 @@ and type_binop typestring env expr1 op expr2 =
 	
 and type_expr typestring env expr =
 	match expr with
-	  Ast.Literal(i) -> if typestring <> "int" && typestring <> "any"
+	  Ast.Literal(i) -> if typestring <> "int" && typestring <> "any" && typestring <> "primitive"
   						then raise (Failure ("Mismatch Expression type: \n" ^ 
   						     	"expression was of type int.\n" ^
   						   		"an expression of type " ^ typestring ^ " was expected."))
 	  					else env
     | Ast.Id(i) -> let id_type = get_variable_type i env in
-    				if typestring == "primitive"
+    				if typestring = "primitive"
     				then
-	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track"
+	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track" && id_type <> "int"
 						then raise (Failure ("Mismatch Expression type: \n" ^ 
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
@@ -654,21 +654,21 @@ let rec sc_function fn env =
 		(* TODO only song needs a return! *)
 		Return(_) -> 
 			(* updating this function's personal envirnment *)
-			let local_env = 
+			(* let env = 
 				{
 					locals = StringMap.empty;
 					globals = env.globals;
 					functions = env.functions;
 				}
-			(* fill up env_new with functions;
+			fill up env_new with functions;
 			change name possibly to something more intuitive
 			new_fn_sm - new function stringmap
-			 *)
-			in
+			
+			in *)
 			let new_function_stringmap = add_function fn.fname fn.rtype fn.formals env in
 				let env =
 					{
-						locals = env.locals;
+						locals = StringMap.empty;
 						globals = env.globals;
 						functions = new_function_stringmap (* new function env *)
 					} 
@@ -683,7 +683,7 @@ let rec sc_function fn env =
 				let formals_list = List.map (fun formal -> fst formal ) function_environment_tuple_list in
 				(match formals_list with
 					(* empty, no formals *)
-					[] -> let junk = type_stmt_list fn env fn.body in
+					[] -> ignore (type_stmt_list fn env fn.body);
 							let sast_body = build_stmt_list fn.body in
 								{
 									Sast.rtype_t = ast_to_sast_type fn.rtype;
@@ -692,14 +692,14 @@ let rec sc_function fn env =
 									Sast.body_t = sast_body
 								}, env
 					|_ -> let new_env = snd (List.hd (List.rev function_environment_tuple_list)) in
-							let junk = type_stmt_list fn new_env fn.body in
-								let sast_body = build_stmt_list fn.body in
-									{
-										Sast.rtype_t = ast_to_sast_type fn.rtype;
-										Sast.fname_t = fn.fname;
-										Sast.formals_t = formals_list; (* ie empty *)
-										Sast.body_t = sast_body
-									}, new_env
+							ignore (type_stmt_list fn new_env fn.body);
+							let sast_body = build_stmt_list fn.body in
+								{
+									Sast.rtype_t = ast_to_sast_type fn.rtype;
+									Sast.fname_t = fn.fname;
+									Sast.formals_t = formals_list; (* ie empty *)
+									Sast.body_t = sast_body
+								}, new_env
 				)
 		|_ -> raise (Failure ("The last statement must be a return statement"))
 			(*let f = sc_formals fn.formals env i stopped fu nv stuff at ln 196*)

@@ -11,10 +11,14 @@ song int ()
 	{
 		note n1;
 		note n2;
+		note n3;
 		chord p;
+		int a;
+		int b;
+		int c;
 
 		n2 = note ( a, b, c);
-		p = chord ( n1 : n2 , n3 );
+		p = chord ( n1 , n2 , n3 );
 
 		return 1;
 
