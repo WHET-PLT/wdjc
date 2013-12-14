@@ -20,7 +20,7 @@ public class CreateChord implements JMC {
    new CreateChord(notes);
 
    
-   public CreateNotesFromFreq(ArrayList<Notes> jnotes){
+   public CreateChord(ArrayList<Notes> jnotes){
     CPhrase chordPhrase = new CPhrase();
     Part p = new Part();
     for(note: jnotes){
