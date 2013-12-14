@@ -4,7 +4,7 @@
 %token COMMA SEMI ASSIGN
 %token PLUS MINUS TIMES DIVIDE 
 %token SERIAL PARALLEL
-%token VIB TREM BEND ARROW
+%token VIB TREM ARROW
 %token EQ NEQ INCR DECR
 %token LT LEQ GT GEQ
 %token IF ELSE FOR WHILE LOOP RETURN INT
@@ -27,7 +27,7 @@ to do (a = (b = c))*/
 %left SERIAL PARALLEL
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left VIB TREM BEND ARROW
+%left VIB TREM ARROW
 /*incr - incrememnt (++); decr - decrement  (--) */
 /*Ex: (note++)++ */
 %left INCR DECR
@@ -226,7 +226,6 @@ expr:
   | expr DECR        { Modifier($1, Decr) }
   | expr VIB         { Modifier($1, Vib) }
   | expr TREM        { Modifier($1, Trem) }
-  | expr BEND        { Modifier($1, Bend) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
