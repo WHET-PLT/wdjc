@@ -57,7 +57,7 @@ let rec stmt_string = function *)
 (* modifs and note attrs and ops? *)
 
 
-let imports=
+let imports =
   "import java.util.LinkedList;\n" ^
   "import java.util.List;\n" ^
   "import jm.JMC;\n" ^
@@ -312,11 +312,14 @@ let string_of_fdecl_t fdecl =
 
 (*pretty print for program*)
 let string_of_program_t (vars, funcs) =
+  "\n" ^ imports ^ 
   String.concat "" (List.map string_of_vdecl_t vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl_t funcs)  
 
 let finalImports = "\n} \n}"
 
+
+(* look over how were doing the song funcitons... *)
 
 
 
