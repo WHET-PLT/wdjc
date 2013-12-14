@@ -54,7 +54,6 @@ let ast_to_sast_op = function
 	| Ast.Div -> Sast.Div_t
 	| Ast.Ser -> Sast.Ser_t
 	| Ast.Par -> Sast.Par_t
-	| Ast.Arrow -> Sast.Arrow_t
 	| Ast.Equal -> Sast.Equal_t
 	| Ast.Neq -> Sast.Neq_t
 	| Ast.Geq -> Sast.Geq_t
@@ -215,7 +214,7 @@ let add_function fname rtype formals env =
 
 (*checks binop types. so far, we can do an op to two ints. 
   need to decide what types can be binop'd and how*)
-let get_binop_expr_type t1 t2 = 
+(* let get_binop_expr_type t1 t2 = 
 	if t1 = "int" && t2 = "int" then "int" else
 	(*consideration for Ser and Par*)
 	(*if t1 = "note" && t2 = "chord" then "chord" else
@@ -225,7 +224,7 @@ let get_binop_expr_type t1 t2 =
 	if t1 = "chord" && t2 = "chord" then "track" else (*serial*)
 	if t1 = "note" && t2 = "note" then "chord" else (*parallel*)
 	raise (Failure ("illegal operation types"))
-
+ *)
 
 (*Serial: combine chords to make a track. Can combine notes to make chord.
   Parallel: combine chords to make a track.
@@ -235,9 +234,9 @@ Parallel(:)
 chord = note(:note.....);
 
 *)
-let sc_binop e1 o e2 =
+(* let sc_binop e1 o e2 =
 	let expr_t = get_binop_expr_type (snd e1) (snd e2) in
-	(match o with
+	match o with
 	  Ast.Add -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Add_t, fst e2), "int") else
 		  raise (Failure ("type error: add"))
 	| Ast.Sub -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Sub_t, fst e2), "int") else
@@ -262,11 +261,7 @@ let sc_binop e1 o e2 =
 		  raise (Failure ("type error: ser"))
 	| Ast.Par -> if expr_t = "chord" then (Sast.Binop_t(fst e1, Sast.Par_t, fst e2), "chord") else
 		  raise (Failure ("type error: par"))
-	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Arrow_t, fst e2), "int") else
-		  raise (Failure ("type error: arrow"))
-
-	)
-
+ *)
 (*
 (*need to discuss actions of modifiers. do they go through every note in
   a chord? Can they be applied to just a single note?*)
@@ -368,8 +363,50 @@ and build_stmt_list stmt_list =
 	[] -> []
 	| _ ->  *) (* ignore type_stmt_list func env func.body; *) 
 	build_stmt_list func.body *)
+
+let rec type_binop typestring env expr1 op expr2 =
+	match op with
+	  Ast.Add -> ignore (type_expr "int" env expr1); 
+	  			 ignore (type_expr "int" env expr2);
+	  			 "int"
+	| Ast.Sub -> ignore (type_expr "int" env expr1); 
+	  			 ignore (type_expr "int" env expr2);
+	  			 "int"
+	| Ast.Mult -> ignore (type_expr "int" env expr1); 
+	  			  ignore (type_expr "int" env expr2);
+	  			  "int"
+	| Ast.Div -> ignore (type_expr "int" env expr1); 
+	  			 ignore (type_expr "int" env expr2);
+	  			 "int"
+	(* TODO boolean should take note or chord or track too*)
+	| Ast.Equal -> ignore (type_expr "int" env expr1); 
+	  			   ignore (type_expr "int" env expr2);
+	  			   "boolean"
+	| Ast.Neq -> ignore (type_expr "int" env expr1); 
+	  			 ignore (type_expr "int" env expr2);
+	  			 "boolean"
+	| Ast.Geq -> ignore (type_expr "int" env expr1); 
+	  			 ignore (type_expr "int" env expr2);
+	  			 "boolean"
+	| Ast.Leq -> ignore (type_expr "int" env expr1); 
+	  			 ignore (type_expr "int" env expr2);
+	  			 "boolean"
+	| Ast.Greater -> ignore (type_expr "int" env expr1); 
+	  			     ignore (type_expr "int" env expr2);
+	  			     "boolean"
+	| Ast.Less -> ignore (type_expr "int" env expr1); 
+	  			  ignore (type_expr "int" env expr2);
+	  			  "boolean"
+	 (* TODO either has to be chord OR note OR track *)
+	| Ast.Ser -> ignore (type_expr "chord" env expr1); 
+	  			 ignore (type_expr "chord" env expr2);
+	  			 "track"
+	 (* TODO either has to be chord OR note OR track *)
+	| Ast.Par -> ignore (type_expr "note" env expr1); 
+	  			 ignore (type_expr "note" env expr2);
+	  			 "chord"
 	
-let rec type_expr typestring env expr =
+and type_expr typestring env expr =
 	match expr with
 	  Ast.Literal(i) -> if typestring != "int"
   						then raise (Failure ("Mismatch Expression type: \n" ^ 
@@ -377,29 +414,60 @@ let rec type_expr typestring env expr =
   						   		"an expression of type " ^ typestring ^ " was expected."))
 	  					else env
     | Ast.Id(i) -> let id_type = get_variable_type i env in
-    				if typestring != id_type
-					then raise (Failure ("Mismatch Expression type: \n" ^ 
-					     	"expression was of type " ^ id_type ^ ".\n" ^
-					   		"an expression of type " ^ typestring ^ " was expected."))
-					else env
-	| Ast.ACCESSOR(expr, note_attr) -> let junk = type_expr "note" env expr in 
+    				if typestring == "primitive"
+    				then
+	    				if id_type != "note" || id_type != "chord" || id_type != "track"
+						then raise (Failure ("Mismatch Expression type: \n" ^ 
+						     	"expression was of type " ^ id_type ^ ".\n" ^
+						   		"an expression of type " ^ typestring ^ " was expected."))
+						else env
+	    			else
+	    				if typestring != id_type
+						then raise (Failure ("Mismatch Expression type: \n" ^ 
+						     	"expression was of type " ^ id_type ^ ".\n" ^
+						   		"an expression of type " ^ typestring ^ " was expected."))
+						else env
+	| Ast.ACCESSOR(expr, note_attr) -> ignore (type_expr "note" env expr);
 										if typestring != "int"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
 				  						     	"expression was of type int.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
 					  					else env
-	| Ast.NOTE_CR(expr1, expr2, expr3) -> let junk = type_expr "int" env expr1 in 
-											let junk = type_expr "int" env expr2 in 
-												let junk = type_expr "int" env expr3 in 
-													env
-	| Ast.REST_CR(expr) -> let junk = type_expr "int" env expr in
-							env
-	| Ast.CHORD_CR(expr_list) -> let junk = type_expr_list "note" env expr_list in
-									env
-	| Ast.TRACK_CR(expr_list) -> let junk = type_expr_list "chord" env expr_list in
-									env
-	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
-	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring != "primitive" || typestring != "note"
+										  then raise (Failure ("Mismatch Expression type: \n" ^ 
+				  						     	"expression was of type note.\n" ^
+				  						   		"an expression of type " ^ typestring ^ " was expected."))
+										  else ignore (type_expr "int" env expr1);
+											   ignore (type_expr "int" env expr2);
+											   ignore (type_expr "int" env expr3);
+											   env
+	| Ast.REST_CR(expr) -> if typestring != "primitive" || typestring != "rest"
+						   then raise (Failure ("Mismatch Expression type: \n" ^ 
+  						      	"expression was of type rest.\n" ^
+  						   		"an expression of type " ^ typestring ^ " was expected."))
+						   else ignore (type_expr "int" env expr);
+							    env
+	| Ast.CHORD_CR(expr_list) -> if typestring != "primitive" || typestring != "chord"
+								 then raise (Failure ("Mismatch Expression type: \n" ^ 
+		  						    "expression was of type chord.\n" ^
+		  						   	"an expression of type " ^ typestring ^ " was expected."))
+								 else ignore (type_expr_list "note" env expr_list);
+								 	  env
+
+	| Ast.TRACK_CR(expr_list) -> if typestring != "primitive" || typestring != "track"
+								 then raise (Failure ("Mismatch Expression type: \n" ^ 
+		  						    "expression was of type track.\n" ^
+		  						   	"an expression of type " ^ typestring ^ " was expected."))
+								 else ignore (type_expr_list "chord" env expr_list);
+								 	  env
+	| Ast.Binop(expr1, op, expr2) -> let binop_type = type_binop typestring env expr1 op expr2 in
+										if typestring != binop_type
+				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
+			  						            "expression was of type " ^ binop_type ^ ".\n" ^
+				  						   		"an expression of type " ^ typestring ^ " was expected."))
+					  					else env
+	| Ast.Modifier(expr, m) -> ignore (type_expr "primitive" env expr); env
+
 	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
   	| Ast.Call(str, expr_list) -> Sast.Call_t( str, (build_expr_list expr_list) )
  	| Ast.Noexpr -> Sast.Noexpr_t
