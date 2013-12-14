@@ -432,7 +432,7 @@ and type_binop typestring env expr1 op expr2 =
 	
 and type_expr typestring env expr =
 	match expr with
-	  Ast.Literal(i) -> if typestring != "int"
+	  Ast.Literal(i) -> if typestring <> "int" && typestring <> "any"
   						then raise (Failure ("Mismatch Expression type: \n" ^ 
   						     	"expression was of type int.\n" ^
   						   		"an expression of type " ^ typestring ^ " was expected."))
@@ -440,24 +440,24 @@ and type_expr typestring env expr =
     | Ast.Id(i) -> let id_type = get_variable_type i env in
     				if typestring == "primitive"
     				then
-	    				if id_type != "note" || id_type != "chord" || id_type != "track"
+	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track"
 						then raise (Failure ("Mismatch Expression type: \n" ^ 
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
 	    			else
-	    				if typestring != id_type
+	    				if typestring <> id_type && typestring <> "any"
 						then raise (Failure ("Mismatch Expression type: \n" ^ 
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
 	| Ast.ACCESSOR(expr, note_attr) -> ignore (type_expr "note" env expr);
-										if typestring != "int"
+										if typestring <> "int" && typestring <> "any"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
 				  						     	"expression was of type int.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
 					  					else env
-	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring != "primitive" || typestring != "note"
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring <> "primitive" && typestring <> "note" && typestring <> "any"
 										  then raise (Failure ("Mismatch Expression type: \n" ^ 
 				  						     	"expression was of type note.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
@@ -465,27 +465,27 @@ and type_expr typestring env expr =
 											   ignore (type_expr "int" env expr2);
 											   ignore (type_expr "int" env expr3);
 											   env
-	| Ast.REST_CR(expr) -> if typestring != "primitive" || typestring != "rest"
+	| Ast.REST_CR(expr) -> if typestring <> "primitive" && typestring <> "rest" && typestring <> "any"
 						   then raise (Failure ("Mismatch Expression type: \n" ^ 
   						      	"expression was of type rest.\n" ^
   						   		"an expression of type " ^ typestring ^ " was expected."))
 						   else ignore (type_expr "int" env expr);
 							    env
-	| Ast.CHORD_CR(expr_list) -> if typestring != "primitive" || typestring != "chord"
+	| Ast.CHORD_CR(expr_list) -> if typestring <> "primitive" && typestring <> "chord" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type chord.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
 								 else ignore (type_expr_list "note" env expr_list);
 								 	  env
 
-	| Ast.TRACK_CR(expr_list) -> if typestring != "primitive" || typestring != "track"
+	| Ast.TRACK_CR(expr_list) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
 								 else ignore (type_expr_list "chord" env expr_list);
 								 	  env
 	| Ast.Binop(expr1, op, expr2) -> let binop_type = type_binop typestring env expr1 op expr2 in
-										if typestring != binop_type
+										if typestring <> binop_type && typestring <> "any"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
 			  						            "expression was of type " ^ binop_type ^ ".\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
@@ -509,22 +509,22 @@ and type_expr_list typestring env = function
 let rec type_stmt func env stmt =
 	match stmt with 
 	  Ast.Block(stmt_list) -> type_stmt_list func env stmt_list
-	| Ast.Expr(expr) -> type_expr "junk" env expr
+	| Ast.Expr(expr) -> type_expr "any" env expr
 	| Ast.Return(expr) -> type_expr (string_of_vartype func.rtype) env expr
 	(* reordered! expr comes last (after stmts) becuase its the only one that can change the environment outside the block *)
-	| Ast.If(expr, stmt1, stmt2) -> let fenv1 = type_stmt func env stmt1 in 
-										let fenv2 = type_stmt func env stmt2 in 
-											type_expr "boolean" env expr
+	| Ast.If(expr, stmt1, stmt2) -> ignore (type_stmt func env stmt1);
+									ignore (type_stmt func env stmt2);
+									type_expr "boolean" env expr
 	(* expr1=assign, expr2=boolean, expr3=junk *)
 	| Ast.For(expr1, expr2, expr3, stmt) -> let for_env = type_expr "int" env expr1 in 
-												let fenv1 = type_expr "junk" for_env expr2 in
-													let fenv2 = type_expr "junk" for_env expr3 in
-														let fenv3 = type_stmt func for_env stmt in
-															env
+												ignore (type_expr "any" for_env expr2);
+												ignore (type_expr "any" for_env expr3);
+												ignore (type_stmt func for_env stmt);
+												env
 	(* (type_expr expr1), (type_expr expr2), type_expr "junk" env expr, (type_stmt stmt) *)
 	| Ast.While(expr, stmt) -> let while_env = type_expr "boolean" env expr in 
-									let fenv = type_stmt func while_env stmt in
-										env
+								ignore (type_stmt func while_env stmt);
+								env
 	| Ast.Vdecl(vardecl) -> let new_locals_stringmap = add_local vardecl.vType vardecl.vName env in
 								let new_env = 
 									{
