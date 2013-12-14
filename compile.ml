@@ -211,7 +211,7 @@ let rec string_of_expr_t ?(opt_name="null") expr =
       "new Note((double)" ^ string_of_expr_t a^ ", " ^  string_of_expr_t b^ ", " ^  string_of_expr_t c ^ ")"
 
 
-  | REST_CR_t(r) -> "new Rest((double) " ^ string_of_expr_t r ^ ")" (* should this really be string of literal or something? *)
+  | REST_CR_t(r) -> "new Note(( REST, " ^ string_of_expr_t r ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR_t(a, b) -> 
       string_of_expr_t a ^ "." ^ (
       match b with
