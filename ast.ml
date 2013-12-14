@@ -1,5 +1,5 @@
 (* AST *)
-type modif = Vib | Trem | Bend | Incr | Decr
+type modif = Vib | Trem | Incr | Decr
 
 (* Not sure if I should make this a string *)
 type note_attribute = Pitch | Vol | Dur
@@ -98,7 +98,7 @@ let rec string_of_expr = function
   | Modifier(e1, modif) ->
       string_of_expr e1 ^
       (match modif with
-      Vib -> "^" | Trem -> "~" | Bend -> "%" | Incr -> "++" | Decr -> "--")
+      Vib -> "^" | Trem -> "~" | Incr -> "++" | Decr -> "--")
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""

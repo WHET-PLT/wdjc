@@ -1,5 +1,5 @@
 (* SAST *)
-type modif_t = Vib_t | Trem_t | Bend_t | Incr_t | Decr_t
+type modif_t = Vib_t | Trem_t | Incr_t | Decr_t
 
 (* Not sure if I should make this a string *)
 type note_attribute_t = Pitch_t | Vol_t | Dur_t
@@ -111,7 +111,7 @@ let rec string_of_expr_t = function
   | Modifier_t(e1, modif) ->
       string_of_expr_t e1 ^
       (match modif with
-      Vib_t -> "^" | Trem_t -> "~" | Bend_t -> "%" | Incr_t -> "++" | Decr_t -> "--")
+      Vib_t -> "^" | Trem_t -> "~" | Incr_t -> "++" | Decr_t -> "--")
   | Call_t(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr_t el) ^ ")"
   | Noexpr_t -> ""
