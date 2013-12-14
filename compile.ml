@@ -58,11 +58,10 @@ let rec stmt_string = function *)
 
 
 let imports =
-  "import java.util.LinkedList;\n" ^
-  "import java.util.List;\n" ^
+  "import java.util.*;\n" ^
   "import jm.JMC;\n" ^
   "import jm.music.data.*;\n" ^
-  "import jm.utl.*;\n" ^
+  "import jm.util.*;\n" ^
   "public class DJ{\n 
   public static void main(Strings[] args){\n
   Song newSong = new Song();
