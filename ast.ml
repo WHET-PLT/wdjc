@@ -11,7 +11,6 @@ type dType = Int | Note | Chord | Track | Rest
 type op =   Add  | Sub
           | Mult | Div 
           | Ser  | Par  
-          | Arrow
           | Equal | Neq | Geq | Leq | Greater | Less
 
 (* Expression type *)
@@ -93,7 +92,7 @@ let rec string_of_expr = function
 	    Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
       | Equal -> "==" | Neq -> "!="
       | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
-      | Ser -> "." | Par -> ":" | Arrow -> "->") ^ " " ^
+      | Ser -> "." | Par -> ":") ^ " " ^
       string_of_expr e2
   (*again, not sure about this section*)
   | Modifier(e1, modif) ->

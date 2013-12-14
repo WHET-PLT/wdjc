@@ -10,7 +10,6 @@ type dType_t = Int_t | Note_t | Chord_t | Track_t | Rest_t
 type op_t =   Add_t  | Sub_t
           | Mult_t | Div_t 
           | Ser_t  | Par_t  
-          | Arrow_t
           | Equal_t | Neq_t | Geq_t | Leq_t | Greater_t | Less_t
 
 (* Expression type *)
@@ -106,7 +105,7 @@ let rec string_of_expr_t = function
       Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
       | Equal_t -> "==" | Neq_t -> "!="
       | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">="
-      | Ser_t -> "." | Par_t -> ":" | Arrow_t -> "->") ^ " " ^
+      | Ser_t -> "." | Par_t -> ":") ^ " " ^
       string_of_expr_t e2
   | Modifier_t(e1, modif) ->
       string_of_expr_t e1 ^
