@@ -1,0 +1,14 @@
+Song note(){
+	/*simple note test */
+
+	int pitchA; 
+	int volume; 
+	int duration; 
+
+	pitchA = 440; 
+	volume=2; 
+	duration=4; 
+
+	n = note (pitchA, volume, duration); 
+	return n; 
+}
