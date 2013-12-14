@@ -227,7 +227,7 @@ let rec string_of_expr_t ?(opt_name="null") expr =
       "ArrayList<Note> noteArrayList = new ArrayList<Note>();\n" ^
 
       (* String.concat "\nnoteArrayList.add(" (List.map string_of_expr_t note_list) ^ ");\n" ^ *)
-      (* hack??? *)
+      (* hack??? Assumes that there are at least 2 notes here...*)
      "noteArrayList.add("^
       String.concat  ");\nnoteArrayList.add(" (List.map string_of_expr_t note_list) ^ ");\n" ^ 
       (* List.map (fun note -> "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n") note_list *)
