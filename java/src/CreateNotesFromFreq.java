@@ -12,20 +12,18 @@ import jm.util.*;
 public class CreateNotesFromFreq implements JMC {
   
   public static void main(String[] args) {
-  ArrayList<Integer> notes = new ArrayList<Integer>();
-   notes.add(440); 
+  // ArrayList<Integer> notes = new ArrayList<Integer>();
+  //  notes.add(440); 
 
-   new CreateNotesFromFreq(notes);
-    }
-    
-  public CreateNotesFromFreq(ArrayList<Integer> notes){
+   new CreateNotesFromFreq();
+   //  }
+   
+   public CreateNotesFromFreq(){
     Phrase notePhrase = new Phrase();
     Part p = new Part();
-    for(Integer note:notes){
-      //System.out.println(note); 
-        Note n = new Note ((note*1.0), 0.5); 
-        notePhrase.addNote(n); 
-    }
+    Note n = new Note ((440*1.0), 0.5); 
+    notePhrase.addNote(n); 
+    
     p.addPhrase(notePhrase); 
     
     Write.midi(p, "midi/createNotesFreq.mid"); 

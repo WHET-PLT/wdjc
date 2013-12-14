@@ -1,10 +1,15 @@
 { "type": "FeatureCollection", "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } }, "features": [ 
+{ "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Dec 14 15:23:43 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.959917, 40.809305, 0.0 ] } },
+<<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Dec 14 14:46:50 EST 2013; Location Accuracy: 71.372722" }, "geometry": { "type": "Point", "coordinates": [ -73.960184, 40.808950, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Dec 14 14:37:25 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.960470, 40.808941, 0.0 ] } },
 <<<<<<< HEAD
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Sat Dec 14 14:37:06 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.960567, 40.808956, 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "elemonier", "Description": "Fri Dec 13 21:45:29 EST 2013; Location Accuracy: 65.000000" }, "geometry": { "type": "Point", "coordinates": [ -73.963369, 40.806131, 0.0 ] } },
 =======
+=======
+{ "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Sat Dec 14 15:17:59 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
+>>>>>>> 514412b2ad2c45a4fb5a3b6f71539b31505c37d3
 { "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Fri Dec 13 22:37:22 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
 { "type": "Feature", "properties": { "Name": "hilagutfreund", "Description": "Fri Dec 13 22:08:04 EST 2013; Location Accuracy: " }, "geometry": { "type": "Point", "coordinates": [ , , 0.0 ] } },
 <<<<<<< HEAD
