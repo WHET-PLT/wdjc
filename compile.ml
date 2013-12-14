@@ -62,12 +62,13 @@ let imports =
   "import jm.JMC;\n" ^
   "import jm.music.data.*;\n" ^
   "import jm.util.*;\n" ^
-  "public class DJ{\n 
-  public static void main(Strings[] args){\n
+  "public class DJ{\n" 
+  
+  (*"public static void main(Strings[] args){\n
   Song newSong = new Song();
   newSong.composeSong();// make this in later method. \n} 
   public class Song implements JMC{ \n
-  "
+  "*)
 
 
 (* New code based on AST Pretty Printing *)
@@ -239,7 +240,7 @@ let rec string_of_expr_t ?(opt_name="null") expr =
   | TRACK_CR_t(track_list) ->  
       (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
       " new Part();\n" ^
-      "ArrayList<> phraseArrayList = new ArrayList<>();" 
+      "ArrayList<> phraseArrayList = new ArrayList<>();"  (*same as cphrase *)
   (* Create function for this here. figure out if arraylist will work with this..  *)
 
 
@@ -296,18 +297,20 @@ let rec string_of_stmt_t = function
 
  (*| Loop*)
 
-
 let string_of_fdecl_t fdecl =
-   "public " ^ (match fdecl.rtype_t with
+  (* no song function has arguments *)
+  if fdecl.fname_t = "Song" 
+    then "public static void main(Strings[] args){\n" ^
+          String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^ "}\n}\n"
+  else 
+   "private static " ^ (match fdecl.rtype_t with
     Int_t -> "int "
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
     | Rest_t -> "Rest "
     | _ -> "void") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
-  String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^
-  "}\n"
-
+          String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^ "}\n"
 
 (*pretty print for program*)
 let string_of_program_t (vars, funcs) =
