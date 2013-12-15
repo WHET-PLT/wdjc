@@ -18,7 +18,7 @@ public class CreateChord implements JMC {
    notes.add(69.0); 
 
    ArrayList<Integer> notes2 = new ArrayList<Integer>();
-    notes.add(440.0); 
+  notes.add(440.0); 
    notes.add(250.0); 
    notes.add(69.5); 
 
