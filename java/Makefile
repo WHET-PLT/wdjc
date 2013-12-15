@@ -1,5 +1,5 @@
 # the main class name
-MAIN=RowYourBoat
+MAIN=helloWorld
 
 # Location of trees.
 SOURCE_DIR=src
