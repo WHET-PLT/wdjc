@@ -379,13 +379,13 @@ let rec type_stmt func env stmt =
 	match stmt with 
 	  Ast.Block(stmt_list) -> type_stmt_list func env stmt_list
 	| Ast.Expr(expr) -> type_expr "any" env expr
-	| Ast.Return(expr) -> if func.fname = "song" then
+	| Ast.Return(expr) -> if func.fname != "song" 
+							then type_expr (string_of_vartype func.rtype) env expr
+						  else
 							 let rtn_type = string_of_vartype func.rtype in
-							 	if rtn_type != "score" then
-							 	raise (Failure ("Return type of song function must be of type score."))
-							 else type_expr (string_of_vartype func.rtype) env expr
-
-						  else type_expr (string_of_vartype func.rtype) env expr
+							 	if rtn_type != "score" 
+							 	then raise (Failure ("Return type of song function must be of type score."))
+								else type_expr (string_of_vartype func.rtype) env expr
 	(* reordered! expr comes last (after stmts) becuase its the only one that can change the environment outside the block *)
 	| Ast.If(expr, stmt1, stmt2) -> ignore (type_stmt func env stmt1);
 									ignore (type_stmt func env stmt2);
