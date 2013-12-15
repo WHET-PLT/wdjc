@@ -18,7 +18,7 @@ song score ()
 	/* TODO chord should be able to take rests too */
 	d = n : n;
 
-	return 1;
+	return score();
 
 
 } 

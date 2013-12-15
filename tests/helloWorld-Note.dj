@@ -12,5 +12,5 @@ song score ()
 	/*
 	n = note (pitchA, volume, duration); */
 
-	return 1;
+	return score();
 }

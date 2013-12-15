@@ -4,6 +4,6 @@ song score ()
 	chord c;
 	chord d;
 	t = c.d;	
-	return 1;
+	return score();
 
 } 

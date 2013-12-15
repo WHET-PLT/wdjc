@@ -7,5 +7,5 @@ song score ( ) {
     	
   }
 
-  return i;
+  return score();
 }
