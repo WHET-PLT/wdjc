@@ -58,7 +58,8 @@ let rec string_of_expr_t ?(v_name="null") ex =
   | SCORE_CR_t(track_list) ->  
       (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
       " new Part();\n" ^
-      "ArrayList<Part> phraseArrayList = new ArrayList<Part>();\n"  (*same as cphrase *)
+      "ArrayList<Part> phraseArrayList = new ArrayList<Part>();\n" ^  (*same as cphrase *)
+      v_name ^ ".add(phraseArrayList);"
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
   (* can we write a function to figure out if note or int etc??? *)
