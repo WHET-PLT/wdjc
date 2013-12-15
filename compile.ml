@@ -90,21 +90,32 @@ let string_of_vdecl_t v =
     | Track_t -> "Part "
     | Rest_t-> "Rest ") ^ v.vName_t 
 
+
+let rec string_of_stmt_list f_name stmt_list = 
+  match stmt_list with
+  [] -> []
+  | hd::tl -> let string_stmt_list = (string_of_stmt_t f_name hd) in string_stmt_list::(string_of_stmt_list f_name tl) (* returns SAST body which is a SAST stmt list *)
+
+
 (*pretty print for stmts*)
 (*TODO need to do loop*)
-let rec string_of_stmt_t ?(f_name="null") statement = 
+and string_of_stmt_t f_name statement = 
   match statement with
-    Block_t(stmts) ->
-      "{\n" ^ String.concat "" (List.map  string_of_stmt_t ~f_name="stupid" stmts) ^ "}\n"
+    Block_t(stmts) -> 
+      ("{\n" ^ 
+        let stmt_lst = string_of_stmt_list f_name stmts in 
+            String.concat "" stmt_lst ^ "}\n")
   | Expr_t(expr) -> string_of_expr_t expr ^ ";\n";
-  | Return_t(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
-  | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
+  | Return_t(expr) -> 
+      if f_name = "Song" then "Write.midi(" ^ string_of_expr_t expr ^", \"midi/createNotes.mid\");\n" 
+    else "return " ^ string_of_expr_t expr ^ ";\n";
+  | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t f_name s
   | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
-      string_of_stmt_t s1 ^ "else\n" ^ string_of_stmt_t s2
+      string_of_stmt_t f_name s1 ^ "else\n" ^ string_of_stmt_t f_name s2
   | For_t(e1, e2, e3, s) ->
       "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
-      string_of_expr_t e3  ^ ") " ^ string_of_stmt_t s
-  | While_t(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
+      string_of_expr_t e3  ^ ") " ^ string_of_stmt_t f_name s
+  | While_t(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t f_name s
   (* | Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e *)
   | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
   | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
@@ -114,17 +125,21 @@ let rec string_of_stmt_t ?(f_name="null") statement =
 let string_of_fdecl_t fdecl =
   (* no song function has arguments *)
   if fdecl.fname_t = "Song" 
-    then "public static void main(Strings[] args){\n" ^
-          String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^ "}\n}\n"
+    then 
+      let stmt_lst = string_of_stmt_list fdecl.fname_t fdecl.body_t in 
+        "public static void main(Strings[] args){\n" ^
+          String.concat "" stmt_lst  ^ "}\n}\n"
   else 
+    let stmt_lst = string_of_stmt_list fdecl.fname_t fdecl.body_t in
    "private static " ^ (match fdecl.rtype_t with
     Int_t -> "int "
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
     | Rest_t -> "Rest "
-    | _ -> "void") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
-          String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^ "}\n"
+    | _ -> "void") ^ 
+            fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+                 String.concat "" stmt_lst ^ "}\n"
 
 (*pretty print for program*)
 let string_of_program_t (vars, funcs) =
