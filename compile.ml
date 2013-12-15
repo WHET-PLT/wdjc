@@ -1,4 +1,5 @@
 open Sast
+open Printf
 
 let imports =
   "import java.util.*;\n" ^
@@ -163,13 +164,31 @@ let string_of_program_t (vars, funcs) =
   String.concat "" (List.map string_of_vdecl_t vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl_t funcs)  
 
-(* let finalImports = "\n} \n}" *)
+(* WRITE TO THE FILE *)
+
+(* let file = "DJ" in *)
 
 
-(* look over how were doing the song funcitons... *)
+(* let programString = ...  *)
+let rec write_to_file file programString=
+  let oc = open_out (file ^ ".java") in 
+  fprintf oc "%s" programString;
+(*   close_out oc in *)
 
+and string_of_program file str(* (vars funcs)  *)= 
+  (* let globalString = writeGlobalString vars in *)
+  let out = sprintf 
+    "
+    import java.util.*;
+    import jm.JMC;
+    import jm.music.data.*;
+    import jm.util.*; 
 
-
-
-
-
+    public class %s implements JMC {
+      public static void main(String[] args)
+      {
+        %s
+      }
+    }
+      " file "hello" in
+      write_to_file file out
