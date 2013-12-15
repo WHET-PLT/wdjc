@@ -1,5 +1,7 @@
 { open Parser }
 
+let Decimal = '.' ['0'-'9']+
+
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
 | "/*"     		{ comment lexbuf }      (* Comments *)
@@ -41,7 +43,7 @@ rule token = parse
 (*CHANGED from pit to pitch, because it sounds exponentially beter *)
 | "pitch"		{ PITCH }
 | "instr"		{ INSTR }
-| "int"			{ INT }
+| "double"			{ DOUBLE }
 | "note"		{ NOTE }
 | "rest"		{ REST }
 | "track"		{ TRACK }
@@ -49,8 +51,9 @@ rule token = parse
 (*
 | "array"		{ ARRAY } 
 *)
-(*Note in microc literals are really only integers *)
-| ['0'-'9']+ as lxm { LITERAL(int_of_string lxm) }
+(*Note in dj literals are really only doubles *)
+| '-'? Decimal as lxm { LITERAL(lxm) }
+| '-'? ['0'-'9']+ Decimal? as lxm { LITERAL(lxm) }
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
 | eof { EOF }
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }

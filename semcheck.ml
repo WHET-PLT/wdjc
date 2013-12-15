@@ -33,7 +33,7 @@ type env = {
 
 (* var type -> string *)
 let string_of_vartype = function
-   Ast.Int -> "int"
+   Ast.Double -> "double"
    | Ast.Note -> "note"
    | Ast.Rest -> "rest"
    | Ast.Chord -> "chord"
@@ -71,7 +71,7 @@ let ast_to_sast_mod = function
 
 (* ast -> sast type*)
 let ast_to_sast_type = function
-   Ast.Int -> Sast.Int_t
+   Ast.Double -> Sast.Double_t
    | Ast.Note -> Sast.Note_t
    | Ast.Rest -> Sast.Rest_t
    | Ast.Chord -> Sast.Chord_t
@@ -390,36 +390,36 @@ and type_call typestring env name_str expr_list =
 
 and type_binop typestring env expr1 op expr2 =
 	match op with
-	  Ast.Add -> ignore (type_expr "int" env expr1); 
-	  			 ignore (type_expr "int" env expr2);
-	  			 "int"
-	| Ast.Sub -> ignore (type_expr "int" env expr1); 
-	  			 ignore (type_expr "int" env expr2);
-	  			 "int"
-	| Ast.Mult -> ignore (type_expr "int" env expr1); 
-	  			  ignore (type_expr "int" env expr2);
-	  			  "int"
-	| Ast.Div -> ignore (type_expr "int" env expr1); 
-	  			 ignore (type_expr "int" env expr2);
-	  			 "int"
+	  Ast.Add -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "double"
+	| Ast.Sub -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "double"
+	| Ast.Mult -> ignore (type_expr "double" env expr1); 
+	  			  ignore (type_expr "double" env expr2);
+	  			  "double"
+	| Ast.Div -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "double"
 	(* TODO boolean should take note or chord or track too*)
-	| Ast.Equal -> ignore (type_expr "int" env expr1); 
-	  			   ignore (type_expr "int" env expr2);
+	| Ast.Equal -> ignore (type_expr "double" env expr1); 
+	  			   ignore (type_expr "double" env expr2);
 	  			   "boolean"
-	| Ast.Neq -> ignore (type_expr "int" env expr1); 
-	  			 ignore (type_expr "int" env expr2);
+	| Ast.Neq -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
 	  			 "boolean"
-	| Ast.Geq -> ignore (type_expr "int" env expr1); 
-	  			 ignore (type_expr "int" env expr2);
+	| Ast.Geq -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
 	  			 "boolean"
-	| Ast.Leq -> ignore (type_expr "int" env expr1); 
-	  			 ignore (type_expr "int" env expr2);
+	| Ast.Leq -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
 	  			 "boolean"
-	| Ast.Greater -> ignore (type_expr "int" env expr1); 
-	  			     ignore (type_expr "int" env expr2);
+	| Ast.Greater -> ignore (type_expr "double" env expr1); 
+	  			     ignore (type_expr "double" env expr2);
 	  			     "boolean"
-	| Ast.Less -> ignore (type_expr "int" env expr1); 
-	  			  ignore (type_expr "int" env expr2);
+	| Ast.Less -> ignore (type_expr "double" env expr1); 
+	  			  ignore (type_expr "double" env expr2);
 	  			  "boolean"
 	 (* TODO either has to be chord OR note OR track *)
 	| Ast.Ser -> ignore (type_expr "chord" env expr1); 
@@ -432,15 +432,15 @@ and type_binop typestring env expr1 op expr2 =
 	
 and type_expr typestring env expr =
 	match expr with
-	  Ast.Literal(i) -> if typestring <> "int" && typestring <> "any" && typestring <> "primitive"
+	  Ast.Literal(i) -> if typestring <> "double" && typestring <> "any" && typestring <> "primitive"
   						then raise (Failure ("Mismatch Expression type: \n" ^ 
-  						     	"expression was of type int.\n" ^
+  						     	"expression was of type double.\n" ^
   						   		"an expression of type " ^ typestring ^ " was expected."))
 	  					else env
     | Ast.Id(i) -> let id_type = get_variable_type i env in
     				if typestring = "primitive"
     				then
-	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track" && id_type <> "int"
+	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track" && id_type <> "double"
 						then raise (Failure ("Mismatch Expression type: \n" ^ 
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
@@ -452,24 +452,24 @@ and type_expr typestring env expr =
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
 	| Ast.ACCESSOR(expr, note_attr) -> ignore (type_expr "note" env expr);
-										if typestring <> "int" && typestring <> "any"
+										if typestring <> "double" && typestring <> "any"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
-				  						     	"expression was of type int.\n" ^
+				  						     	"expression was of type double.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
 					  					else env
 	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring <> "primitive" && typestring <> "note" && typestring <> "any"
 										  then raise (Failure ("Mismatch Expression type: \n" ^ 
 				  						     	"expression was of type note.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
-										  else ignore (type_expr "int" env expr1);
-											   ignore (type_expr "int" env expr2);
-											   ignore (type_expr "int" env expr3);
+										  else ignore (type_expr "double" env expr1);
+											   ignore (type_expr "double" env expr2);
+											   ignore (type_expr "double" env expr3);
 											   env
 	| Ast.REST_CR(expr) -> if typestring <> "primitive" && typestring <> "rest" && typestring <> "any"
 						   then raise (Failure ("Mismatch Expression type: \n" ^ 
   						      	"expression was of type rest.\n" ^
   						   		"an expression of type " ^ typestring ^ " was expected."))
-						   else ignore (type_expr "int" env expr);
+						   else ignore (type_expr "double" env expr);
 							    env
 	| Ast.CHORD_CR(expr_list) -> if typestring <> "primitive" && typestring <> "chord" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
@@ -516,7 +516,7 @@ let rec type_stmt func env stmt =
 									ignore (type_stmt func env stmt2);
 									type_expr "boolean" env expr
 	(* expr1=assign, expr2=boolean, expr3=junk *)
-	| Ast.For(expr1, expr2, expr3, stmt) -> let for_env = type_expr "int" env expr1 in 
+	| Ast.For(expr1, expr2, expr3, stmt) -> let for_env = type_expr "double" env expr1 in 
 												ignore (type_expr "any" for_env expr2);
 												ignore (type_expr "any" for_env expr3);
 												ignore (type_stmt func for_env stmt);
