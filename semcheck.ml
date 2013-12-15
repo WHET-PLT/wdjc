@@ -288,9 +288,24 @@ and type_binop typestring env expr1 op expr2 =
 	  			 ignore (type_expr "chord" env expr2);
 	  			 "track"
 	 (* TODO either has to be chord OR note OR track OR score *)
-	| Ast.Par -> ignore (type_expr "note" env expr1); 
-	  			 ignore (type_expr "note" env expr2);
-	  			 "chord"
+	| Ast.Par -> ignore (type_expr "primitive" env expr1); 
+	  			 ignore (type_expr "primitive" env expr2);
+	  			 match typestring with
+	  			   "score" ->
+		  				ignore (type_expr "score_or_track" env expr1); 
+		   	  			ignore (type_expr "score_or_track" env expr2);
+		   	  			"score"
+	  			 | "track" ->
+ 						ignore (type_expr "track_or_chord" env expr1); 
+ 		 	  			ignore (type_expr "track_or_chord" env expr2);
+ 		 	  			"track"
+	  			 | "chord" -> 
+		 				ignore (type_expr "chord_or_note" env expr1); 
+		  	  			ignore (type_expr "chord_or_note" env expr2);
+		  	  			"chord"
+	  			 | _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+  						     	"expression was required to be of type score or track or chord.\n" ^
+  						   		"but an expression of type " ^ typestring ^ " was expected."))
 	
 and type_expr typestring env expr =
 	match expr with
