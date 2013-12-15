@@ -86,9 +86,9 @@ let rec string_of_expr_t = function
     Literal_t(l) -> l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
-      "(" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
-  | REST_CR_t(r) -> "(" ^ string_of_expr_t r ^ ")" 
-  | TRACK_CR_t(track) -> "(" ^ string_of_expr_t track ^ ")" 
+      "note (" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
+  | REST_CR_t(r) -> "rest (" ^ string_of_expr_t r ^ ")" 
+  | TRACK_CR_t(track) -> "track (" ^ string_of_expr_t track ^ ")" 
   | ACCESSOR_t(a, b) -> 
       (string_of_expr_t a) ^ " -> " ^ (
       match b with
@@ -96,7 +96,7 @@ let rec string_of_expr_t = function
       )
   | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
   | CHORD_CR_t(note_list) -> 
-      "(" ^ String.concat " : " (List.map string_of_expr_t note_list) ^ ")"
+      "chord (" ^ String.concat " : " (List.map string_of_expr_t note_list) ^ ")"
   | Binop_t(e1, o, e2) ->
       string_of_expr_t e1 ^ " " ^
       (match o with

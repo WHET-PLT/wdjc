@@ -482,7 +482,7 @@ and type_expr typestring env expr =
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
-								 else ignore (type_expr "chord" env expr);
+								 else ignore (type_expr "double" env expr);
 								 	  env
 	| Ast.Binop(expr1, op, expr2) -> let binop_type = type_binop typestring env expr1 op expr2 in
 										if typestring <> binop_type && typestring <> "any"
