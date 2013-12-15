@@ -47,6 +47,7 @@ rule token = parse
 | "rest"		{ REST }
 | "track"		{ TRACK }
 | "chord"		{ CHORD }
+| "score"		{ SCORE }
 (*
 | "array"		{ ARRAY } 
 *)

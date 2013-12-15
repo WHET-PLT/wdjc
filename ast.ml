@@ -5,7 +5,7 @@ type modif = Vib | Trem | Incr | Decr
 type note_attribute = Pitch | Vol | Dur
 
 (*our data types*)
-type dType = Double | Note | Chord | Track | Rest 
+type dType = Double | Note | Chord | Track | Rest | Score
 
 (* operation types *)
 type op =   Add  | Sub
@@ -21,6 +21,7 @@ type expr =
   | REST_CR of expr
   | TRACK_CR of expr
   | CHORD_CR of expr list
+  | SCORE_CR of expr list
   | ACCESSOR of expr * note_attribute
   | Binop of expr * op * expr
   | Modifier of expr * modif 
@@ -77,6 +78,8 @@ let rec string_of_expr = function
       "(" ^ string_of_expr a ^ ", " ^ string_of_expr b ^ ", " ^ string_of_expr c ^ ")"
   | REST_CR(expr) -> "(" ^ string_of_expr expr ^ ")" (* should this really be string of literal or something? *)
   | TRACK_CR(expr) -> "(" ^ string_of_expr expr ^ ")"
+  | SCORE_CR(expr_list) -> 
+      "(" ^ String.concat " . " (List.map string_of_expr expr_list) ^ ")"
   | ACCESSOR(a, b) -> 
       (string_of_expr a) ^ " -> " ^ (
       match b with
@@ -109,7 +112,8 @@ let string_of_vdecl v =
     | Note -> "note "
     | Chord -> "chord "
     | Track -> "track "
-    | Rest -> "rest ") ^ v.vName
+    | Rest -> "rest "
+    | Score -> "score" ) ^ v.vName
 
 (*
 let string_of_cr_type t =
@@ -142,7 +146,8 @@ let string_of_fdecl fdecl =
     | Note -> "note "
     | Chord -> "chord "
     | Track -> "track "
-    | Rest -> "rest ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
+    | Rest -> "rest "
+    | Score ->  "score") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 
