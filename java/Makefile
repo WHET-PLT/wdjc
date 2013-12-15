@@ -1,5 +1,5 @@
 # the main class name
-MAIN=RowYourBoat
+MAIN=DJ
 
 # Location of trees.
 SOURCE_DIR=src
@@ -25,7 +25,7 @@ JM_INSTR=jMusic/inst/
 CLASSPATH=$(OUTPUT_DIR):$(JM_JAR):$(JM_INSTR):.
 
 # List the sourcefiles
-FILES=$(SOURCE_DIR)/*.java	
+FILES=$(SOURCE_DIR)/$(MAIN).java	
 	
 # compile and run default
 default: compile run
