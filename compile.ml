@@ -12,28 +12,33 @@ let imports =
 
   (* new code based on new ast that emily showed me *)
 
+let rec string_of_expr_list v_name expr_list = 
+  match expr_list with
+  [] -> []
+  | hd::tl -> let string_expr_list = (string_of_expr_t v_name hd) in string_expr_list::(string_of_expr_list v_name tl) (* returns SAST body which is a SAST stmt list *)
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
-let rec string_of_expr_t ?(v_name="null") ex = 
+and string_of_expr_t v_name ex = 
   match ex with
     Literal_t(l) -> l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
       (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
-      "new Note((double)" ^ string_of_expr_t a^ ", " ^  string_of_expr_t b^ ", " ^  string_of_expr_t c ^ ")"
+      "new Note((double)" ^ string_of_expr_t "junk" a^ ", " ^  string_of_expr_t "junk" b^ ", " ^  string_of_expr_t "junk" c ^ ")"
 
 
-  | REST_CR_t(r) -> "new Note(( REST, " ^ string_of_expr_t r ^ ")" (* should this really be string of literal or something? *)
+  | REST_CR_t(r) -> "new Note(( REST, " ^ string_of_expr_t "junk" r ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR_t(a, b) -> 
-      string_of_expr_t a ^ "." ^ (
+      (string_of_expr_t "junk" a) ^ "." ^ (
       match b with
         Pitch_t -> "getFrequency()" | Vol_t -> "getVolume()" |  Dur_t -> "getDuration()"
       )
 
-  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t ~v_name:(string_of_expr_t id) expr
+  | Assign_t(id, expr) -> (string_of_expr_t "junk" id) ^ " = " ^ (string_of_expr_t (string_of_expr_t "junk" id) expr)
 
   | CHORD_CR_t(note_list) -> 
+    let notes = string_of_expr_list "junk" note_list in
       (* !!!we are going to have an issue here because chord is actually a cPhrase *)
       (* !!!also going to have an issue with ID naming situation *)
       " new CPhrase();\n" ^
@@ -42,7 +47,7 @@ let rec string_of_expr_t ?(v_name="null") ex =
       (* String.concat "\nnoteArrayList.add(" (List.map string_of_expr_t note_list) ^ ");\n" ^ *)
       (* hack??? Assumes that there are at least 2 notes here...*)
      "noteArrayList.add("^
-      String.concat  ");\nnoteArrayList.add(" (List.map string_of_expr_t note_list) ^ ");\n" ^ 
+      String.concat  ");\nnoteArrayList.add(" notes ^ ");\n" ^  (**FLAG!!!!***)
       v_name ^ ".add(noteArrayList);\n"
 
       (*List.map (fun a ->  "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n")  note_list
@@ -64,25 +69,26 @@ let rec string_of_expr_t ?(v_name="null") ex =
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
   (* can we write a function to figure out if note or int etc??? *)
   | Binop_t(e1, o, e2) ->
-      string_of_expr_t e1 ^ " " ^
+      string_of_expr_t "junk" e1 ^ " " ^
       (match o with
       Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
       | Equal_t -> "==" | Neq_t -> "!="
       | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">=" 
       | Ser_t -> "" | Par_t -> "" ) ^ " " ^
-      string_of_expr_t e2
+      string_of_expr_t "junk" e2
 
 
   (* again, not sure about this section * also are we talking about incr decr pitch? by how much? *)
   | Modifier_t(e1, modif) ->
-      string_of_expr_t e1 ^
+      string_of_expr_t "junk" e1 ^
       (match modif with
       Vib_t -> " " |
       Trem_t -> " " | 
-      Incr_t -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch()) + 50)"  | 
-      Decr_t -> ".setPitch((" ^ string_of_expr_t e1 ^".getPitch())  -50)")
+      Incr_t -> ".setPitch((" ^ string_of_expr_t "junk" e1 ^".getPitch()) + 50)"  | 
+      Decr_t -> ".setPitch((" ^ string_of_expr_t "junk" e1 ^".getPitch())  -50)")
   | Call_t(f, el) ->
-      f ^ "(" ^ String.concat ", " (List.map string_of_expr_t el) ^ ")"
+        let calls = string_of_expr_list "junk" el in
+      f ^ "(" ^ String.concat ", " calls ^ ")"
   | Noexpr_t -> ""
 (*| Array*) 
 
@@ -94,6 +100,8 @@ let string_of_vdecl_t v =
     | Track_t -> "Part "
     | Rest_t-> "Rest "
     | Score_t -> "Score ") ^ v.vName_t 
+
+let string_of_vdecl_name_t v = v.vName_t 
 
 
 let rec string_of_stmt_list f_name stmt_list = 
@@ -110,19 +118,20 @@ and string_of_stmt_t f_name statement =
       ("{\n" ^ 
         let stmt_lst = string_of_stmt_list f_name stmts in 
             String.concat "" stmt_lst ^ "}\n")
-  | Expr_t(expr) -> string_of_expr_t expr ^ ";\n"
+  | Expr_t(expr) -> string_of_expr_t "junk" expr ^ ";\n"
   | Return_t(expr) -> 
-      if f_name = "Song" then "Write.midi(" ^ string_of_expr_t expr ^", \"midi/createNotes.mid\");\n" 
-    else "return " ^ string_of_expr_t expr ^ ";\n"
-  | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t f_name s
-  | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
+      if f_name = "Song" then "Write.midi(" ^ string_of_expr_t "junk" expr ^", \"midi/createNotes.mid\");\n" 
+    else "return " ^ string_of_expr_t "junk" expr ^ ";\n"
+  | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t "junk" e ^ ")\n" ^ string_of_stmt_t f_name s
+  | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t "junk" e ^ ")\n" ^
       string_of_stmt_t f_name s1 ^ "else\n" ^ string_of_stmt_t f_name s2
   | For_t(e1, e2, e3, s) ->
-      "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
-      string_of_expr_t e3  ^ ") " ^ string_of_stmt_t f_name s
-  | While_t(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t f_name s
+      "for (" ^ string_of_expr_t "junk" e1  ^ " ; " ^ string_of_expr_t "junk" e2 ^ " ; " ^
+      string_of_expr_t "junk" e3  ^ ") " ^ string_of_stmt_t f_name s
+  | While_t(e, s) -> "while (" ^ string_of_expr_t "junk" e ^ ") " ^ string_of_stmt_t f_name s
   | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
-  | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ "\n"
+  (* really...the only time that this maters - is here *)
+  | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t (string_of_vdecl_name_t v) e ^ "\n" 
 
  (*| Loop*)
 
