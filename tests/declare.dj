@@ -1,7 +1,7 @@
-song int ( ) {
+song double ( ) {
 /* Simple note text. */
 
-int pitchA;
+double pitchA;
 
 note mynote;
 

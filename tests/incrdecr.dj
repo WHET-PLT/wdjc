@@ -1,10 +1,10 @@
-song int ( ) {
+song double ( ) {
 
 /*
 Incr and Decr
  */
 
- int i;
+ double i;
  i ++;
  return 1;
 

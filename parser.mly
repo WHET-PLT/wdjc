@@ -7,9 +7,9 @@
 %token VIB TREM ARROW
 %token EQ NEQ INCR DECR
 %token LT LEQ GT GEQ
-%token IF ELSE FOR WHILE LOOP RETURN INT
+%token IF ELSE FOR WHILE LOOP RETURN DOUBLE
 %token FUN VOL DUR PITCH INSTR
-%token <int> LITERAL
+%token <string> LITERAL
 %token <string> ID
 %token NOTE REST CHORD TRACK
 %token EOF
@@ -47,9 +47,9 @@ program:
 /*  --- FUNCTION --- */
 fdecl:
 
-  ID INT LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+  ID DOUBLE LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
     {{ 
-       rtype = Int;
+       rtype = Double;
        fname = $1;
 	     formals = $4;
 	     body = List.rev $7
@@ -157,7 +157,7 @@ note_attribute:
   | DUR {Dur}
   
 dType: 
-   INT {Int}
+   DOUBLE {Double}
  | NOTE {Note}
  | CHORD {Chord} 
  | TRACK {Track}

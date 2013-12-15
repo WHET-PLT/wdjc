@@ -4,7 +4,7 @@ type modif_t = Vib_t | Trem_t | Incr_t | Decr_t
 (* Not sure if I should make this a string *)
 type note_attribute_t = Pitch_t | Vol_t | Dur_t
 
-type dType_t = Int_t | Note_t | Chord_t | Track_t | Rest_t 
+type dType_t = Double_t | Note_t | Chord_t | Track_t | Rest_t 
 
 (* operation types *)
 type op_t =   Add_t  | Sub_t
@@ -30,7 +30,7 @@ type expr_t =
   | Noexpr
 *)
 type expr_t =
-    Literal_t of int
+    Literal_t of string
   | Id_t of string
   | NOTE_CR_t of expr_t * expr_t * expr_t
   | REST_CR_t of expr_t
@@ -83,7 +83,7 @@ type program_t = var_decl_t list * func_decl_t list
 
 
 let rec string_of_expr_t = function
-    Literal_t(l) -> string_of_int l
+    Literal_t(l) -> l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
       "(" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
@@ -118,7 +118,7 @@ let rec string_of_expr_t = function
 
 let string_of_vdecl_t v = 
   (match v.vType_t with
-    Int_t -> "int "
+    Double_t -> "double "
     | Note_t -> "note "
     | Chord_t -> "chord "
     | Track_t -> "track "
@@ -143,7 +143,7 @@ let rec string_of_stmt_t = function
 
 let string_of_fdecl_t fdecl =
    (match fdecl.rtype_t with
-    Int_t -> "int "
+    Double_t -> "double "
     | Note_t -> "note "
     | Chord_t -> "chord "
     | Track_t -> "track "

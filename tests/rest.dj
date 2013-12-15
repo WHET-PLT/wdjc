@@ -1,13 +1,13 @@
-song int ()
+song double ()
 {
 	/* rest of duration 5  */
 	/* make a chord which is a rest + a note */	
 	rest r;
 	chord d;
-	int i = 3;
-	int a;
-	int b;
-	int c;
+	double i = 3;
+	double a;
+	double b;
+	double c;
 
 	
 	r = rest (5);

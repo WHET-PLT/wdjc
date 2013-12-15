@@ -1,4 +1,4 @@
-song int ()
+song double ()
 {
 	track t;
 	chord c;
