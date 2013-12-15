@@ -87,18 +87,11 @@ let rec string_of_expr_t = function
     Literal_t(l) -> l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
-<<<<<<< HEAD
-      "(" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
-  | REST_CR_t(r) -> "(" ^ string_of_expr_t r ^ ")" 
-  | TRACK_CR_t(track_list) -> 
-  "(" ^ String.concat " : " (List.map string_of_expr_t track_list) ^ ")"
-  | SCORE_CR_t(score_list) -> 
-  "(" ^ String.concat " : " (List.map string_of_expr_t score_list) ^ ")"
-=======
       "note (" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
   | REST_CR_t(r) -> "rest (" ^ string_of_expr_t r ^ ")" 
   | TRACK_CR_t(track) -> "track (" ^ string_of_expr_t track ^ ")" 
->>>>>>> 1c8c0d6d8c05dcdee8b317fb6572b8edaea1ee53
+  | SCORE_CR_t(score_list) -> 
+  "(" ^ String.concat " : " (List.map string_of_expr_t score_list) ^ ")"
   | ACCESSOR_t(a, b) -> 
       (string_of_expr_t a) ^ " -> " ^ (
       match b with
