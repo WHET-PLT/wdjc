@@ -4,7 +4,7 @@ let imports =
   "import java.util.*;\n" ^
   "import jm.JMC;\n" ^
   "import jm.music.data.*;\n" ^
-  "import jm.util.*;\n" ^
+  "import jm.util.*;\n\n" ^
   "public class DJ{\n" 
   
 
@@ -15,8 +15,8 @@ let imports =
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
-let rec string_of_expr_t ?(opt_name="null") expr = 
-  match expr with
+let rec string_of_expr_t ?(f_name="null") ?(v_name="null") ex = 
+  match ex with
     Literal_t(l) -> string_of_int l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
@@ -31,7 +31,7 @@ let rec string_of_expr_t ?(opt_name="null") expr =
         Pitch_t -> "getFrequency()" | Vol_t -> "getVolume()" |  Dur_t -> "getDuration()"
       )
 
-  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t ~opt_name:(string_of_expr_t id) expr (*implementation of optional name param *)
+  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t ~v_name:(string_of_expr_t id) expr (*implementation of optional name param *)
 
   | CHORD_CR_t(note_list) -> 
       (* !!!we are going to have an issue here because chord is actually a cPhrase *)
@@ -44,7 +44,7 @@ let rec string_of_expr_t ?(opt_name="null") expr =
      "noteArrayList.add("^
       String.concat  ");\nnoteArrayList.add(" (List.map string_of_expr_t note_list) ^ ");\n" ^ 
       (* List.map (fun note -> "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n") note_list *)
-      opt_name ^ ".add(noteArrayList);\n"
+      v_name ^ ".add(noteArrayList);\n"
 
       (*List.map (fun a ->  "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n")  note_list
       name_CPhrase ^ ".add(noteArrayList);" *)
@@ -92,9 +92,10 @@ let string_of_vdecl_t v =
 
 (*pretty print for stmts*)
 (*TODO need to do loop*)
-let rec string_of_stmt_t = function
+let rec string_of_stmt_t ?(f_name="null") statement = 
+  match statement with
     Block_t(stmts) ->
-      "{\n" ^ String.concat "" (List.map string_of_stmt_t stmts) ^ "}\n"
+      "{\n" ^ String.concat "" (List.map  string_of_stmt_t ~f_name="stupid" stmts) ^ "}\n"
   | Expr_t(expr) -> string_of_expr_t expr ^ ";\n";
   | Return_t(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
   | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
@@ -131,7 +132,7 @@ let string_of_program_t (vars, funcs) =
   String.concat "" (List.map string_of_vdecl_t vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl_t funcs)  
 
-let finalImports = "\n} \n}"
+(* let finalImports = "\n} \n}" *)
 
 
 (* look over how were doing the song funcitons... *)
