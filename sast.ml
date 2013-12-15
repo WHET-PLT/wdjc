@@ -151,13 +151,14 @@ let rec string_of_stmt_t = function
 
 
 let string_of_fdecl_t fdecl =
+  fdecl.fname_t ^
    (match fdecl.rtype_t with
     Double_t -> "double "
     | Note_t -> "note "
     | Chord_t -> "chord "
     | Track_t -> "track "
     | Rest_t -> "rest "
-    | Score_t -> "score ") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+    | Score_t -> "score ") ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^
   "}\n"
 
