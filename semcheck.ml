@@ -192,7 +192,7 @@ let rec build_expr = function
 	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR_t( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
 	| Ast.REST_CR(expr) -> Sast.REST_CR_t( (build_expr expr) )
 	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR_t( (build_expr_list expr_list) )
-	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR_t( (build_expr_list expr_list) )
+	| Ast.TRACK_CR(expr) -> Sast.TRACK_CR_t( (build_expr expr) )
 	| Ast.SCORE_CR(expr_list) -> Sast.SCORE_CR_t( (build_expr_list expr_list) )
 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
 	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
@@ -340,11 +340,11 @@ and type_expr typestring env expr =
 								 else ignore (type_expr_list "note" env expr_list);
 								 	  env
 
-	| Ast.TRACK_CR(expr_list) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "any"
+	| Ast.TRACK_CR(expr) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
-								 else ignore (type_expr_list "chord" env expr_list);
+								 else ignore (type_expr "double" env expr);
 								 	  env
 	| Ast.SCORE_CR(expr_list) -> if typestring <> "primitive" && typestring <> "score" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 

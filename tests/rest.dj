@@ -1,4 +1,4 @@
-song double ()
+song score ()
 {
 	/* rest of duration 5  */
 	/* make a chord which is a rest + a note */	

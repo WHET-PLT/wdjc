@@ -1,6 +1,6 @@
 double global
 
-song double ( ) {
+song score ( ) {
 
 /*
 Simple arithmetic test.

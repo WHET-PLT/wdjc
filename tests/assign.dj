@@ -1,5 +1,5 @@
 
-song double ( ) {
+song score ( ) {
 /* Simple note text. */
 
 /* individual declaration + assignment */

@@ -1,6 +1,6 @@
 /* Test for if statement */
 
-song double () 
+song score () 
 {
 	
 	double i;

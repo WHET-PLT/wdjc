@@ -1,4 +1,4 @@
-song double ()
+song score ()
 {
 	track t;
 	chord c;
