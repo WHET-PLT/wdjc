@@ -1,6 +1,6 @@
-int global
+double global
 
-song int ( ) {
+song double ( ) {
 
 /*
 Simple arithmetic test.

@@ -5,10 +5,10 @@ Simple note text.
 */
 
 
-int pitchA;
-int volume;
-/* int volume; */
-int duration;
+double pitchA;
+double volume;
+/* double volume; */
+double duration;
 note n;
 note n1;
 note n2;

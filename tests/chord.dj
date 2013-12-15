@@ -7,15 +7,15 @@ variables.
 Recall: chord must be enclosed by parenthesis
 */
 
-song int () 
+song double () 
 	{
 		note n1;
 		note n2;
 		note n3;
 		chord p;
-		int a;
-		int b;
-		int c;
+		double a;
+		double b;
+		double c;
 
 		n2 = note ( a, b, c);
 		p = chord ( n1 , n2 , n3 );

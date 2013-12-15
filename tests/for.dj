@@ -1,8 +1,8 @@
-song int ( ) {
+song double ( ) {
 
 /* Simple for loop test */
 
-  int i;
+  double i;
   for (i = 0 ; i < 5 ; i = i + 1) {
     	
   }
