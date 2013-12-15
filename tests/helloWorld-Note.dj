@@ -10,5 +10,8 @@ Song note(){
 	duration=4; 
 
 	n = note (pitchA, volume, duration); 
-	return n; 
+	chord c = chord(n);
+	track t = track(c);
+	score s = score(s);
+	return s; 
 }
