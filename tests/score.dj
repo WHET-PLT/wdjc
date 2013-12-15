@@ -1,4 +1,4 @@
-song score () 
+name score() 
 {
 	/*simple note test */
 
@@ -12,7 +12,8 @@ song score ()
 	note n = note (pitchA, volume, duration);
 	chord c = chord(n);
 	track t = track(c);
-	score s = score(t);
+	score s;
+	s = score(t);
 
 	return s;
 }

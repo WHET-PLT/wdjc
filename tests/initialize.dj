@@ -1,4 +1,4 @@
-song track ( ) {
+hello track ( ) {
 /* Simple note text. */
 
 double pitchA = 60;
