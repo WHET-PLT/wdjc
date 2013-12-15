@@ -34,7 +34,7 @@ type expr_t =
   | Id_t of string
   | NOTE_CR_t of expr_t * expr_t * expr_t
   | REST_CR_t of expr_t
-  | TRACK_CR_t of expr_t list
+  | TRACK_CR_t of expr_t
   | CHORD_CR_t of expr_t list
   | ACCESSOR_t of expr_t * note_attribute_t
   | Binop_t of expr_t * op_t * expr_t
@@ -88,9 +88,7 @@ let rec string_of_expr_t = function
   | NOTE_CR_t(a, b, c) ->
       "(" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
   | REST_CR_t(r) -> "(" ^ string_of_expr_t r ^ ")" 
-  | TRACK_CR_t(track_list) -> 
-  "(" ^ String.concat " : " (List.map string_of_expr_t track_list) ^ ")"
- 
+  | TRACK_CR_t(track) -> "(" ^ string_of_expr_t track ^ ")" 
   | ACCESSOR_t(a, b) -> 
       (string_of_expr_t a) ^ " -> " ^ (
       match b with
