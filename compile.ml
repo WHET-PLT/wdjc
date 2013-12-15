@@ -5,7 +5,7 @@ let imports =
   "import jm.JMC;\n" ^
   "import jm.music.data.*;\n" ^
   "import jm.util.*;\n\n" ^
-  "public class DJ{\n" 
+  "public class DJ implements JMC{\n" 
   
 
 (* ------------------------------------------------------------------------------------------------------------- *)
@@ -25,14 +25,14 @@ and string_of_expr_t v_name ex =
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
       (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
-      "new Note((double)" ^ string_of_expr_t "junk" a^ ", " ^  string_of_expr_t "junk" b^ ", " ^  string_of_expr_t "junk" c ^ ")"
+      "new Note((double)" ^ string_of_expr_t "junk" a^ ", " ^  string_of_expr_t "junk" b^ ", (int) " ^  string_of_expr_t "junk" c ^ ");"
 
 
   | REST_CR_t(r) -> "new Note(( REST, " ^ string_of_expr_t "junk" r ^ ")" (* should this really be string of literal or something? *)
   | ACCESSOR_t(a, b) -> 
       (string_of_expr_t "junk" a) ^ "." ^ (
       match b with
-        Pitch_t -> "getFrequency()" | Vol_t -> "getVolume()" |  Dur_t -> "getDuration()"
+        Pitch_t -> "getFrequency()" | Vol_t -> "getDynamic()" |  Dur_t -> "getDuration()"
       )
 
   | Assign_t(id, expr) -> (string_of_expr_t "junk" id) ^ " = " ^ (string_of_expr_t (string_of_expr_t "junk" id) expr)
@@ -42,13 +42,15 @@ and string_of_expr_t v_name ex =
       (* !!!we are going to have an issue here because chord is actually a cPhrase *)
       (* !!!also going to have an issue with ID naming situation *)
       " new CPhrase();\n" ^
-      "ArrayList<Note> noteArrayList = new ArrayList<Note>();\n" ^
+      (* "ArrayList<Note> noteArrayList = new ArrayList<Note>();\n" ^ *)
 
       (* String.concat "\nnoteArrayList.add(" (List.map string_of_expr_t note_list) ^ ");\n" ^ *)
       (* hack??? Assumes that there are at least 2 notes here...*)
-     "noteArrayList.add("^
-      String.concat  ");\nnoteArrayList.add(" notes ^ ");\n" ^  (**FLAG!!!!***)
-      v_name ^ ".add(noteArrayList);\n"
+     (* "noteArrayList.add("^ *)
+      (* String.concat  ");\nnoteArrayList.add(" notes ^ ");\n" ^  (**FLAG!!!!***) *)
+    "Note [] notes_array = {" ^ String.concat ", " notes ^ "};\n" ^ 
+      (* v_name ^ ".add(noteArrayList);\n" *)
+      v_name^ ".addChord(notes_array);"
 
       (*List.map (fun a ->  "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n")  note_list
       name_CPhrase ^ ".add(noteArrayList);" *)
@@ -57,14 +59,14 @@ and string_of_expr_t v_name ex =
   | TRACK_CR_t(track_list) ->  
       (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
       " new Part();\n" ^
-      "ArrayList<Chord> chordArrayList = new ArrayList<Chord>();\n" ^ (*same as cphrase *)
-       v_name ^ ".add(chordArrayList);\n"
+      (* "ArrayList<Phrase> chordArrayList = new ArrayList<Phrase>();\n" ^ (*same as cphrase *) *)
+       v_name ^ ".addCPhrase("^   String.concat " , " (string_of_expr_list "junk" track_list) ^ ");\n"
   (* Create function for this here. figure out if arraylist will work with this..  *)
   | SCORE_CR_t(track_list) ->  
       (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
-      " new Part();\n" ^
-      "ArrayList<Part> phraseArrayList = new ArrayList<Part>();\n" ^  (*same as cphrase *)
-      v_name ^ ".add(phraseArrayList);"
+      " new Score();\n" ^
+      (* "ArrayList<Part> phraseArrayList = new ArrayList<Part>();\n" ^  (*same as cphrase *) *)
+      v_name ^ ".addPart(" ^ String.concat " , " (string_of_expr_list "junk" track_list) ^ ");"
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
   (* can we write a function to figure out if note or int etc??? *)
@@ -120,7 +122,7 @@ and string_of_stmt_t f_name statement =
             String.concat "" stmt_lst ^ "}\n")
   | Expr_t(expr) -> string_of_expr_t "junk" expr ^ ";\n"
   | Return_t(expr) -> 
-      if f_name = "Song" then "Write.midi(" ^ string_of_expr_t "junk" expr ^", \"midi/createNotes.mid\");\n" 
+      if f_name = "song" then "Write.midi(" ^ string_of_expr_t "junk" expr ^", \"createNotes.mid\");\n" 
     else "return " ^ string_of_expr_t "junk" expr ^ ";\n"
   | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t "junk" e ^ ")\n" ^ string_of_stmt_t f_name s
   | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t "junk" e ^ ")\n" ^
@@ -140,7 +142,7 @@ let string_of_fdecl_t fdecl =
   if fdecl.fname_t = "song" 
     then 
       let stmt_lst = string_of_stmt_list fdecl.fname_t fdecl.body_t in 
-        "public static void main(Strings[] args){\n" ^
+        "public static void main(String[] args){\n" ^
           String.concat "" stmt_lst  ^ "}\n}\n"
   else 
     let stmt_lst = string_of_stmt_list fdecl.fname_t fdecl.body_t in
