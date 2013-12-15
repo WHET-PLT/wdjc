@@ -1,4 +1,4 @@
-s(* SAST *)
+(* SAST *)
 type modif_t = Vib_t | Trem_t | Incr_t | Decr_t
 
 (* Not sure if I should make this a string *)
@@ -91,7 +91,7 @@ let rec string_of_expr_t = function
   | REST_CR_t(r) -> "rest (" ^ string_of_expr_t r ^ ")" 
   | TRACK_CR_t(track) -> "track (" ^ string_of_expr_t track ^ ")" 
   | SCORE_CR_t(score_list) -> 
-  "(" ^ String.concat " : " (List.map string_of_expr_t score_list) ^ ")"
+  "score (" ^ String.concat " : " (List.map string_of_expr_t score_list) ^ ")"
   | ACCESSOR_t(a, b) -> 
       (string_of_expr_t a) ^ " -> " ^ (
       match b with
@@ -146,12 +146,12 @@ let rec string_of_stmt_t = function
 let string_of_fdecl_t fdecl =
   fdecl.fname_t ^
    (match fdecl.rtype_t with
-    Double_t -> "double "
-    | Note_t -> "note "
-    | Chord_t -> "chord "
-    | Track_t -> "track "
-    | Rest_t -> "rest "
-    | Score_t -> "score ") ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+    Double_t -> " double "
+    | Note_t -> " note "
+    | Chord_t -> " chord "
+    | Track_t -> " track "
+    | Rest_t -> " rest "
+    | Score_t -> " score ") ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^
   "}\n"
 

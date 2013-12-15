@@ -41,7 +41,6 @@ rule token = parse
 | "vol"			{ VOL }
 | "dur"			{ DUR }
 | "pitch"		{ PITCH }
-| "instr"		{ INSTR }
 | "double"		{ DOUBLE }
 | "note"		{ NOTE }
 | "rest"		{ REST }
