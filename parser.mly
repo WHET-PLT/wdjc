@@ -117,20 +117,13 @@ assign:
     ID ASSIGN expr { Assign(Id($1), $3) }
   | accessor ASSIGN expr { Assign($1, $3) }
 
-
 /* --- TRACK -- */
 track_cr:
-    TRACK LPAREN RPAREN { TRACK_CR ([]) }
-    | TRACK LPAREN track_list RPAREN { TRACK_CR ( List.rev $3 ) }
-
-track_list:
-    expr { [$1] }
-    | track_list COMMA expr { $3 :: $1 }
+  TRACK LPAREN expr RPAREN { TRACK_CR( $3 ) }
 
 /* --- REST --- */
 rest_cr:
   REST LPAREN expr RPAREN { REST_CR( $3 ) }
-  /* later maybe we want to make this also with an id? */
 
 /*  --- NOTE  --- */
 note_cr:

@@ -19,7 +19,7 @@ type expr =
   | Id of string
   | NOTE_CR of expr * expr * expr
   | REST_CR of expr
-  | TRACK_CR of expr list
+  | TRACK_CR of expr
   | CHORD_CR of expr list
   | ACCESSOR of expr * note_attribute
   | Binop of expr * op * expr
@@ -75,9 +75,8 @@ let rec string_of_expr = function
   | Id(s) -> s
   | NOTE_CR(a, b, c) ->
       "(" ^ string_of_expr a ^ ", " ^ string_of_expr b ^ ", " ^ string_of_expr c ^ ")"
-  | REST_CR(r) -> "(" ^ string_of_expr r ^ ")" (* should this really be string of literal or something? *)
-  | TRACK_CR(expr_list) -> 
-      "(" ^ String.concat " . " (List.map string_of_expr expr_list) ^ ")"
+  | REST_CR(expr) -> "(" ^ string_of_expr expr ^ ")" (* should this really be string of literal or something? *)
+  | TRACK_CR(expr) -> "(" ^ string_of_expr expr ^ ")"
   | ACCESSOR(a, b) -> 
       (string_of_expr a) ^ " -> " ^ (
       match b with
