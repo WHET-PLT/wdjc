@@ -38,6 +38,7 @@ let string_of_vartype = function
    | Ast.Rest -> "rest"
    | Ast.Chord -> "chord"
    | Ast.Track -> "track"
+   | Ast.Score -> "score"
 
 (* ast -> sast type*)
 let ast_to_sast_note_attr = function
@@ -76,6 +77,7 @@ let ast_to_sast_type = function
    | Ast.Rest -> Sast.Rest_t
    | Ast.Chord -> Sast.Chord_t
    | Ast.Track -> Sast.Track_t
+   | Ast.Score -> Sast.Score_t
    | _ -> raise (Failure ("Mismatch Variable Type Type"))
    (* 
 let ast_to_sast_vdecl vdecl = 
@@ -332,6 +334,7 @@ let rec build_expr = function
 	| Ast.REST_CR(expr) -> Sast.REST_CR_t( (build_expr expr) )
 	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR_t( (build_expr_list expr_list) )
 	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR_t( (build_expr_list expr_list) )
+	| Ast.SCORE_CR(expr_list) -> Sast.SCORE_CR_t( (build_expr_list expr_list) )
 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
 	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
 	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
@@ -440,7 +443,7 @@ and type_expr typestring env expr =
     | Ast.Id(i) -> let id_type = get_variable_type i env in
     				if typestring = "primitive"
     				then
-	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track" && id_type <> "double"
+	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track" && id_type <> "score" && id_type <> "double"
 						then raise (Failure ("Mismatch Expression type: \n" ^ 
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
@@ -484,6 +487,12 @@ and type_expr typestring env expr =
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
 								 else ignore (type_expr_list "chord" env expr_list);
 								 	  env
+	| Ast.SCORE_CR(expr_list) -> if typestring <> "primitive" && typestring <> "score" && typestring <> "any"
+								 then raise (Failure ("Mismatch Expression type: \n" ^ 
+		  						    "expression was of type track.\n" ^
+		  						   	"an expression of type " ^ typestring ^ " was expected."))
+								 else ignore (type_expr_list "track" env expr_list);
+								 	  env	
 	| Ast.Binop(expr1, op, expr2) -> let binop_type = type_binop typestring env expr1 op expr2 in
 										if typestring <> binop_type && typestring <> "any"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 

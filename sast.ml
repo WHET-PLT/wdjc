@@ -4,7 +4,7 @@ type modif_t = Vib_t | Trem_t | Incr_t | Decr_t
 (* Not sure if I should make this a string *)
 type note_attribute_t = Pitch_t | Vol_t | Dur_t
 
-type dType_t = Double_t | Note_t | Chord_t | Track_t | Rest_t 
+type dType_t = Double_t | Note_t | Chord_t | Track_t | Rest_t | Score_t
 
 (* operation types *)
 type op_t =   Add_t  | Sub_t
@@ -36,6 +36,7 @@ type expr_t =
   | REST_CR_t of expr_t
   | TRACK_CR_t of expr_t list
   | CHORD_CR_t of expr_t list
+  | SCORE_CR_t of expr_t list
   | ACCESSOR_t of expr_t * note_attribute_t
   | Binop_t of expr_t * op_t * expr_t
   | Modifier_t of expr_t * modif_t
@@ -90,7 +91,8 @@ let rec string_of_expr_t = function
   | REST_CR_t(r) -> "(" ^ string_of_expr_t r ^ ")" 
   | TRACK_CR_t(track_list) -> 
   "(" ^ String.concat " : " (List.map string_of_expr_t track_list) ^ ")"
- 
+  | SCORE_CR_t(score_list) -> 
+  "(" ^ String.concat " : " (List.map string_of_expr_t score_list) ^ ")"
   | ACCESSOR_t(a, b) -> 
       (string_of_expr_t a) ^ " -> " ^ (
       match b with
@@ -122,7 +124,8 @@ let string_of_vdecl_t v =
     | Note_t -> "note "
     | Chord_t -> "chord "
     | Track_t -> "track "
-    | Rest_t -> "rest ") ^ v.vName_t
+    | Rest_t -> "rest "
+    | Score_t -> "score ") ^ v.vName_t
 
 
 let rec string_of_stmt_t = function
@@ -147,7 +150,8 @@ let string_of_fdecl_t fdecl =
     | Note_t -> "note "
     | Chord_t -> "chord "
     | Track_t -> "track "
-    | Rest_t -> "rest ") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+    | Rest_t -> "rest "
+    | Score_t -> "score ") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^
   "}\n"
 

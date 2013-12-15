@@ -11,7 +11,7 @@
 %token FUN VOL DUR PITCH INSTR
 %token <string> LITERAL
 %token <string> ID
-%token NOTE REST CHORD TRACK
+%token NOTE REST CHORD TRACK SCORE
 %token EOF
 
 /*ie TIMES DIVIDE is higher precedence than ASSIGN*/
@@ -83,6 +83,13 @@ fdecl:
        formals = $4;
        body = List.rev $7
     }}
+    | ID SCORE LPAREN formals_opt RPAREN LBRACE stmt_list RBRACE
+    {{ 
+       rtype = Score;
+       fname = $1;
+       formals = $4;
+       body = List.rev $7
+    }}
 
 /* --- FORMALS --- */
 /* formals to be vdecl */
@@ -117,6 +124,14 @@ assign:
     ID ASSIGN expr { Assign(Id($1), $3) }
   | accessor ASSIGN expr { Assign($1, $3) }
 
+/* --- SCORE -- */
+score_cr:
+    SCORE LPAREN RPAREN { SCORE_CR ([]) }
+    | SCORE LPAREN score_list RPAREN { SCORE_CR ( List.rev $3 ) }
+
+score_list:
+    expr { [$1] }
+    | score_list COMMA expr { $3 :: $1 }
 
 /* --- TRACK -- */
 track_cr:
@@ -162,6 +177,7 @@ dType:
  | CHORD {Chord} 
  | TRACK {Track}
  | REST {Rest}
+ | SCORE {Score}
 
 
 /* --- MODIFIERS --- */
@@ -210,6 +226,7 @@ expr:
   | note_cr          { $1 }
   | rest_cr          { $1 }
   | track_cr         { $1 }
+  | score_cr         { $1 }
   | expr PLUS   expr { Binop($1, Add,   $3) }
   | expr MINUS  expr { Binop($1, Sub,   $3) }
   | expr TIMES  expr { Binop($1, Mult,  $3) }
