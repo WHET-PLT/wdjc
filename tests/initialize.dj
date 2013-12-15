@@ -1,8 +1,12 @@
-song track ( ) {
+hello track ( ) {
 /* Simple note text. */
 
 double pitchA = 60;
 
 return track(5);
 
+}
+
+song score () {
+	return score ( track (13) );
 }

@@ -1,4 +1,4 @@
-song double () 
+song score () 
 {
 	/*simple note test */
 
@@ -12,5 +12,5 @@ song double ()
 	/*
 	n = note (pitchA, volume, duration); */
 
-	return 1;
+	return score();
 }

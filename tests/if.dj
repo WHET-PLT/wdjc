@@ -1,6 +1,6 @@
 /* Test for if statement */
 
-song double () 
+song score () 
 {
 	
 	double i;
@@ -32,6 +32,6 @@ song double ()
 	{
 		i = i + 1;
 	}
-	return 1;
+	return score();
 
 }

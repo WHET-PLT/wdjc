@@ -1,4 +1,4 @@
-song double () {
+song score () {
 	
 	note n;
 	double p;
@@ -6,5 +6,5 @@ song double () {
 	p = n -> dur;
 	p = n -> vol;
 
-	return 1;
+	return score();
 }

@@ -1,4 +1,4 @@
-song chord ( ) {
+song score ( ) {
 
 /*
 Simple note text.
@@ -20,9 +20,9 @@ duration = 4;
 
 
 n = note (pitchA, volume, duration);
-n = note (1, 2, 3);
+n = note (1.33, 2, 3);
 n = note (n1 -> pitch, volume, 4);
 
-return chord(n1, n2);
+return score( track (5) );
 	
 }

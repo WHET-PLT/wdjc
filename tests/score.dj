@@ -1,4 +1,4 @@
-song score () 
+name score() 
 {
 	/*simple note test */
 
@@ -17,4 +17,9 @@ song score ()
 	score s = score(t);
 
 	return s;
+}
+
+song score () 
+{
+	return name();
 }

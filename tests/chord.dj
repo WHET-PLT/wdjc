@@ -7,7 +7,7 @@ variables.
 Recall: chord must be enclosed by parenthesis
 */
 
-song double () 
+song score () 
 	{
 		note n1;
 		note n2;
@@ -20,6 +20,6 @@ song double ()
 		n2 = note ( a, b, c);
 		p = chord ( n1 , n2 , n3 );
 
-		return 1;
+		return score();
 
 	}

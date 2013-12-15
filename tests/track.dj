@@ -1,9 +1,9 @@
-song double ()
+song score ()
 {
 	track t;
 	chord c;
 	chord d;
 	t = c.d;	
-	return 1;
+	return score();
 
 } 

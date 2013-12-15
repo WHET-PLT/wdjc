@@ -147,7 +147,7 @@ let string_of_fdecl fdecl =
     | Chord -> "chord "
     | Track -> "track "
     | Rest -> "rest "
-    | Score ->  "score") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
+    | Score ->  "score ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 
