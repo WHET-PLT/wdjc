@@ -287,7 +287,7 @@ and type_binop typestring env expr1 op expr2 =
 	| Ast.Ser -> ignore (type_expr "chord" env expr1); 
 	  			 ignore (type_expr "chord" env expr2);
 	  			 "track"
-	 (* TODO either has to be chord OR note OR track *)
+	 (* TODO either has to be chord OR note OR track OR score *)
 	| Ast.Par -> ignore (type_expr "note" env expr1); 
 	  			 ignore (type_expr "note" env expr2);
 	  			 "chord"
