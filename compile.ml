@@ -31,7 +31,7 @@ let rec string_of_expr_t ?(v_name="null") ex =
         Pitch_t -> "getFrequency()" | Vol_t -> "getVolume()" |  Dur_t -> "getDuration()"
       )
 
-  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t ~v_name:(string_of_expr_t id) expr (*implementation of optional name param *)
+  | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t ~v_name:(string_of_expr_t id) expr
 
   | CHORD_CR_t(note_list) -> 
       (* !!!we are going to have an issue here because chord is actually a cPhrase *)
@@ -120,9 +120,8 @@ and string_of_stmt_t f_name statement =
       "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
       string_of_expr_t e3  ^ ") " ^ string_of_stmt_t f_name s
   | While_t(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t f_name s
-  (* | Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e *)
   | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
-  | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
+  | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ "\n"
 
  (*| Loop*)
 
