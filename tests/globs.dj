@@ -1,10 +1,13 @@
+double global
+
 song double ( ) {
 
 /*
 Simple arithmetic test.
 Can test comments too.
  */
+global = 5;
 print(1+1);
-return 1;
+return global;
 
 }

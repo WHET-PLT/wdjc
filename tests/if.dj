@@ -1,10 +1,10 @@
 /* Test for if statement */
 
-song int () 
+song double () 
 {
 	
-	int i;
-	int j;
+	double i;
+	double j;
 
 	i = 0;
 	j = 1;

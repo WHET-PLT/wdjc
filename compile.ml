@@ -17,7 +17,7 @@ let imports =
 (*TODO need to decide on arrays*)
 let rec string_of_expr_t ?(f_name="null") ?(v_name="null") ex = 
   match ex with
-    Literal_t(l) -> string_of_int l
+    Literal_t(l) -> l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
       (* "(" ^ a ^ ", " ^ b ^ ", " ^ c ^ ", " ^ d ^ ")" *)
@@ -65,7 +65,7 @@ let rec string_of_expr_t ?(f_name="null") ?(v_name="null") ex =
       Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
       | Equal_t -> "==" | Neq_t -> "!="
       | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">=" 
-      | Ser_t -> "" | Par_t -> "" | Arrow_t -> "") ^ " " ^
+      | Ser_t -> "" | Par_t -> "" ) ^ " " ^
       string_of_expr_t e2
 
 
@@ -84,7 +84,7 @@ let rec string_of_expr_t ?(f_name="null") ?(v_name="null") ex =
 
 let string_of_vdecl_t v = 
   (match v.vType_t with
-    Int_t -> "int "
+    Double_t -> "double "
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
@@ -132,7 +132,7 @@ let string_of_fdecl_t fdecl =
   else 
     let stmt_lst = string_of_stmt_list fdecl.fname_t fdecl.body_t in
    "private static " ^ (match fdecl.rtype_t with
-    Int_t -> "int "
+    Double_t -> "double "
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "

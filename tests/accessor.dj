@@ -1,7 +1,7 @@
-song int () {
+song double () {
 	
 	note n;
-	int p;
+	double p;
 	p = n -> pitch;
 	p = n -> dur;
 	p = n -> vol;

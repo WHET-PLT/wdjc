@@ -5,23 +5,23 @@ type modif = Vib | Trem | Incr | Decr
 type note_attribute = Pitch | Vol | Dur
 
 (*our data types*)
-type dType = Int | Note | Chord | Track | Rest 
+type dType = Double | Note | Chord | Track | Rest | Score
 
 (* operation types *)
 type op =   Add  | Sub
           | Mult | Div 
           | Ser  | Par  
-          | Arrow
           | Equal | Neq | Geq | Leq | Greater | Less
 
 (* Expression type *)
 type expr =
-    Literal of int
+    Literal of string
   | Id of string
   | NOTE_CR of expr * expr * expr
   | REST_CR of expr
   | TRACK_CR of expr list
   | CHORD_CR of expr list
+  | SCORE_CR of expr list
   | ACCESSOR of expr * note_attribute
   | Binop of expr * op * expr
   | Modifier of expr * modif 
@@ -65,18 +65,21 @@ type func_decl = {
     body : stmt list;
   }
 
+
 (*ast is a list of variables and list of function dels*)
 type program = var_decl list * func_decl list
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
 let rec string_of_expr = function
-    Literal(l) -> string_of_int l
+    Literal(l) -> l
   | Id(s) -> s
   | NOTE_CR(a, b, c) ->
       "(" ^ string_of_expr a ^ ", " ^ string_of_expr b ^ ", " ^ string_of_expr c ^ ")"
   | REST_CR(r) -> "(" ^ string_of_expr r ^ ")" (* should this really be string of literal or something? *)
   | TRACK_CR(expr_list) -> 
+      "(" ^ String.concat " . " (List.map string_of_expr expr_list) ^ ")"
+  | SCORE_CR(expr_list) -> 
       "(" ^ String.concat " . " (List.map string_of_expr expr_list) ^ ")"
   | ACCESSOR(a, b) -> 
       (string_of_expr a) ^ " -> " ^ (
@@ -92,7 +95,7 @@ let rec string_of_expr = function
 	    Add -> "+" | Sub -> "-" | Mult -> "*" | Div -> "/"
       | Equal -> "==" | Neq -> "!="
       | Less -> "<" | Leq -> "<=" | Greater -> ">" | Geq -> ">="
-      | Ser -> "." | Par -> ":" | Arrow -> "->") ^ " " ^
+      | Ser -> "." | Par -> ":") ^ " " ^
       string_of_expr e2
   (*again, not sure about this section*)
   | Modifier(e1, modif) ->
@@ -106,11 +109,12 @@ let rec string_of_expr = function
 
 let string_of_vdecl v = 
   (match v.vType with
-    Int -> "int "
+    Double -> "double "
     | Note -> "note "
     | Chord -> "chord "
     | Track -> "track "
-    | Rest -> "rest ") ^ v.vName
+    | Rest -> "rest "
+    | Score -> "score" ) ^ v.vName
 
 (*
 let string_of_cr_type t =
@@ -139,11 +143,12 @@ let rec string_of_stmt = function
 
 let string_of_fdecl fdecl =
    (match fdecl.rtype with
-    Int -> "int "
+    Double -> "double "
     | Note -> "note "
     | Chord -> "chord "
     | Track -> "track "
-    | Rest -> "rest ") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
+    | Rest -> "rest "
+    | Score ->  "score") ^ fdecl.fname ^ "(" ^ String.concat ", " (List.map string_of_vdecl fdecl.formals) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
   "}\n"
 

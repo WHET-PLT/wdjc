@@ -1,7 +1,9 @@
 song track ( ) {
 /* Simple note text. */
 
-int pitchA = 60;
+double pitchA = 60;
+
+return track();
 
 return track();
 

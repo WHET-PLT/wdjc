@@ -6,10 +6,11 @@ The WHET DJ Compiler
 
 TODO
 ----
-- Decide whether we are implementing loop.
-- Decide on usage and representation of arrays.
-- Review 'Modifiers' section.
-- Need to review our decion on types in the ast. We have made our types part of the 'expr' section. Not sure yet on what emily will be pushing in terms of var decls, but I cannot build out the symbol table or the type checking mechanisms before we clean types in the ast. -Tom
+Semcheck
+- sc_expr section
+	- change NOTE_CR
+	- modifier types, confirm behavior
+	- check_vinit_type function probably wrong
 
 ANSWERED
 --------

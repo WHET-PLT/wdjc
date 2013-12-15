@@ -33,11 +33,12 @@ type env = {
 
 (* var type -> string *)
 let string_of_vartype = function
-   Ast.Int -> "int"
+   Ast.Double -> "double"
    | Ast.Note -> "note"
    | Ast.Rest -> "rest"
    | Ast.Chord -> "chord"
    | Ast.Track -> "track"
+   | Ast.Score -> "score"
 
 (* ast -> sast type*)
 let ast_to_sast_note_attr = function
@@ -54,7 +55,6 @@ let ast_to_sast_op = function
 	| Ast.Div -> Sast.Div_t
 	| Ast.Ser -> Sast.Ser_t
 	| Ast.Par -> Sast.Par_t
-	| Ast.Arrow -> Sast.Arrow_t
 	| Ast.Equal -> Sast.Equal_t
 	| Ast.Neq -> Sast.Neq_t
 	| Ast.Geq -> Sast.Geq_t
@@ -72,11 +72,12 @@ let ast_to_sast_mod = function
 
 (* ast -> sast type*)
 let ast_to_sast_type = function
-   Ast.Int -> Sast.Int_t
+   Ast.Double -> Sast.Double_t
    | Ast.Note -> Sast.Note_t
    | Ast.Rest -> Sast.Rest_t
    | Ast.Chord -> Sast.Chord_t
    | Ast.Track -> Sast.Track_t
+   | Ast.Score -> Sast.Score_t
    | _ -> raise (Failure ("Mismatch Variable Type Type"))
    (* 
 let ast_to_sast_vdecl vdecl = 
@@ -95,35 +96,6 @@ let convert_types vardecl =
  (* TYPES - do we need this? *)
 let get_type = function
 	var -> string_of_vartype var.vType
-	
-
-(* search for variable types by name; return type or exception *)
-(* let get_variable_type name env = 
-	let typ = get_variable_name name env in
-	if typ = "" then raise (Failure ("wrong type used: " ^ name))
-	else typ
-
-let isnote name env =
-	let typ = get_variable_type name env in
-	if typ = "note" then name
-	else raise (Failure ("wrong type used: " ^ name))
-	
-let ischord name env =
-	let typ = get_variable_type name env in
-	if typ = "chord" then name
-	else raise (Failure ("wrong type used: " ^ name))
-
-let istrack name env =
-	let typ = get_variable_type name env in
-	if typ = "track" then name
-	else raise (Failure ("wrong type used: " ^ name))
-	
-let istrack name env =
-	let typ = get_variable_type name env in
-	if typ = "track" then name
-	else raise (Failure ("wrong type used: " ^ name))
-	 *)	
-		
 
 (* HELPFUL FUNCTIONS TO GET AND ADD VARIABLES (GLOBAL & LOCAL), FUNCIONS TO ENVIRONMENT *)
 
@@ -138,7 +110,12 @@ let istrack name env =
 let get_variable_name vname env = 
 	try StringMap.find vname env.locals
 	with Not_found -> try StringMap.find vname env.globals
-	with Not_found -> raise (Failure ("undeclared variable " ^ vname))
+						with Not_found -> raise (Failure ("Undeclared variable " ^ vname))
+
+let get_variable_type vname env = 
+	try StringMap.find vname env.locals
+	with Not_found -> try StringMap.find vname env.globals
+						with Not_found -> raise (Failure ("Untyped variable " ^ vname))
 
 
 (* 
@@ -150,7 +127,7 @@ let get_variable_name vname env =
 *)
 let get_function fname env =
 	try StringMap.find fname env.functions
-	with Not_found -> raise (Failure ("undeclared variable " ^ fname))
+	with Not_found -> raise (Failure ("Undeclared function " ^ fname))
 
 
 (*
@@ -162,7 +139,7 @@ let get_function fname env =
 	If it doesn't contain it, it adds it to the env's local list.
 *)
 let add_local var_type name env =
-	if StringMap.mem name env.locals then StringMap.empty
+	if StringMap.mem name env.locals then raise (Failure ("Local variable " ^ name ^ "is already defined"))
 	else StringMap.add name (string_of_vartype var_type) env.locals
 
 (*
@@ -176,7 +153,7 @@ let add_local var_type name env =
 *)
 let add_global var_type name env =
 	(* if name exists in env.globals, return empty stringmap *)
-	if StringMap.mem name env.globals then StringMap.empty
+	if StringMap.mem name env.globals then raise (Failure ("Global variable " ^ name ^ " is already defined."))
 	(*  else; add to env.globals:
 		key = name
 		value = vartype 
@@ -196,7 +173,7 @@ let add_global var_type name env =
 		name, vartype of return, formals to environemt's function
 *)
 let add_function fname rtype formals env =
-	if StringMap.mem fname env.functions then StringMap.empty
+	if StringMap.mem fname env.functions then raise (Failure ("function " ^ fname ^ " is already defined."))
 	else let fmls = List.map get_type formals in
 	(* weird parenthesis...*)
 	StringMap.add fname (string_of_vartype (rtype) :: fmls) env.functions
@@ -204,125 +181,6 @@ let add_function fname rtype formals env =
 
 
 (* SEMANTIC CHECKING FUNCTIONS *)
-
-
-(* check binop operands - TOM *)
-
-(*checks binop types. so far, we can do an op to two ints. 
-  need to decide what types can be binop'd and how*)
-let get_binop_expr_type t1 t2 = 
-	if t1 = "int" && t2 = "int" then "int" else
-	(*consideration for Ser and Par*)
-	(*if t1 = "note" && t2 = "chord" then "chord" else
-	if t1 = "chord" && t2 = "note" then "chord" else
-	if t1 = "chord" && t2 = "track" then "track" else
-	if t1 = "track" && t2 = "chord" then "track" else*)
-	if t1 = "chord" && t2 = "chord" then "track" else (*serial*)
-	if t1 = "note" && t2 = "note" then "chord" else (*parallel*)
-	raise (Failure ("illegal operation types"))
-
-
-(*Serial: combine chords to make a track. Can combine notes to make chord.
-  Parallel: combine chords to make a track.
-Serial (.)
-track  = chord.chord...;
-Parallel(:)
-chord = note(:note.....);
-
-*)
-let sc_binop e1 o e2 =
-	let expr_t = get_binop_expr_type (snd e1) (snd e2) in
-	(match o with
-	  Ast.Add -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Add_t, fst e2), "int") else
-		  raise (Failure ("type error: add"))
-	| Ast.Sub -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Sub_t, fst e2), "int") else
-		  raise (Failure ("type error: sub"))
-	| Ast.Mult -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Mult_t, fst e2), "int") else
-		  raise (Failure ("type error: mult"))
-	| Ast.Div -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Div_t, fst e2), "int") else
-		  raise (Failure ("type error: div"))
-	| Ast.Equal -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Equal_t, fst e2), "int") else
-		  raise (Failure ("type error: equal"))
-	| Ast.Neq -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Neq_t, fst e2), "int") else
-		  raise (Failure ("type error: neq"))
-	| Ast.Geq -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Geq_t, fst e2), "int") else
-		  raise (Failure ("type error: geq"))
-	| Ast.Leq -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Leq_t, fst e2), "int") else
-		  raise (Failure ("type error: leq"))
-	| Ast.Greater -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Greater_t, fst e2), "int") else
-		  raise (Failure ("type error: greater"))
-	| Ast.Less -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Less_t, fst e2), "int") else
-		  raise (Failure ("type error: less"))
-	| Ast.Ser -> if expr_t = "track" then (Sast.Binop_t(fst e1, Sast.Ser_t, fst e2), "track") else
-		  raise (Failure ("type error: ser"))
-	| Ast.Par -> if expr_t = "chord" then (Sast.Binop_t(fst e1, Sast.Par_t, fst e2), "chord") else
-		  raise (Failure ("type error: par"))
-	| Ast.Arrow -> if expr_t = "int" then (Sast.Binop_t(fst e1, Sast.Arrow_t, fst e2), "int") else
-		  raise (Failure ("type error: arrow"))
-
-	)
-
-(*
-(*need to discuss actions of modifiers. do they go through every note in
-  a chord? Can they be applied to just a single note?*)
-let get_mod_expr_type t1 =
-	if t1 = "note" then "note" else
-	if t1 = "chord" then "chord" else
-	if t1 = "track" then "track" else
-	raise (Failure ("illegal modifier types"))
-
-let sc_modifier e1 o =
-	let expr_t = get mod_expr_type (snd e1) in
-	(match o with
-	  Ast.Vib ->
-	| Ast.Trem ->
-	| Ast.Bend ->
-	| Ast.Incr ->
-	| Ast.Decr -> 
-
-	)
-
-*)
-
-(*
-	locals are now vdecls, vinits. Need to pass a fuction a stmt_list and 
-	function will go through list to pull out vdecls/vinits.
-	Implemented at 365, 375. 
-
-	add_to_locals function
-*)
-
-(* STATEMENTS - TOM *)
-(* check statement *)
-(* check statement list *)
-(* ARE WE ACTUALLY RETURNING THE ENVIRONMENT HERE *)
-(* let rec sc_stmt  func env = function
-	  Ast.Block(stmt_list) -> (Sast.Block(sc_stmt_list env func stmt_list)), env
-	  (*need to check expr eval*)
-	| Ast.Expr(expr) -> (Sast.Expr( (sc_expr env expr))), env
-	| Ast.Return(expr) -> let e = sc_expr env expr in
-						if not(snd e = string_of_vartype func.return) then raise (Failure ("Illegal return type: func type and return type must match"))
-						else (Sast.Return(fst e)), env
-	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (sc_stmt env func stmt1), (sc_stmt env func stmt2))), env
-	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (sc_stmt env func stmt))), env
-	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), sc_stmt env func stmt)), env
-	| Ast.Vdecl(vardecl) -> 
-		let new_env = add_local vardecl.vName vardecl.vType env in 
-		Sast.Vdecl(vardecl), new_env
-	(* does checking *)
-	| Ast.Vinit(varinit) -> 
-		let new_init = check_vinit_type varinit in 
-			let new_vardecl = new_init.vardecl in
-				let new_env = add_local new_vardecl.vType new_vardecl.vName in 
-		Sast.Vinit(varinit), new_env *)
-(*	| Ast.If(expr, stmt1, stmt2) -> (Sast.If((sc_expr env expr), (sc_stmt env func stmt1), (sc_stmt env func stmt2))), env
-	| Ast.For(expr1, expr2, expr3, stmt) -> (Sast.For((sc_expr env expr1), (sc_expr env expr2), (sc_expr env expr3), (sc_stmt env func stmt))), env
-	| Ast.While(expr, stmt) -> (Sast.While((sc_expr env expr), sc_stmt env func stmt)), env
-	| Ast.Vdecl(vardecl) -> (Sast.Vdecl(vardecl)), env
-	| Ast.Vinit(varinit) -> (Sast.Vinit(check_vinit_type env varinit)), env
-*)
-
-
 
 let rec build_expr = function
 	  Ast.Literal(i) -> Sast.Literal_t(i)
@@ -332,6 +190,7 @@ let rec build_expr = function
 	| Ast.REST_CR(expr) -> Sast.REST_CR_t( (build_expr expr) )
 	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR_t( (build_expr_list expr_list) )
 	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR_t( (build_expr_list expr_list) )
+	| Ast.SCORE_CR(expr_list) -> Sast.SCORE_CR_t( (build_expr_list expr_list) )
 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
 	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
 	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
@@ -363,29 +222,195 @@ and build_stmt_list stmt_list =
 	[] -> []
 	| _ ->  *) (* ignore type_stmt_list func env func.body; *) 
 	build_stmt_list func.body *)
+
+let is_id expr = 
+	match expr with
+	  Ast.Id(i) -> []
+	| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+	    		"LHS of assign must be of type ID."))
 	
-(* 
-let rec type_stmt_list func env = function
+let rec match_expr_list_types env types_list expr_list = 
+	match expr_list with
+		  [] -> (match types_list with
+					[] -> []
+					| _ -> raise (Failure ("Mismatch arguments number: function expects more arguments than supplied.")))
+		| hd::tl -> ignore (type_expr (List.hd types_list) env hd); match_expr_list_types env (List.tl types_list) tl
+			
+and type_call typestring env name_str expr_list =
+	let func_types_list = try StringMap.find name_str env.functions
+						  with Not_found -> raise (Failure ("Undefined function: " ^ name_str)) 
+		in
+		let rtype = (List.hd func_types_list) in
+		if rtype != typestring
+		then raise (Failure ("Mismatch Expression type: \n" ^ 
+			     	"function has return type " ^ rtype ^ ".\n" ^
+			   		"an expression of type " ^ typestring ^ " was expected."))
+		else match_expr_list_types env (List.tl func_types_list) expr_list 
+
+and type_binop typestring env expr1 op expr2 =
+	match op with
+	  Ast.Add -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "double"
+	| Ast.Sub -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "double"
+	| Ast.Mult -> ignore (type_expr "double" env expr1); 
+	  			  ignore (type_expr "double" env expr2);
+	  			  "double"
+	| Ast.Div -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "double"
+	(* TODO boolean should take note or chord or track too*)
+	| Ast.Equal -> ignore (type_expr "double" env expr1); 
+	  			   ignore (type_expr "double" env expr2);
+	  			   "boolean"
+	| Ast.Neq -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "boolean"
+	| Ast.Geq -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "boolean"
+	| Ast.Leq -> ignore (type_expr "double" env expr1); 
+	  			 ignore (type_expr "double" env expr2);
+	  			 "boolean"
+	| Ast.Greater -> ignore (type_expr "double" env expr1); 
+	  			     ignore (type_expr "double" env expr2);
+	  			     "boolean"
+	| Ast.Less -> ignore (type_expr "double" env expr1); 
+	  			  ignore (type_expr "double" env expr2);
+	  			  "boolean"
+	 (* TODO either has to be chord OR note OR track *)
+	| Ast.Ser -> ignore (type_expr "chord" env expr1); 
+	  			 ignore (type_expr "chord" env expr2);
+	  			 "track"
+	 (* TODO either has to be chord OR note OR track *)
+	| Ast.Par -> ignore (type_expr "note" env expr1); 
+	  			 ignore (type_expr "note" env expr2);
+	  			 "chord"
+	
+and type_expr typestring env expr =
+	match expr with
+	  Ast.Literal(i) -> if typestring <> "double" && typestring <> "any" && typestring <> "primitive"
+  						then raise (Failure ("Mismatch Expression type: \n" ^ 
+  						     	"expression was of type double.\n" ^
+  						   		"an expression of type " ^ typestring ^ " was expected."))
+	  					else env
+    | Ast.Id(i) -> let id_type = get_variable_type i env in
+    				if typestring = "primitive"
+    				then
+	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track" && id_type <> "score" && id_type <> "double"
+						then raise (Failure ("Mismatch Expression type: \n" ^ 
+						     	"expression was of type " ^ id_type ^ ".\n" ^
+						   		"an expression of type " ^ typestring ^ " was expected."))
+						else env
+	    			else
+	    				if typestring <> id_type && typestring <> "any"
+						then raise (Failure ("Mismatch Expression type: \n" ^ 
+						     	"expression was of type " ^ id_type ^ ".\n" ^
+						   		"an expression of type " ^ typestring ^ " was expected."))
+						else env
+	| Ast.ACCESSOR(expr, note_attr) -> ignore (type_expr "note" env expr);
+										if typestring <> "double" && typestring <> "any"
+				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
+				  						     	"expression was of type double.\n" ^
+				  						   		"an expression of type " ^ typestring ^ " was expected."))
+					  					else env
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring <> "primitive" && typestring <> "note" && typestring <> "any"
+										  then raise (Failure ("Mismatch Expression type: \n" ^ 
+				  						     	"expression was of type note.\n" ^
+				  						   		"an expression of type " ^ typestring ^ " was expected."))
+										  else ignore (type_expr "double" env expr1);
+											   ignore (type_expr "double" env expr2);
+											   ignore (type_expr "double" env expr3);
+											   env
+	| Ast.REST_CR(expr) -> if typestring <> "primitive" && typestring <> "rest" && typestring <> "any"
+						   then raise (Failure ("Mismatch Expression type: \n" ^ 
+  						      	"expression was of type rest.\n" ^
+  						   		"an expression of type " ^ typestring ^ " was expected."))
+						   else ignore (type_expr "double" env expr);
+							    env
+	| Ast.CHORD_CR(expr_list) -> if typestring <> "primitive" && typestring <> "chord" && typestring <> "any"
+								 then raise (Failure ("Mismatch Expression type: \n" ^ 
+		  						    "expression was of type chord.\n" ^
+		  						   	"an expression of type " ^ typestring ^ " was expected."))
+								 else ignore (type_expr_list "note" env expr_list);
+								 	  env
+
+	| Ast.TRACK_CR(expr_list) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "any"
+								 then raise (Failure ("Mismatch Expression type: \n" ^ 
+		  						    "expression was of type track.\n" ^
+		  						   	"an expression of type " ^ typestring ^ " was expected."))
+								 else ignore (type_expr_list "chord" env expr_list);
+								 	  env
+	| Ast.SCORE_CR(expr_list) -> if typestring <> "primitive" && typestring <> "score" && typestring <> "any"
+								 then raise (Failure ("Mismatch Expression type: \n" ^ 
+		  						    "expression was of type track.\n" ^
+		  						   	"an expression of type " ^ typestring ^ " was expected."))
+								 else ignore (type_expr_list "track" env expr_list);
+								 	  env	
+	| Ast.Binop(expr1, op, expr2) -> let binop_type = type_binop typestring env expr1 op expr2 in
+										if typestring <> binop_type && typestring <> "any"
+				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
+			  						            "expression was of type " ^ binop_type ^ ".\n" ^
+				  						   		"an expression of type " ^ typestring ^ " was expected."))
+					  					else env
+	| Ast.Modifier(expr, m) -> ignore (type_expr "primitive" env expr); env
+	| Ast.Assign(expr1, expr2) -> ignore (is_id expr1);
+								  ignore (type_expr typestring env expr1);
+								  ignore (type_expr typestring env expr2);
+								  (* TODO update environment with initialized boolean *)
+								  env
+  	| Ast.Call(name_str, expr_list) -> ignore (type_call typestring env name_str expr_list); 
+  										env
+ 	| Ast.Noexpr -> env
+
+and type_expr_list typestring env = function
 		[] -> []
-	| hd::tl -> let st, new_env = (type_stmt func env hd) in st::(type_stmt_list func new_env tl)
+	| hd::tl -> let new_env = (type_expr typestring env hd) in type_expr_list typestring new_env tl
 	
- *)
 
-
-
-
-(* 
-
-let rec check_vinit_type varinit env =
-	if sc_expr env varinit.vExpr == varinit.vType
-	then varinit else
-	raise (Failure("expr type does not match delcarartion type"))
-
-	(*if check_expr_type (vinit.expr) == "vinit.vdecl.type"
-		then vinit
-		else raise*)
- *)
-
+(* function matches a STATEMENT *)
+let rec type_stmt func env stmt =
+	match stmt with 
+	  Ast.Block(stmt_list) -> type_stmt_list func env stmt_list
+	| Ast.Expr(expr) -> type_expr "any" env expr
+	| Ast.Return(expr) -> type_expr (string_of_vartype func.rtype) env expr
+	(* reordered! expr comes last (after stmts) becuase its the only one that can change the environment outside the block *)
+	| Ast.If(expr, stmt1, stmt2) -> ignore (type_stmt func env stmt1);
+									ignore (type_stmt func env stmt2);
+									type_expr "boolean" env expr
+	(* expr1=assign, expr2=boolean, expr3=junk *)
+	| Ast.For(expr1, expr2, expr3, stmt) -> let for_env = type_expr "double" env expr1 in 
+												ignore (type_expr "any" for_env expr2);
+												ignore (type_expr "any" for_env expr3);
+												ignore (type_stmt func for_env stmt);
+												env
+	(* (type_expr expr1), (type_expr expr2), type_expr "junk" env expr, (type_stmt stmt) *)
+	| Ast.While(expr, stmt) -> let while_env = type_expr "boolean" env expr in 
+								ignore (type_stmt func while_env stmt);
+								env
+	| Ast.Vdecl(vardecl) -> let new_locals_stringmap = add_local vardecl.vType vardecl.vName env in
+								let new_env = 
+									{
+										locals = new_locals_stringmap; 
+										globals = env.globals; 
+										functions = env.functions 
+									} in
+									new_env
+	| Ast.Vinit(vardecl, expr) -> let new_locals_stringmap = add_local vardecl.vType vardecl.vName env in
+									let new_env = 
+										{
+											locals = new_locals_stringmap; 
+											globals = env.globals; 
+											functions = env.functions 
+										} in
+										type_expr (string_of_vartype vardecl.vType) new_env expr
+										
+and type_stmt_list func env = function
+	  [] -> env
+	| hd::tl -> let new_env = (type_stmt func env hd) in type_stmt_list func new_env tl
+	
 (* let rec sc_local_vars func env =  *)
 
 (* check the expression type can be used for
@@ -395,65 +420,14 @@ let sc_func_arg lst expr arg_t =
 	if (snd expr) = arg_t then (fst expr)::lst else
 	raise (Failure("function arguments do not match"))
 
-(* returns expr + its type 
-meat of this part taken from sast.ml
-*)(* 
-let rec sc_expr expr = function
-	(* literal *)
-	Ast.Literal(i) -> Sast.Literal(i)
-	(* accessor *)
-	| Ast.ACCESSOR(id, note_attr) -> Sast.ACCESSOR( (isnote id env), (sc_expr note_attr) )
-	(* id *)
-	| Ast.Id(i) -> Sast.Id(i), (get_variable_type i env)
-	(* note creation *)
-	| Ast.NOTE_CR(s1,s2,s3) -> Sast.NOTE_CR( (sc_expr s1), (sc_expr s2), (sc_expr s3) ), "note"
-	
-		need to get the type of each expr/id
-	| Ast.NOTE_CR(i1, i2, i3, i4) -> (Sast.NOTE_CR((get_variable_type i1 env), (get_variable_type i2 env), (get_variable_type i3 env), (get_variable_type i4 env))), "note"
-	
-	(* Rest *)
-	| Ast.Rest(s) -> Sast.REST_CR(), "rest"
-	(*  chord create *)
-	(*list of notes*)
-	| Ast.CHORD_CR(str_lst) -> Sast.CHORD_CR(), "chord"
-	(* track *)
-	| Ast.TRACK_CR(s) -> Sast.TRACK_CR(), "track"
-	(* binop *)
- 	| Ast.Binop(e1, op, e2) ->
- 		sc_binop (sc_expr env e1) op (sc_sexpr env e2)
-	(* Assign *)
-	(* *)
-	| Ast.Assign(st, exp) -> let typ = get_variable_type env st in
-		Sast.Assign(st, (get_expr_type env exp typ)), 
- 	*)
- 	(* Call
- 	| Ast.call(func, expr_list) ->
- 		let args = get_function func env in
- 			(match args with
- 				[] -> raise (Failure ("undefined function " ^ func))
- 				| h::t -> let new_lst = 
- 					try List.fold_left2 sc_func_arg [] (List.map (sc_expr env) expr_list)
- 				with 
- 			)
-(* 	*)
- 	| Ast.Noexpr -> Sast.Noexpr, "void" (* do we even have void type *)
- *)
-(* let get_expr_type env expr typ =
-	let e = sc_expr env expr in
-	if not((snd e) = typ) then raise (Failure ("type error")) else (fst e)
-
- *)
-
 (* FUNCTIONS  - EMILY *)
 (*checks function arguments, then updates env*)
 let sc_formal formal env =
 	(*fstrently, formals are var_decls*)
-	let new_env = add_local formal.vType formal.vName env in
-	if StringMap.is_empty new_env then
-		raise (Failure ("formals_checker: variable " ^ formal.vName ^ "is already defined"))
-	else let env = 
+	let new_locals_stringmap = add_local formal.vType formal.vName env in
+		let env = 
 		{
-			locals = new_env; 
+			locals = new_locals_stringmap; 
 			globals = env.globals; 
 			functions = env.functions 
 		} in
@@ -466,7 +440,7 @@ let sc_formal formal env =
 let rec sc_formals formals env =
 	match formals with
 	  [] -> []
-	| h::t -> let f, new_e = (sc_formal h env) in (f, new_e)::(sc_formals t new_e) 
+	| h::t -> let f, new_env = (sc_formal h env) in (f, new_env)::(sc_formals t new_env) 
 
 
 (* sc_function
@@ -476,29 +450,25 @@ let rec sc_formals formals env =
 let rec sc_function fn env = 
 	match List.hd (List.rev fn.body) with
 		(* check there is a return statement at the end of the function *)
+		(* TODO only song needs a return! *)
 		Return(_) -> 
 			(* updating this function's personal envirnment *)
-			let local_env = 
+			(* let env = 
 				{
 					locals = StringMap.empty;
 					globals = env.globals;
 					functions = env.functions;
 				}
-			(* fill up env_new with functions;
+			fill up env_new with functions;
 			change name possibly to something more intuitive
-			new_fn_sm - new function stringmap
-			 *)
-			in
-			let new_func_sm =
-				add_function fn.fname fn.rtype fn.formals env in
-				(* WHAT is env_new -- newfuncsm? *)
-				if StringMap.is_empty new_func_sm then raise (Failure ("function " 
-					^ fn.fname ^ " is already defined."))
-				else let env =
+			new_fn_sm - new function stringmap			
+			in *)
+			let new_function_stringmap = add_function fn.fname fn.rtype fn.formals env in
+				let env =
 					{
-						locals = env.locals;
+						locals = StringMap.empty;
 						globals = env.globals;
-						functions = new_func_sm (* new function env *)
+						functions = new_function_stringmap (* new function env *)
 					} 
 				
 			(* check formal arguments with sc_formals 
@@ -506,26 +476,28 @@ let rec sc_function fn env =
 				- returns formal list appended w/ new environment as tuples
 			*)
 			in
-			let f = sc_formals fn.formals env in (* f is tuple (formals, env) *)
+			let function_environment_tuple_list = sc_formals fn.formals env in (* f is tuple (formals, env) *)
 				(* formals = list of formals *)
-				let formals_list = List.map (fun formal -> fst formal ) f in
+				let formals_list = List.map (fun formal -> fst formal ) function_environment_tuple_list in
 				(match formals_list with
 					(* empty, no formals *)
-					[] -> let body = build_stmt_list fn.body in
-						{
-							Sast.rtype_t = ast_to_sast_type fn.rtype;
-							Sast.fname_t = fn.fname;
-							Sast.formals_t = formals_list; (* ie empty *)
-							Sast.body_t = body
-						}, env
-					|_ -> let new_env = snd (List.hd (List.rev f)) in
-						let body = build_stmt_list fn.body in
-						{
-							Sast.rtype_t = ast_to_sast_type fn.rtype;
-							Sast.fname_t = fn.fname;
-							Sast.formals_t = formals_list; (* ie empty *)
-							Sast.body_t = body
-						}, new_env
+					[] -> ignore (type_stmt_list fn env fn.body);
+							let sast_body = build_stmt_list fn.body in
+								{
+									Sast.rtype_t = ast_to_sast_type fn.rtype;
+									Sast.fname_t = fn.fname;
+									Sast.formals_t = formals_list; (* ie empty *)
+									Sast.body_t = sast_body
+								}, env
+					|_ -> let new_env = snd (List.hd (List.rev function_environment_tuple_list)) in
+							ignore (type_stmt_list fn new_env fn.body);
+							let sast_body = build_stmt_list fn.body in
+								{
+									Sast.rtype_t = ast_to_sast_type fn.rtype;
+									Sast.fname_t = fn.fname;
+									Sast.formals_t = formals_list; (* ie empty *)
+									Sast.body_t = sast_body
+								}, new_env
 				)
 		|_ -> raise (Failure ("The last statement must be a return statement"))
 			(*let f = sc_formals fn.formals env i stopped fu nv stuff at ln 196*)
@@ -555,15 +527,11 @@ let rec functions_update env funcs =
 (* sem check global *)
 let sc_global global env = 
 	(* add_global returns updated stringmap *)
-	let new_global_sm = add_global global.vType global.vName env in
-		(* if already exists in the add_global, don't add it; crash program *)
-		if StringMap.is_empty new_global_sm then raise (Failure ("global variable " ^ 
-			global.vName ^ " is already defined."))
-		(* update env with globals from r *)
-		else let env = 
+	let new_global_stringmap = add_global global.vType global.vName env in
+		let env = 
 			{
 				locals = env.locals; 
-				globals = new_global_sm;
+				globals = new_global_stringmap;
 				functions = env.functions
 			} in
 		(* 

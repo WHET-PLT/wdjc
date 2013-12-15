@@ -1,11 +1,12 @@
 
-song int ( ) {
+song double ( ) {
 /* Simple note text. */
 
 /* individual declaration + assignment */
 
 
-int pitchA;
+double pitchA;
+double pitchB;
 /* pitchA = 60; */
 
 

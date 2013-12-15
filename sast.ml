@@ -4,13 +4,12 @@ type modif_t = Vib_t | Trem_t | Incr_t | Decr_t
 (* Not sure if I should make this a string *)
 type note_attribute_t = Pitch_t | Vol_t | Dur_t
 
-type dType_t = Int_t | Note_t | Chord_t | Track_t | Rest_t 
+type dType_t = Double_t | Note_t | Chord_t | Track_t | Rest_t | Score_t
 
 (* operation types *)
 type op_t =   Add_t  | Sub_t
           | Mult_t | Div_t 
           | Ser_t  | Par_t  
-          | Arrow_t
           | Equal_t | Neq_t | Geq_t | Leq_t | Greater_t | Less_t
 
 (* Expression type *)
@@ -31,12 +30,13 @@ type expr_t =
   | Noexpr
 *)
 type expr_t =
-    Literal_t of int
+    Literal_t of string
   | Id_t of string
   | NOTE_CR_t of expr_t * expr_t * expr_t
   | REST_CR_t of expr_t
   | TRACK_CR_t of expr_t list
   | CHORD_CR_t of expr_t list
+  | SCORE_CR_t of expr_t list
   | ACCESSOR_t of expr_t * note_attribute_t
   | Binop_t of expr_t * op_t * expr_t
   | Modifier_t of expr_t * modif_t
@@ -84,14 +84,15 @@ type program_t = var_decl_t list * func_decl_t list
 
 
 let rec string_of_expr_t = function
-    Literal_t(l) -> string_of_int l
+    Literal_t(l) -> l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
       "(" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
   | REST_CR_t(r) -> "(" ^ string_of_expr_t r ^ ")" 
   | TRACK_CR_t(track_list) -> 
   "(" ^ String.concat " : " (List.map string_of_expr_t track_list) ^ ")"
- 
+  | SCORE_CR_t(score_list) -> 
+  "(" ^ String.concat " : " (List.map string_of_expr_t score_list) ^ ")"
   | ACCESSOR_t(a, b) -> 
       (string_of_expr_t a) ^ " -> " ^ (
       match b with
@@ -106,7 +107,7 @@ let rec string_of_expr_t = function
       Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
       | Equal_t -> "==" | Neq_t -> "!="
       | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">="
-      | Ser_t -> "." | Par_t -> ":" | Arrow_t -> "->") ^ " " ^
+      | Ser_t -> "." | Par_t -> ":") ^ " " ^
       string_of_expr_t e2
   | Modifier_t(e1, modif) ->
       string_of_expr_t e1 ^
@@ -119,11 +120,12 @@ let rec string_of_expr_t = function
 
 let string_of_vdecl_t v = 
   (match v.vType_t with
-    Int_t -> "int "
+    Double_t -> "double "
     | Note_t -> "note "
     | Chord_t -> "chord "
     | Track_t -> "track "
-    | Rest_t -> "rest ") ^ v.vName_t
+    | Rest_t -> "rest "
+    | Score_t -> "score ") ^ v.vName_t
 
 
 let rec string_of_stmt_t = function
@@ -144,11 +146,12 @@ let rec string_of_stmt_t = function
 
 let string_of_fdecl_t fdecl =
    (match fdecl.rtype_t with
-    Int_t -> "int "
+    Double_t -> "double "
     | Note_t -> "note "
     | Chord_t -> "chord "
     | Track_t -> "track "
-    | Rest_t -> "rest ") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+    | Rest_t -> "rest "
+    | Score_t -> "score ") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^
   "}\n"
 
