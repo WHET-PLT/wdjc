@@ -15,7 +15,7 @@ let imports =
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
-let rec string_of_expr_t ?(f_name="null") ?(v_name="null") ex = 
+let rec string_of_expr_t ?(v_name="null") ex = 
   match ex with
     Literal_t(l) -> l
   | Id_t(s) -> s
@@ -43,7 +43,6 @@ let rec string_of_expr_t ?(f_name="null") ?(v_name="null") ex =
       (* hack??? Assumes that there are at least 2 notes here...*)
      "noteArrayList.add("^
       String.concat  ");\nnoteArrayList.add(" (List.map string_of_expr_t note_list) ^ ");\n" ^ 
-      (* List.map (fun note -> "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n") note_list *)
       v_name ^ ".add(noteArrayList);\n"
 
       (*List.map (fun a ->  "noteArrayList.add(" ^ string_of_expr_t a ^ ")\n")  note_list
@@ -53,9 +52,13 @@ let rec string_of_expr_t ?(f_name="null") ?(v_name="null") ex =
   | TRACK_CR_t(track_list) ->  
       (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
       " new Part();\n" ^
-      "ArrayList<> phraseArrayList = new ArrayList<>();"  (*same as cphrase *)
+      "ArrayList<Chord> chordArrayList = new ArrayList<Chord>();\n" ^ (*same as cphrase *)
+       v_name ^ ".add(chordArrayList);\n"
   (* Create function for this here. figure out if arraylist will work with this..  *)
-
+  | SCORE_CR_t(track_list) ->  
+      (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
+      " new Part();\n" ^
+      "ArrayList<Part> phraseArrayList = new ArrayList<Part>();\n"  (*same as cphrase *)
 
   (* the question is whether this makes sense complete. it will work for variable ints + ints but not notes etc *)
   (* can we write a function to figure out if note or int etc??? *)
@@ -88,7 +91,8 @@ let string_of_vdecl_t v =
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
-    | Rest_t-> "Rest ") ^ v.vName_t 
+    | Rest_t-> "Rest "
+    | Score_t -> "Score ") ^ v.vName_t 
 
 
 let rec string_of_stmt_list f_name stmt_list = 
@@ -105,10 +109,10 @@ and string_of_stmt_t f_name statement =
       ("{\n" ^ 
         let stmt_lst = string_of_stmt_list f_name stmts in 
             String.concat "" stmt_lst ^ "}\n")
-  | Expr_t(expr) -> string_of_expr_t expr ^ ";\n";
+  | Expr_t(expr) -> string_of_expr_t expr ^ ";\n"
   | Return_t(expr) -> 
       if f_name = "Song" then "Write.midi(" ^ string_of_expr_t expr ^", \"midi/createNotes.mid\");\n" 
-    else "return " ^ string_of_expr_t expr ^ ";\n";
+    else "return " ^ string_of_expr_t expr ^ ";\n"
   | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t f_name s
   | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
       string_of_stmt_t f_name s1 ^ "else\n" ^ string_of_stmt_t f_name s2
@@ -124,7 +128,7 @@ and string_of_stmt_t f_name statement =
 
 let string_of_fdecl_t fdecl =
   (* no song function has arguments *)
-  if fdecl.fname_t = "Song" 
+  if fdecl.fname_t = "song" 
     then 
       let stmt_lst = string_of_stmt_list fdecl.fname_t fdecl.body_t in 
         "public static void main(Strings[] args){\n" ^
@@ -137,6 +141,7 @@ let string_of_fdecl_t fdecl =
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
     | Rest_t -> "Rest "
+    | Score_t -> "Score "
     | _ -> "void") ^ 
             fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
                  String.concat "" stmt_lst ^ "}\n"

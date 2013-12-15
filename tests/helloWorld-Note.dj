@@ -1,4 +1,4 @@
-song double () 
+song score () 
 {
 	/*simple note test */
 
@@ -9,10 +9,9 @@ song double ()
 	pitchA = 440; 
 	volume=2; 
 	duration=4; 
-	/*
-	n = note (pitchA, volume, duration); */
+	note n = note (pitchA, volume, duration);
 	chord c = chord(n);
 	track t = track(c);
-	score s = score(s);
+	score s = score(t);
 	return s; 
 }
