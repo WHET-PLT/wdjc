@@ -15,8 +15,7 @@ song score ()
 	
 
 	note n = note (a, b, c);
-	/* TODO chord should be able to take rests too */
-	d = n : n;
+	d = d : n;
 
 	return score();
 

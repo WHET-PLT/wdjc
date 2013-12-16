@@ -284,27 +284,42 @@ and type_binop typestring env expr1 op expr2 =
 	  			  ignore (type_expr "double" env expr2);
 	  			  "boolean"
 	 (* TODO either has to be chord OR note OR track *)
-	| Ast.Ser -> match typestring with
+	| Ast.Ser -> (match typestring with
 	  			 | "track" ->
- 						ignore (type_expr "track" env expr1); 
- 		 	  			ignore (type_expr "track_or_chord" env expr2);
- 		 	  			"track"
+						ignore (type_expr "track" env expr1); 
+		 	  			ignore (type_expr "track_or_chord" env expr2);
+		 	  			"track"
+	  			 | "any" ->
+						ignore (type_expr "track" env expr1); 
+		 	  			ignore (type_expr "track_or_chord" env expr2);
+		 	  			"track"
 	  			 | _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
   						     	"expression was of type track.\n" ^
-  						   		"but an expression of type " ^ typestring ^ " was expected."))
+  						   		"but an expression of type " ^ typestring ^ " was expected.")) )
 	 (* TODO either has to be chord OR note OR track OR score *)
-	| Ast.Par -> match typestring with
+	| Ast.Par -> (match typestring with
 	  			   "score" ->
 		  				ignore (type_expr "score" env expr1); 
 		   	  			ignore (type_expr "score_or_track" env expr2);
 		   	  			"score"
 	  			 | "chord" -> 
 		 				ignore (type_expr "chord" env expr1); 
-		  	  			ignore (type_expr "chord_or_note" env expr2);
+		  	  			ignore (type_expr "chord_or_note_or_rest" env expr2);
 		  	  			"chord"
-	  			 | _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
-  						     	"expression was required to be of type score or track or chord.\n" ^
-  						   		"but an expression of type " ^ typestring ^ " was expected."))
+		  	  			
+	  			 | "any" -> try
+								ignore (type_expr "chord" env expr1); 
+				 	  			ignore (type_expr "chord_or_note_or_rest" env expr2);
+				 	  			"chord"
+				 	  		with Failure cause -> 
+						 	  		try 
+			 	  						ignore (type_expr "score" env expr1); 
+			 	  		 	  			ignore (type_expr "score_or_track" env expr2);
+			 	  		 	  			"score"
+			 	  		 	  		with Failure cause -> raise (Failure ("Mismatch Expression type: \n" ^ 
+	  				  						     	"expression was required to be of type score or chord.\n" ^
+	  				  						   		"but an expression of type " ^ typestring ^ " was expected."))
+	  			 )
 	
 and type_expr typestring env expr =
 	match expr with
@@ -321,19 +336,38 @@ and type_expr typestring env expr =
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
-	    			else
-	    				if typestring <> id_type && typestring <> "any"
-						then raise (Failure ("Mismatch Expression type: \n" ^ 
-						     	"expression was of type " ^ id_type ^ ".\n" ^
-						   		"an expression of type " ^ typestring ^ " was expected."))
-						else env
+	    			else (match typestring with
+		    				  id_type -> env
+		    				| "any" -> env
+		    				| "chord_or_note_or_rest" -> (match id_type with
+		    												  "chord" -> env
+		    												| "note" -> env
+		    												| "rest" -> env
+		    												| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+														     	"expression was of type " ^ id_type ^ ".\n" ^
+														   		"an expression of type " ^ typestring ^ " was expected.")) )
+		    				| "score_or_track" -> (match id_type with
+    												  "score" -> env
+    												| "track" -> env
+    												| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+												     	"expression was of type " ^ id_type ^ ".\n" ^
+												   		"an expression of type " ^ typestring ^ " was expected.")) )
+		    				| "track_or_chord" -> (match id_type with
+    												  "track" -> env
+    												| "chord" -> env
+    												| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+												     	"expression was of type " ^ id_type ^ ".\n" ^
+												   		"an expression of type " ^ typestring ^ " was expected.")) )
+		    				| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+							     	"expression was of type " ^ id_type ^ ".\n" ^
+							   		"an expression of type " ^ typestring ^ " was expected.")) )
 	| Ast.ACCESSOR(expr, note_attr) -> ignore (type_expr "note" env expr);
 										if typestring <> "double" && typestring <> "any"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
 				  						     	"expression was of type double.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
 					  					else env
-	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring <> "primitive" && typestring <> "note" && typestring <> "any"
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring <> "primitive" && typestring <> "note" && typestring <> "chord_or_note_or_rest" && typestring <> "any"
 										  then raise (Failure ("Mismatch Expression type: \n" ^ 
 				  						     	"expression was of type note.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
@@ -341,26 +375,26 @@ and type_expr typestring env expr =
 											   ignore (type_expr "double" env expr2);
 											   ignore (type_expr "double" env expr3);
 											   env
-	| Ast.REST_CR(expr) -> if typestring <> "primitive" && typestring <> "rest" && typestring <> "any"
+	| Ast.REST_CR(expr) -> if typestring <> "primitive" && typestring <> "rest" && typestring <> "chord_or_note_or_rest" && typestring <> "any"
 						   then raise (Failure ("Mismatch Expression type: \n" ^ 
   						      	"expression was of type rest.\n" ^
   						   		"an expression of type " ^ typestring ^ " was expected."))
 						   else ignore (type_expr "double" env expr);
 							    env
-	| Ast.CHORD_CR(expr_list) -> if typestring <> "primitive" && typestring <> "chord" && typestring <> "any"
+	| Ast.CHORD_CR(expr_list) -> if typestring <> "primitive" && typestring <> "chord" && typestring <> "chord_or_note_or_rest" && typestring <> "track_or_chord" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type chord.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
 								 else ignore (type_expr_list "note" env expr_list);
 								 	  env
 
-	| Ast.TRACK_CR(expr) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "any"
+	| Ast.TRACK_CR(expr) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "track_or_chord" && typestring <> "score_or_track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
 								 else ignore (type_expr "double" env expr);
 								 	  env
-	| Ast.SCORE_CR(expr_list) -> if typestring <> "primitive" && typestring <> "score" && typestring <> "any"
+	| Ast.SCORE_CR(expr_list) -> if typestring <> "primitive" && typestring <> "score" && typestring <> "score_or_track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
@@ -377,6 +411,7 @@ and type_expr typestring env expr =
 								  ignore (type_expr typestring env expr1);
 								  ignore (type_expr typestring env expr2);
 								  (* TODO update environment with initialized boolean *)
+								  (* TODO update environment? *)
 								  env
   	| Ast.Call(name_str, expr_list) -> ignore (type_call typestring env name_str expr_list); 
   										env

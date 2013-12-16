@@ -3,7 +3,7 @@ song score ()
 	track t;
 	chord c;
 	chord d;
-	t = c.d;	
+	t = t.c;	
 	return score();
 
 } 
