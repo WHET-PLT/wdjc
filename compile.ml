@@ -1,6 +1,7 @@
 open Sast
 open Printf
 
+let num_tracks = ref 0;;
 let imports = "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimport jm.util.*;\n\npublic class DJ implements JMC{\n" 
   
 
@@ -59,6 +60,8 @@ and write_vdecl v =
     | Track_t -> "Part "
     | Rest_t-> "Rest "
     | Score_t -> "Score ") ^ v.vName_t
+
+and write_vdecl_name v =  v.vName_t
 
 and write_fdecl f =
   (* no song function has arguments *)
@@ -119,9 +122,10 @@ and write_stmt f_name statement =
       sprintf "%s" ("while (" ^ ex1^ ") " ^ s1)
   | Vdecl_t(v) -> sprintf "%s" (write_vdecl v ^ ";\n")
   | Vinit_t(v, e) -> 
-    let v = write_vdecl v in 
-      let ex1 = write_expr "junk" e in 
-        sprintf "%s" (v ^ " = " ^ ex1 ^ ";\n")
+    let var = write_vdecl v in 
+      (* let name = write_expr "junk" v  *)
+      let ex1 = (write_expr v.vName_t e) in 
+        sprintf "%s" (var ^ " = " ^ ex1 ^ ";\n")
 
 and write_stmt_block f_name stmts = 
   let stmt_list = (write_stmt_list f_name stmts) in
@@ -136,7 +140,7 @@ and write_expr v_name ex =
       let ex1 = write_expr "junk" a in
         let ex2 = write_expr "junk" b in
           let ex3 = write_expr "junk" c in 
-     sprintf "%s" "new Note((double)" ^ ex1 ^ ", " ^  ex2 ^ ", (int) " ^ ex3 ^ ");"
+     sprintf "%s" "new Note((double)" ^ ex1 ^ ", " ^  ex2 ^ ", (int) " ^ ex3 ^ ")"
   | REST_CR_t(r) -> 
       let ex1  = write_expr "junk" r in
       sprintf "%s" "new Note(( REST, " ^ ex1 ^ ")" 
@@ -150,20 +154,20 @@ and write_expr v_name ex =
   | Assign_t(id, expr) -> 
       let identifier = write_expr "junk" id in
         let ex = write_expr identifier expr in
-          sprintf "%s" identifier ^ " = " ^ ex
+          sprintf "%s" identifier ^ " = " ^ ex ^ ";\n"
   | CHORD_CR_t(note_list) -> 
     let notes = write_expr_list "junk" note_list in
       let notes_string = String.concat ", " notes in
-        sprintf "%s" " new CPhrase();\n" ^ "Note [] notes_array = {" ^ notes_string ^ "};\n" ^  v_name^ ".addChord(notes_array);\n"
+        sprintf "%s" " new CPhrase();\n" ^ "Note [] notes_array = {" ^ notes_string ^ "};\n" ^  v_name^ ".addChord(notes_array)"
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
-  | TRACK_CR_t(track_list) ->  sprintf "%s" "WAITING FOR NEW TRACK CONSTRUCTOR..."
-      (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
-      (* v_name ^ ".addCPhrase("^   String.concat " , " (string_of_expr_list "junk" track_list) ^ ");\n" *)
-
+  | TRACK_CR_t(chord_list) ->
+    let chords = write_chord_list v_name chord_list in
+      let chords_string = String.concat ";\n" chords in
+        sprintf "%s" (" new Part();\n" ^ chords_string )
   (* GLOBAL VARIABLES???? *)
   | SCORE_CR_t(track_list) ->
     let track_adds = write_score_track_list v_name track_list in
-      let track_str = String.concat "" track_adds in
+      let track_str = String.concat ";\n" track_adds in
         sprintf "%s" ("new Score();\n" ^ track_str)
   | Binop_t(e1, o, e2) ->
       let ex1 = write_expr "junk" e1 in
@@ -191,7 +195,12 @@ and write_expr v_name ex =
 
 and write_score_track_list vname = function 
   [] -> []
-  | h::t -> let track_str_list = (vname ^ ".addPart(" ^ (write_expr "junk" h) ^ ");\n") in track_str_list::(write_score_track_list vname t)
+  | h::t -> let track_str_list = (vname ^ ".addPart(" ^ (write_expr "junk" h) ^ ")") in track_str_list::(write_score_track_list vname t)
+
+and write_chord_list vname = function 
+  [] -> []
+  | h::t -> let track_str_list = (vname ^ ".addCPhrase(" ^ (write_expr "junk" h) ^ ")") in track_str_list::(write_score_track_list vname t)
+  
   
 and write_expr_list v_name expr_list = 
   match expr_list with
