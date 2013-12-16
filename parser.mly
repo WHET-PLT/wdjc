@@ -41,7 +41,7 @@ to do (a = (b = c))*/
 
 program:
    /* nothing */ { [], [] }
- | program vdecl { ($2 :: fst $1), snd $1 }
+ | program stmt { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
 /*  --- FUNCTION --- */

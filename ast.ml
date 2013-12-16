@@ -69,7 +69,7 @@ type func_decl = {
 
 
 (*ast is a list of variables and list of function dels*)
-type program = var_decl list * func_decl list
+type program = stmt list * func_decl list
 
 (*pretty print for expr*)
 (*TODO need to decide on arrays*)
@@ -156,7 +156,7 @@ let string_of_fdecl fdecl =
   "}\n"
 
 (*pretty print for program*)
-let string_of_program (vars, funcs) =
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
+let string_of_program (glbs, funcs) =
+  String.concat "" (List.map string_of_stmt glbs) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)  
 
