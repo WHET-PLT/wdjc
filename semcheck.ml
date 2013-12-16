@@ -209,6 +209,7 @@ let rec build_stmt = function
 	  Ast.Block(stmt_list) -> Sast.Block_t( (build_stmt_list stmt_list) )
 	| Ast.Expr(expr) -> Sast.Expr_t( (build_expr expr) )
 	| Ast.Return(expr) -> Sast.Return_t( (build_expr expr) )
+	| Ast.Print(expr) -> Sast.Print_t( (build_expr expr) )
 	| Ast.If(expr, stmt1, stmt2) -> Sast.If_t( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
 	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For_t( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
 	| Ast.Loop(expr, stmt) -> Sast.Loop_t( (build_expr expr), (build_stmt stmt) )
@@ -429,6 +430,7 @@ let rec type_stmt func env stmt =
 	match stmt with 
 	  Ast.Block(stmt_list) -> type_stmt_list func env stmt_list
 	| Ast.Expr(expr) -> type_expr "any" env expr
+	| Ast.Print(expr) -> type_expr "any" env expr
 	| Ast.Return(expr) -> if func.fname != "song" 
 							then type_expr (string_of_vartype func.rtype) env expr
 						  else

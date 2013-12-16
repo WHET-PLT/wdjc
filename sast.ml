@@ -64,6 +64,7 @@ type stmt_t =
     Block_t of stmt_t list
   | Expr_t of expr_t
   | Return_t of expr_t
+  | Print_t of expr_t
   | If_t of expr_t * stmt_t * stmt_t
   | For_t of expr_t * expr_t * expr_t * stmt_t
   | Loop_t of expr_t * stmt_t
@@ -133,6 +134,7 @@ let rec string_of_stmt_t = function
       "{\n" ^ String.concat "" (List.map string_of_stmt_t stmts) ^ "}\n"
   | Expr_t(expr) -> string_of_expr_t expr ^ ";\n";
   | Return_t(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
+  | Print_t(expr) -> "print (" ^ string_of_expr_t expr ^ ");\n";
   | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
   | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
       string_of_stmt_t s1 ^ "else\n" ^ string_of_stmt_t s2
