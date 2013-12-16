@@ -197,14 +197,22 @@ and string_of_program file (vars, funcs)=
       out
 and write_global_string vars =
   let gs = parse_global vars in
-  sprintf "%s" (String.concat "" gs)
+  if List.length gs >= 1
+    then sprintf "%s" ((String.concat ";\n" gs) ^ ";\n")
+  else
+    sprintf "%s" (String.concat ";\n" gs)
 
-and write_func_string vars =
-  sprintf "%s" "functions"
+and write_func_string funcs =
+  let fs = parse_funcs funcs in
+    sprintf "%s" (String.concat "" fs)
 
 and parse_global = function
   [] -> []
   | h::t -> let global_string = (write_vdecl h) in global_string::(parse_global t)
+
+and parse_funcs = function
+  [] -> []
+  | h::t -> let funcs_string = (write_fdecl h) in funcs_string::(parse_funcs t)
 
 and write_vdecl v = 
   (match v.vType_t with
@@ -213,8 +221,34 @@ and write_vdecl v =
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
     | Rest_t-> "Rest "
-    | Score_t -> "Score ") ^ v.vName_t ^ ";\n"
+    | Score_t -> "Score ") ^ v.vName_t
 
+and write_fdecl f =
+  (* no song function has arguments *)
+  if f.fname_t = "song" 
+    then 
+      (* let stmt_list =  *)
+        "public static void main(String[] args){
+            stmt_list here
+        }\n"
+  else 
+   (*  let stmt_lst = *)
+    "private static " ^ (match f.rtype_t with
+    Double_t -> "double "
+    | Note_t -> "Note "
+    | Chord_t -> "CPhrase "
+    | Track_t -> "Part "
+    | Rest_t -> "Rest "
+    | Score_t -> "Score "
+    | _ -> "void") ^ f.fname_t ^ "( formals here )
+      {
+        stmt_list here
+      }\n"
+(*               fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+                   String.concat "" stmt_lst ^ "}\n" *)
+(*       let stmt_lst = string_of_stmt_list fdecl.fname_t fdecl.body_t in 
+        "public static void main(String[] args){\n" ^
+          String.concat "" stmt_lst  ^ "}\n}\n" *)
 and write_stmt f_name statement = 
   match statement with
     Block_t(stmts) -> sprintf "%s" "block"
@@ -226,6 +260,3 @@ and write_stmt f_name statement =
   | While_t(e, s) -> sprintf "%s" "while"
   | Vdecl_t(v) -> sprintf "%s" "v_decl"
   | Vinit_t(v, e) -> sprintf "%s" "v_init"
-
-
-
