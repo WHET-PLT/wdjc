@@ -196,12 +196,36 @@ and string_of_program file (vars, funcs)=
       write_to_file file out;
       out
 and write_global_string vars =
-  sprintf "%s" "global variables"
+  let gs = parse_global vars in
+  sprintf "%s" (String.concat "" gs)
 
 and write_func_string vars =
   sprintf "%s" "functions"
 
+and parse_global = function
+  [] -> []
+  | h::t -> let global_string = (write_vdecl h) in global_string::(parse_global t)
 
+and write_vdecl v = 
+  (match v.vType_t with
+    Double_t -> "double "
+    | Note_t -> "Note "
+    | Chord_t -> "CPhrase "
+    | Track_t -> "Part "
+    | Rest_t-> "Rest "
+    | Score_t -> "Score ") ^ v.vName_t ^ ";\n"
+
+and write_stmt f_name statement = 
+  match statement with
+    Block_t(stmts) -> sprintf "%s" "block"
+  | Expr_t(expr) -> sprintf "%s" "expr"
+  | Return_t(expr) -> sprintf "%s" "return"
+  | If_t(e, s, Block_t([])) -> sprintf "%s" "if"
+  | If_t(e, s1, s2) ->  sprintf "%s" "if"
+  | For_t(e1, e2, e3, s) -> sprintf "%s" "for"
+  | While_t(e, s) -> sprintf "%s" "while"
+  | Vdecl_t(v) -> sprintf "%s" "v_decl"
+  | Vinit_t(v, e) -> sprintf "%s" "v_init"
 
 
 
