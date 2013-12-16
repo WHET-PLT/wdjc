@@ -257,33 +257,34 @@ and write_stmt f_name statement =
   match statement with
     Block_t(stmts) -> sprintf "%s" (write_stmt_block f_name stmts)
   | Expr_t(expr) -> sprintf "%s" (write_expr f_name expr)
-  | Return_t(expr) -> sprintf "%s" "return"
-  | If_t(e, s, Block_t([])) -> sprintf "%s" "if"
-  | If_t(e, s1, s2) ->  sprintf "%s" "if"
-  | For_t(e1, e2, e3, s) -> sprintf "%s" "for"
-  | While_t(e, s) -> sprintf "%s" "while"
-  | Vdecl_t(v) -> sprintf "%s" "v_decl"
-  | Vinit_t(v, e) -> sprintf "%s" "v_init"
-
-
-(*   | Expr_t(expr) -> string_of_expr_t "junk" expr ^ ";\n"
   | Return_t(expr) -> 
-      if f_name = "song" then "Write.midi(" ^ string_of_expr_t "junk" expr ^", \"createNotes.mid\");\n" 
-    else "return " ^ string_of_expr_t "junk" expr ^ ";\n"
-  | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t "junk" e ^ ")\n" ^ string_of_stmt_t f_name s
-  | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t "junk" e ^ ")\n" ^
-      string_of_stmt_t f_name s1 ^ "else\n" ^ string_of_stmt_t f_name s2
-  | For_t(e1, e2, e3, s) ->
-      "for (" ^ string_of_expr_t "junk" e1  ^ " ; " ^ string_of_expr_t "junk" e2 ^ " ; " ^
-      string_of_expr_t "junk" e3  ^ ") " ^ string_of_stmt_t f_name s
-  | While_t(e, s) -> "while (" ^ string_of_expr_t "junk" e ^ ") " ^ string_of_stmt_t f_name s
-  | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
-  (* really...the only time that this maters - is here *)
-  | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t (string_of_vdecl_name_t v) e ^ "\n" 
-
- (*| Loop*)
- *)
-
+    let ex1 = write_expr "junk" expr in
+      if f_name = "song" then 
+        sprintf "%s" "Write.midi(" ^ ex1 ^", \"createNotes.mid\");\n" 
+      else sprintf "%s" "return " ^ ex1 ^ ";\n"
+  | If_t(e, s, Block_t([])) -> 
+      let ex1 = write_expr "junk" e in 
+        sprintf "%s" "if (" ^ ex1 ^ ")\n" ^ write_stmt f_name s
+  | If_t(e, s1, s2) ->  
+      let ex1 = write_expr "junk" e in
+        let s1 = write_stmt f_name s1 in
+          let s2 = write_stmt f_name s2 in
+            sprintf "%s" "if (" ^ ex1 ^ ")\n" ^ s1 ^ "else\n" ^ s2
+  | For_t(e1, e2, e3, s) -> 
+    let ex1 = write_expr "junk" e1 in
+      let ex2 = write_expr "junk" e2 in
+        let ex3 = write_expr "junk" e3 in
+          let s1 = write_stmt f_name s in
+            sprintf "%s" "for (" ^ ex1  ^ " ; " ^ ex2 ^ " ; " ^ ex3 ^ ") " ^ s1
+  | While_t(e, s) -> 
+  let ex1 = write_expr "junk" e in
+    let s1 = write_stmt f_name s in
+      sprintf "%s" ("while (" ^ ex1^ ") " ^ s1)
+  | Vdecl_t(v) -> sprintf "%s" (write_vdecl v)
+  | Vinit_t(v, e) -> 
+    let v = write_vdecl v in 
+      let ex1 = write_expr "junk" e in 
+        sprintf "%s" (v ^ " = " ^ ex1 ^ "\n")
 
 and write_stmt_block f_name stmts = 
   let stmt_list = (write_stmt_list f_name stmts) in
