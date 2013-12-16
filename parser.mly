@@ -7,7 +7,7 @@
 %token VIB TREM ARROW
 %token EQ NEQ INCR DECR
 %token LT LEQ GT GEQ
-%token IF ELSE FOR WHILE LOOP RETURN DOUBLE
+%token IF ELSE FOR WHILE LOOP RETURN DOUBLE PRINT
 %token FUN VOL DUR PITCH INSTR
 %token <string> LITERAL
 %token <string> ID
@@ -191,6 +191,7 @@ stmt:
   | vinit SEMI { $1 }
   | vdecl SEMI { Vdecl($1) }
   | RETURN expr SEMI { Return($2) }
+  | PRINT LPAREN expr RPAREN SEMI { Print($3) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
