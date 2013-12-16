@@ -211,6 +211,7 @@ let rec build_stmt = function
 	| Ast.Return(expr) -> Sast.Return_t( (build_expr expr) )
 	| Ast.If(expr, stmt1, stmt2) -> Sast.If_t( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
 	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For_t( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
+	| Ast.Loop(expr, stmt) -> Sast.Loop_t( (build_expr expr), (build_stmt stmt) )
 	| Ast.While(expr, stmt) -> Sast.While_t( (build_expr expr), (build_stmt stmt) )
 	| Ast.Vdecl( vardecl ) -> Sast.Vdecl_t( {vType_t=(ast_to_sast_type vardecl.vType); vName_t=vardecl.vName;} )
 	| Ast.Vinit(decl, expr) -> Sast.Vinit_t( {vType_t=(ast_to_sast_type decl.vType); vName_t=decl.vName;} , (build_expr expr) )
@@ -445,7 +446,9 @@ let rec type_stmt func env stmt =
 												ignore (type_expr "any" for_env expr3);
 												ignore (type_stmt func for_env stmt);
 												env
-	(* (type_expr expr1), (type_expr expr2), type_expr "junk" env expr, (type_stmt stmt) *)
+	| Ast.Loop(expr, stmt) -> let loop_env = type_expr "double" env expr in 
+								ignore (type_stmt func loop_env stmt);
+								env
 	| Ast.While(expr, stmt) -> let while_env = type_expr "boolean" env expr in 
 								ignore (type_stmt func while_env stmt);
 								env
