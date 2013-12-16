@@ -265,23 +265,23 @@ and type_binop typestring env expr1 op expr2 =
 	  			 ignore (type_expr "double" env expr2);
 	  			 "double"
 	(* TODO boolean should take note or chord or track too*)
-	| Ast.Equal -> ignore (type_expr "double" env expr1); 
-	  			   ignore (type_expr "double" env expr2);
+	| Ast.Equal -> ignore (type_expr "primitive" env expr1); 
+	  			   ignore (type_expr "primitive" env expr2);
 	  			   "boolean"
-	| Ast.Neq -> ignore (type_expr "double" env expr1); 
-	  			 ignore (type_expr "double" env expr2);
+	| Ast.Neq -> ignore (type_expr "primitive" env expr1); 
+	  			 ignore (type_expr "primitive" env expr2);
 	  			 "boolean"
-	| Ast.Geq -> ignore (type_expr "double" env expr1); 
-	  			 ignore (type_expr "double" env expr2);
+	| Ast.Geq -> ignore (type_expr "primitive" env expr1); 
+	  			 ignore (type_expr "primitive" env expr2);
 	  			 "boolean"
-	| Ast.Leq -> ignore (type_expr "double" env expr1); 
-	  			 ignore (type_expr "double" env expr2);
+	| Ast.Leq -> ignore (type_expr "primitive" env expr1); 
+	  			 ignore (type_expr "primitive" env expr2);
 	  			 "boolean"
-	| Ast.Greater -> ignore (type_expr "double" env expr1); 
-	  			     ignore (type_expr "double" env expr2);
+	| Ast.Greater -> ignore (type_expr "primitive" env expr1); 
+	  			     ignore (type_expr "primitive" env expr2);
 	  			     "boolean"
-	| Ast.Less -> ignore (type_expr "double" env expr1); 
-	  			  ignore (type_expr "double" env expr2);
+	| Ast.Less -> ignore (type_expr "primitive" env expr1); 
+	  			  ignore (type_expr "primitive" env expr2);
 	  			  "boolean"
 	 (* TODO either has to be chord OR note OR track *)
 	| Ast.Ser -> (match typestring with
