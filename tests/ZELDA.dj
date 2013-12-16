@@ -1,0 +1,42 @@
+song score () {
+	
+	double C3 = 130.81;
+	double CSharp3 = 138.59;
+	double D3 = 146.83;
+	double DSharp3 = 155.56;
+	double E3 = 164.81;
+	double F3 = 174.61;
+	double FSharp3 = 185;
+	double G3 = 196;
+	double GSharp3 = 207.65;
+	double ASharp3 = 233.08;
+	double C4 = 261.63;
+	double CSharp4 = 277.18;
+	double D4 = 293.66;
+	double DSharp4 = 311.13;
+	double E4 = 329.63;
+	double F4 = 349.23;
+	double FSharp4 = 369.99;
+	double G4 = 392;
+	double GSharp4 = 415.3;
+	double ASharp4 = 466.16;
+	double C5 = 523.25;
+
+	double whole = 16;
+	double half = 8;
+	double quarter = 4;
+	double eighth = 2;
+	double sixteenth = 1;
+	
+	double pipe_organ = 19;
+	double piano = 0;
+	
+	track treble_clef = track ( pipe_organ );
+
+	note held_A = note ( ASharp3, 50, half + eighth );
+	
+	treble_clef = treble_clef . held_A;
+	
+	
+	return score ( treble_clef );
+}
