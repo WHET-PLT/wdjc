@@ -245,7 +245,7 @@ and type_call typestring env name_str expr_list =
 						  with Not_found -> raise (Failure ("Undefined function: " ^ name_str)) 
 		in
 		let rtype = (List.hd func_types_list) in
-		if rtype != typestring
+		if rtype != typestring && typestring <> "any"
 		then raise (Failure ("Mismatch Expression type: \n" ^ 
 			     	"function has return type " ^ rtype ^ ".\n" ^
 			   		"an expression of type " ^ typestring ^ " was expected."))
