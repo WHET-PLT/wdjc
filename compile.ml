@@ -225,30 +225,34 @@ and write_vdecl v =
 
 and write_fdecl f =
   (* no song function has arguments *)
+  let stmt_list = write_stmt_list f.fname_t f.body_t in
+    let stmt_string = String.concat "" stmt_list in 
+  (* SONG FUNCTION *)
   if f.fname_t = "song" 
     then 
-      (* let stmt_list =  *)
-        "public static void main(String[] args){
-            stmt_list here
-        }\n"
-  else 
-   (*  let stmt_lst = *)
-    "private static " ^ (match f.rtype_t with
-    Double_t -> "double "
-    | Note_t -> "Note "
-    | Chord_t -> "CPhrase "
-    | Track_t -> "Part "
-    | Rest_t -> "Rest "
-    | Score_t -> "Score "
-    | _ -> "void") ^ f.fname_t ^ "( formals here )
-      {
-        stmt_list here
-      }\n"
-(*               fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
-                   String.concat "" stmt_lst ^ "}\n" *)
-(*       let stmt_lst = string_of_stmt_list fdecl.fname_t fdecl.body_t in 
         "public static void main(String[] args){\n" ^
-          String.concat "" stmt_lst  ^ "}\n}\n" *)
+        stmt_string ^
+        "\n}\n"
+  (* NON-SONG FUNCTION *)
+  else 
+      let formals_list = List.map string_of_vdecl_t f.formals_t in
+        let formals_str = String.concat ", " formals_list in
+          "private static " ^ 
+            (match f.rtype_t with
+              Double_t -> "double "
+              | Note_t -> "Note "
+              | Chord_t -> "CPhrase "
+              | Track_t -> "Part "
+              | Rest_t -> "Rest "
+              | Score_t -> "Score "
+              | _ -> "void") ^ 
+            f.fname_t ^ "( " ^ formals_str ^ " )" ^
+            "\n{" ^ stmt_string ^ "\n}\n"
+
+and write_stmt_list fname = function 
+  [] -> []
+  | h::t -> let string_stmt_list = ((write_stmt fname h)^";\n") in string_stmt_list::(write_stmt_list fname t)
+
 and write_stmt f_name statement = 
   match statement with
     Block_t(stmts) -> sprintf "%s" "block"
