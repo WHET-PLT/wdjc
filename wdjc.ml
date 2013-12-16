@@ -15,8 +15,8 @@ let _ =
     | Sast -> let program_t = Semcheck.sc_program program in 
           let listing = Sast.string_of_program_t program_t
           in print_string listing
-    | Java -> let listing = Compile.string_of_program_t (Semcheck.sc_program program)
-          in print_endline listing 
+    | Java -> let listing = Compile.string_of_program "DJ" "hellostupid" (* (Semcheck.sc_program program) *)
+          in ignore( listing );
     (* | Java -> let listing = Compile.program_string program
               in print_endline listing
     | Compile -> Execute.javacompile (Compile.program_string (Semcheck.sc_program program)) *)
