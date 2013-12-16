@@ -177,7 +177,7 @@ let rec write_to_file file programString =
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
-and string_of_program file programString(* (vars, funcs) *) = 
+and string_of_program file (* programString *) (vars, funcs)= 
   (* let globalString = writeGlobalString vars in *)
   let out = sprintf 
     "
@@ -191,7 +191,7 @@ and string_of_program file programString(* (vars, funcs) *) =
 
       %s 
     }
-      " file (* globalString *) "junk" programString in
+      " file (* globalString *) "globals" "functions, etc" (* programString *) in
       write_to_file file out;
       out
 
