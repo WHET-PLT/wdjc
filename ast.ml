@@ -50,6 +50,7 @@ type stmt =
   | Return of expr
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
+  | Loop of expr * stmt
   | While of expr * stmt
   (* | Assign of var_decl * expr *)
   | Vdecl of var_decl
@@ -132,6 +133,7 @@ let rec string_of_stmt = function
   | For(e1, e2, e3, s) ->
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
+  | Loop(e, s) -> "loop (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   (* | Assign(v, e) -> string_of_vdecl v ^ " = " ^ string_of_expr e *)
   | Vdecl(v) -> string_of_vdecl v ^ ";\n"

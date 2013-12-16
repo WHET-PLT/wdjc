@@ -66,6 +66,7 @@ type stmt_t =
   | Return_t of expr_t
   | If_t of expr_t * stmt_t * stmt_t
   | For_t of expr_t * expr_t * expr_t * stmt_t
+  | Loop_t of expr_t * stmt_t
   | While_t of expr_t * stmt_t
   | Vdecl_t of var_decl_t
   | Vinit_t of var_decl_t * expr_t
@@ -138,6 +139,7 @@ let rec string_of_stmt_t = function
   | For_t(e1, e2, e3, s) ->
       "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
       string_of_expr_t e3  ^ ") " ^ string_of_stmt_t s
+  | Loop_t(e, s) -> "loop (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
   | While_t(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
   | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
   | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"

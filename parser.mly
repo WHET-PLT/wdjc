@@ -194,8 +194,8 @@ stmt:
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
-     { For($3, $5, $7, $9) }
+  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt { For($3, $5, $7, $9) }
+  | LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
   /*| vdecl ASSIGN expr { Assign( $1, $3 ) }
