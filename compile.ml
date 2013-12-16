@@ -1,4 +1,5 @@
 open Sast
+open Printf
 
 let imports =
   "import java.util.*;\n" ^
@@ -168,6 +169,31 @@ let string_of_program_t (vars, funcs) =
 
 (* look over how were doing the song funcitons... *)
 
+
+
+(* WRITE PROGRAM TO FILE  *)
+let rec write_to_file file programString =
+  let oc = open_out ("java/" ^ file ^ ".java") in 
+  fprintf oc "%s" programString;
+(*   close_out oc in *)
+
+and string_of_program file programString(* (vars, funcs) *) = 
+  (* let globalString = writeGlobalString vars in *)
+  let out = sprintf 
+    "
+    import java.util.*;
+    import jm.JMC;
+    import jm.music.data.*;
+    import jm.util.*; 
+
+    public class %s implements JMC {
+      %s
+
+      %s 
+    }
+      " file (* globalString *) "junk" programString in
+      write_to_file file out;
+      out
 
 
 
