@@ -177,8 +177,9 @@ let rec write_to_file file programString =
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
-and string_of_program file (* programString *) (vars, funcs)= 
-  (* let globalString = writeGlobalString vars in *)
+and string_of_program file (vars, funcs)= 
+  let global_string = write_global_string vars in
+    let func_string = write_func_string funcs in 
   let out = sprintf 
     "
     import java.util.*;
@@ -191,9 +192,14 @@ and string_of_program file (* programString *) (vars, funcs)=
 
       %s 
     }
-      " file (* globalString *) "globals" "functions, etc" (* programString *) in
+      " file global_string func_string in
       write_to_file file out;
       out
+and write_global_string vars =
+  sprintf "%s" "global variables"
+
+and write_func_string vars =
+  sprintf "%s" "functions"
 
 
 
