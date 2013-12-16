@@ -41,6 +41,7 @@ type expr_t =
   | Binop_t of expr_t * op_t * expr_t
   | Modifier_t of expr_t * modif_t
   | Assign_t of expr_t * expr_t
+  | Address_t of expr_t * expr_t
   | Call_t of string * expr_t list
   | Noexpr_t
 
@@ -100,6 +101,7 @@ let rec string_of_expr_t = function
         Pitch_t -> "pitch" | Vol_t -> "vol" | Dur_t -> "dur"
       )
   | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
+  | Address_t(id, expr) -> string_of_expr_t id ^ " [" ^ string_of_expr_t expr ^ "]"
   | CHORD_CR_t(note_list) -> 
       "chord (" ^ String.concat " : " (List.map string_of_expr_t note_list) ^ ")"
   | Binop_t(e1, o, e2) ->

@@ -197,6 +197,7 @@ let rec build_expr = function
 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
 	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
 	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
+	| Ast.Address(expr1, expr2) -> Sast.Address_t( (build_expr expr1), (build_expr expr2) ) 
   	| Ast.Call(str, expr_list) -> Sast.Call_t( str, (build_expr_list expr_list) )
  	| Ast.Noexpr -> Sast.Noexpr_t
 
@@ -415,6 +416,26 @@ and type_expr typestring env expr =
 								  (* TODO update environment with initialized boolean *)
 								  (* TODO update environment? *)
 								  env
+	| Ast.Address(expr1, expr2) -> ignore (is_id expr1);
+									(match typestring with
+									"track" -> ignore (type_expr "score" env expr1);
+											   ignore (type_expr "double" env expr2);
+											   env
+									| "chord" -> ignore (type_expr "track" env expr1);
+											     ignore (type_expr "double" env expr2);
+											     env
+									| "note" -> ignore (type_expr "chord" env expr1);
+											    ignore (type_expr "double" env expr2);
+											    env
+									| "rest" -> ignore (type_expr "chord" env expr1);
+											    ignore (type_expr "double" env expr2);
+											    env
+									| "any" -> ignore (type_expr "any" env expr1);
+											   ignore (type_expr "double" env expr2);
+											   env
+									| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+			  						            "expression was of the wrong type.\n" ^
+				  						   		"an expression of type " ^ typestring ^ " was expected.")) )
   	| Ast.Call(name_str, expr_list) -> ignore (type_call typestring env name_str expr_list); 
   										env
  	| Ast.Noexpr -> env
