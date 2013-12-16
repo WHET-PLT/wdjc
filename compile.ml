@@ -255,8 +255,8 @@ and write_stmt_list fname = function
 
 and write_stmt f_name statement = 
   match statement with
-    Block_t(stmts) -> sprintf "%s" "block"
-  | Expr_t(expr) -> sprintf "%s" "expr"
+    Block_t(stmts) -> sprintf "%s" (write_stmt_block f_name stmts)
+  | Expr_t(expr) -> sprintf "%s" (write_expr f_name expr)
   | Return_t(expr) -> sprintf "%s" "return"
   | If_t(e, s, Block_t([])) -> sprintf "%s" "if"
   | If_t(e, s1, s2) ->  sprintf "%s" "if"
@@ -264,3 +264,102 @@ and write_stmt f_name statement =
   | While_t(e, s) -> sprintf "%s" "while"
   | Vdecl_t(v) -> sprintf "%s" "v_decl"
   | Vinit_t(v, e) -> sprintf "%s" "v_init"
+
+
+(*   | Expr_t(expr) -> string_of_expr_t "junk" expr ^ ";\n"
+  | Return_t(expr) -> 
+      if f_name = "song" then "Write.midi(" ^ string_of_expr_t "junk" expr ^", \"createNotes.mid\");\n" 
+    else "return " ^ string_of_expr_t "junk" expr ^ ";\n"
+  | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t "junk" e ^ ")\n" ^ string_of_stmt_t f_name s
+  | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t "junk" e ^ ")\n" ^
+      string_of_stmt_t f_name s1 ^ "else\n" ^ string_of_stmt_t f_name s2
+  | For_t(e1, e2, e3, s) ->
+      "for (" ^ string_of_expr_t "junk" e1  ^ " ; " ^ string_of_expr_t "junk" e2 ^ " ; " ^
+      string_of_expr_t "junk" e3  ^ ") " ^ string_of_stmt_t f_name s
+  | While_t(e, s) -> "while (" ^ string_of_expr_t "junk" e ^ ") " ^ string_of_stmt_t f_name s
+  | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
+  (* really...the only time that this maters - is here *)
+  | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t (string_of_vdecl_name_t v) e ^ "\n" 
+
+ (*| Loop*)
+ *)
+
+
+and write_stmt_block f_name stmts = 
+  let stmt_list = (write_stmt_list f_name stmts) in
+    let stmt_string = String.concat "" stmt_list in 
+      "{\n" ^ stmt_string ^ "}\n"
+
+and write_expr v_name ex = 
+  match ex with
+    Literal_t(l) -> sprintf "%s" l
+  | Id_t(s) -> sprintf "%s" s
+  | NOTE_CR_t(a, b, c) -> 
+      let ex1 = write_expr "junk" a in
+        let ex2 = write_expr "junk" b in
+          let ex3 = write_expr "junk" c in 
+     sprintf "%s" "new Note((double)" ^ ex1 ^ ", " ^  ex2 ^ ", (int) " ^ ex3 ^ ");"
+  | REST_CR_t(r) -> 
+      let ex1  = write_expr "junk" r in
+      sprintf "%s" "new Note(( REST, " ^ ex1 ^ ")" 
+  | ACCESSOR_t(a, b) -> 
+      let ex1 = write_expr "junk" a in
+        let access_type = (
+          match b with
+          Pitch_t -> "getFrequency()" | Vol_t -> "getDynamic()" |  Dur_t -> "getDuration()"
+          ) in
+      sprintf "%s" ex1 ^ "." ^ access_type
+  | Assign_t(id, expr) -> 
+      let identifier = write_expr "junk" id in
+        let ex = write_expr identifier expr in
+          sprintf "%s" identifier ^ " = " ^ ex
+  | CHORD_CR_t(note_list) -> 
+    let notes = string_of_expr_list "junk" note_list in
+      let notes_string = String.concat ", " notes in
+        sprintf "%s" " new CPhrase();\n" ^ "Note [] notes_array = {" ^ notes_string ^ "};\n" ^  v_name^ ".addChord(notes_array);\n"
+(* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
+  | TRACK_CR_t(track_list) ->  sprintf "%s" "WAITING FOR NEW TRACK CONSTRUCTOR..."
+      (* "new Part( \"" ^ string_of_expr_t t ^ "\");"  *)
+      (* v_name ^ ".addCPhrase("^   String.concat " , " (string_of_expr_list "junk" track_list) ^ ");\n" *)
+
+  (* GLOBAL VARIABLES???? *)
+  | SCORE_CR_t(track_list) ->
+    let track_adds = write_score_track_list v_name track_list in
+      let track_str = String.concat "" track_adds in
+        sprintf "%s" ("new Score()\n" ^ track_str)
+  | Binop_t(e1, o, e2) ->
+      let ex1 = write_expr "junk" e1 in
+        let ex2 = write_expr "junk" e2 in
+          let op = (
+            match o with
+              Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
+              | Equal_t -> "==" | Neq_t -> "!="
+              | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">=" 
+              | Ser_t -> "" | Par_t -> "" ) in
+      sprintf "%s" (ex1 ^ " " ^ op ^ " " ^ ex2)
+  | Modifier_t(e1, modif) ->
+    let ex1 = write_expr "junk" e1 in
+      let modifier = (
+        match modif with
+        Vib_t -> " " |
+        Trem_t -> " " | 
+        Incr_t -> ".setPitch((" ^ string_of_expr_t "junk" e1 ^".getPitch()) + 50)"  | 
+        Decr_t -> ".setPitch((" ^ string_of_expr_t "junk" e1 ^".getPitch())  -50)") in
+      sprintf "%s" (ex1 ^ modifier)
+  | Call_t(f, el) ->
+        let calls = write_expr_list "junk" el in
+        sprintf "%s" (f ^ "(" ^ String.concat ", " calls ^ ")")
+  | Noexpr_t -> sprintf "%s" ""
+
+and write_score_track_list vname = function 
+  [] -> []
+  | h::t -> let track_str_list = (vname ^ ".addPart(" ^ (write_expr "junk" h) ^ ");\n") in track_str_list::(write_score_track_list vname t)
+  
+and write_expr_list v_name expr_list = 
+  match expr_list with
+  [] -> []
+  | hd::tl -> let string_expr_list = (write_expr v_name hd) in string_expr_list::(write_expr_list v_name tl) 
+
+
+
+
