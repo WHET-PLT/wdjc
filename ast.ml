@@ -26,6 +26,7 @@ type expr =
   | Binop of expr * op * expr
   | Modifier of expr * modif 
   | Assign of expr * expr
+  | Address of expr * expr
   | Call of string * expr list
   | Noexpr
  
@@ -88,6 +89,7 @@ let rec string_of_expr = function
         Pitch -> "pitch" | Vol -> "vol" | Dur -> "dur"
       )
   | Assign(id, expr) -> string_of_expr id ^ " = " ^ string_of_expr expr
+  | Address(id, expr) -> string_of_expr id ^ "[" ^ string_of_expr expr ^ "]"
   | CHORD_CR(expr_list) -> 
       "(" ^ String.concat " : " (List.map string_of_expr expr_list) ^ ")"
   | Binop(e1, o, e2) ->

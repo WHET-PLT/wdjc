@@ -27,7 +27,7 @@ to do (a = (b = c))*/
 %left SERIAL PARALLEL
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left VIB TREM ARROW
+%left VIB TREM
 /*incr - incrememnt (++); decr - decrement  (--) */
 /*Ex: (note++)++ */
 %left INCR DECR
@@ -240,6 +240,7 @@ expr:
   | expr TREM        { Modifier($1, Trem) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
+  | expr LBRACK expr RBRACK { Address($1, $3) }
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
  /* actuals - When you call the function you use actuals_opt?? */
