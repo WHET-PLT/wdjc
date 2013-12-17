@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# the main class name
+MAIN=$1
+
+# the src directory
+SOURCE_DIR=$(pwd)
+
+# the output directory
+# OUTOUTPUT_DIR=$3
+
+
+# jMusic Jars
+JM_JAR=java/jMusic/jMusic1.6.4.jar
+JM_INSTR=java/jMusic/inst/
+
+# Set the CLASSPATH
+CLASSPATH=$SOURCE_DIR:$JM_JAR:$JM_INSTR:.
+
+
+# Java tools
+JAVA=java
+JFLAGS="-classpath $CLASSPATH"
+
+JAVAC=javac
+JCFLAGS="-sourcepath $SOURCE_DIR -d $SOURCE_DIR -classpath $CLASSPATH"
+
+
+# List the sourcefiles
+FILES=$SOURCE_DIR/$MAIN.java	
+
+echo $JAVAC $JCFLAGS $FILES
+$( $JAVAC $JCFLAGS $FILES )
+
+echo $JAVA $JFLAGS $MAIN
+$JAVA $JFLAGS $MAIN
+
+# rm -rf $SOURCE_DIR/$MAIN.class
+# rm -rf $SOURCE_DIR/$MAIN.java

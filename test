@@ -51,17 +51,17 @@ elif [[ $1 =~ '-j' ]]; then
 	echo ">> Done Compiling JAVA <<" 
 	echo
 #if flag is j - JAVA
-elif [[ $1 =~ '-t' ]]; then
-	echo ">> Compiling JAVA <<" 
+elif [[ $1 =~ '-c' ]]; then
+	echo ">> Compiling <<" 
 	echo
 	for file in ./tests/*.dj
 	do
 		echo $file
 		echo ------------------------
-		$WDJC -t < $file
+		$WDJC -c < $file
 		echo
 	done
-	echo ">> Done Compiling JAVA <<" 
+	echo ">> Done Compiling <<" 
 	echo
 	
 #if no flag, default to ast

@@ -14,14 +14,14 @@ let imports = "import java.util.*;\n" ^
   (* new code based on new ast that emily showed me *)
 
 (* WRITE PROGRAM TO FILE  *)
-let rec write_to_file file programString =
-  let oc = open_out ("java/src/" ^ file ^ ".java") in 
+let rec write_to_file programString =
+  let oc = open_out ("main.java") in 
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
 and string_of_program file (vars, funcs)= 
   let global_string = write_global_string vars in
-    let func_string = write_func_string funcs in 
+    let func_string = write_func_string file funcs in 
   let out = sprintf 
     "
     import java.util.*;
@@ -29,14 +29,15 @@ and string_of_program file (vars, funcs)=
     import jm.music.data.*;
     import jm.util.*; 
 
-    public class %s implements JMC {
+    public class main implements JMC {
       %s
 
       %s 
     }
-      " file global_string func_string in
-      write_to_file file out;
+      " global_string func_string in
+      write_to_file out;
       out
+      
 and write_global_string vars =
   let gs = parse_global vars in
   if List.length gs >= 1
@@ -44,17 +45,17 @@ and write_global_string vars =
   else
     sprintf "%s" (String.concat ";\n" gs)
 
-and write_func_string funcs =
-  let fs = parse_funcs funcs in
+and write_func_string file funcs =
+  let fs = parse_funcs file funcs in
     sprintf "%s" (String.concat "" fs)
 
 and parse_global = function
   [] -> []
   | h::t -> let global_string = (write_vdecl h) in global_string::(parse_global t)
 
-and parse_funcs = function
+and parse_funcs file = function
   [] -> []
-  | h::t -> let funcs_string = (write_fdecl h) in funcs_string::(parse_funcs t)
+  | h::t -> let funcs_string = (write_fdecl file h) in funcs_string::(parse_funcs file t)
 
 and write_vdecl v = 
   (match v.vType_t with
@@ -67,9 +68,9 @@ and write_vdecl v =
 
 and write_vdecl_name v =  v.vName_t
 
-and write_fdecl f =
+and write_fdecl file f =
   (* no song function has arguments *)
-  let stmt_list = write_stmt_list f.fname_t f.body_t in
+  let stmt_list = write_stmt_list file f.fname_t f.body_t in
     let stmt_string = String.concat "" stmt_list in 
   (* SONG FUNCTION *)
   if f.fname_t = "song" 
@@ -93,36 +94,36 @@ and write_fdecl f =
             f.fname_t ^ "( " ^ formals_str ^ " )" ^
             "\n{" ^ stmt_string ^ "\n}\n"
 
-and write_stmt_list fname = function 
+and write_stmt_list file fname = function 
   [] -> []
-  | h::t -> let string_stmt_list = ((write_stmt fname h)) in string_stmt_list::(write_stmt_list fname t)
+  | h::t -> let string_stmt_list = ((write_stmt file fname h)) in string_stmt_list::(write_stmt_list file fname t)
 
-and write_stmt f_name statement = 
+and write_stmt file f_name statement = 
   match statement with
-    Block_t(stmts) -> sprintf "%s" (write_stmt_block f_name stmts)
+    Block_t(stmts) -> sprintf "%s" (write_stmt_block file f_name stmts)
   | Expr_t(expr) -> sprintf "%s" (write_expr f_name expr)
   | Return_t(expr) -> 
     let ex1 = write_expr "junk" expr in
       if f_name = "song" then 
-        sprintf "%s" "Write.midi(" ^ ex1 ^", \"helloWorld.mid\");\n" 
+        sprintf "%s" "Write.midi(" ^ ex1 ^", \"" ^ file ^ ".mid\");\n" 
       else sprintf "%s" "return " ^ ex1 ^ ";\n"
   | If_t(e, s, Block_t([])) -> 
       let ex1 = write_expr "junk" e in 
-        sprintf "%s" "if (" ^ ex1 ^ ")\n" ^ write_stmt f_name s
+        sprintf "%s" "if (" ^ ex1 ^ ")\n" ^ write_stmt file f_name s
   | If_t(e, s1, s2) ->  
       let ex1 = write_expr "junk" e in
-        let s1 = write_stmt f_name s1 in
-          let s2 = write_stmt f_name s2 in
+        let s1 = write_stmt file f_name s1 in
+          let s2 = write_stmt file f_name s2 in
             sprintf "%s" "if (" ^ ex1 ^ ")\n" ^ s1 ^ "else\n" ^ s2
   | For_t(e1, e2, e3, s) -> 
     let ex1 = write_expr "junk" e1 in
       let ex2 = write_expr "junk" e2 in
         let ex3 = write_expr "junk" e3 in
-          let s1 = write_stmt f_name s in
+          let s1 = write_stmt file f_name s in
             sprintf "%s" "for ( (int)" ^ ex1  ^ "" ^ ex2 ^ " ; " ^ ex3 ^ ") " ^ s1
   | While_t(e, s) -> 
   let ex1 = write_expr "junk" e in
-    let s1 = write_stmt f_name s in
+    let s1 = write_stmt file f_name s in
       sprintf "%s" ("while (" ^ ex1^ ") " ^ s1)
   | Vdecl_t(v) -> sprintf "%s" (write_vdecl v ^ ";\n")
   | Vinit_t(v, e) -> 
@@ -131,8 +132,8 @@ and write_stmt f_name statement =
       let ex1 = (write_expr v.vName_t e) in 
         sprintf "%s" (var ^ " = " ^ ex1 ^ ";\n")
 
-and write_stmt_block f_name stmts = 
-  let stmt_list = (write_stmt_list f_name stmts) in
+and write_stmt_block file f_name stmts = 
+  let stmt_list = (write_stmt_list file f_name stmts) in
     let stmt_string = String.concat "" stmt_list in 
       "{\n" ^ stmt_string ^ "}\n"
 
