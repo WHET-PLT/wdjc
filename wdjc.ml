@@ -7,6 +7,8 @@ let _ =
             (* ("-c", Compile); *)
             ("-j", Java) ]
   else Compile in
+  if Array.length Sys.argv > 1 then
+      let f_name = Sys.argv.(2) in
   let lexbuf = Lexing.from_channel stdin in
   let program = Parser.program Scanner.token lexbuf in
   match action with
@@ -15,7 +17,7 @@ let _ =
     | Sast -> let program_t = Semcheck.sc_program program in 
           let listing = Sast.string_of_program_t program_t
           in print_string listing
-    | Java -> let listing = Compile.string_of_program "DJ" (Semcheck.sc_program program)
+    | Java -> let listing = Compile.string_of_program f_name (Semcheck.sc_program program)
           in ignore( listing );
     (* | Java -> let listing = Compile.program_string program
               in print_endline listing

@@ -11,7 +11,7 @@ let imports = "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimp
 
 (* WRITE PROGRAM TO FILE  *)
 let rec write_to_file file programString =
-  let oc = open_out ("java/" ^ file ^ ".java") in 
+  let oc = open_out ("java/testOutput/" ^ file ^ ".java") in 
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
@@ -115,7 +115,7 @@ and write_stmt f_name statement =
       let ex2 = write_expr "junk" e2 in
         let ex3 = write_expr "junk" e3 in
           let s1 = write_stmt f_name s in
-            sprintf "%s" "for (" ^ ex1  ^ " ; " ^ ex2 ^ " ; " ^ ex3 ^ ") " ^ s1
+            sprintf "%s" "for ( (int)" ^ ex1  ^ "" ^ ex2 ^ " ; " ^ ex3 ^ ") " ^ s1
   | While_t(e, s) -> 
   let ex1 = write_expr "junk" e in
     let s1 = write_stmt f_name s in
