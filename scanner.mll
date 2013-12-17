@@ -40,24 +40,22 @@ rule token = parse
 | "fun"			{ FUN }
 | "vol"			{ VOL }
 | "dur"			{ DUR }
-(*CHANGED from pit to pitch, because it sounds exponentially beter *)
 | "pitch"		{ PITCH }
-| "instr"		{ INSTR }
-| "double"			{ DOUBLE }
+| "double"		{ DOUBLE }
 | "note"		{ NOTE }
 | "rest"		{ REST }
 | "track"		{ TRACK }
 | "chord"		{ CHORD }
 | "score"		{ SCORE }
+| "print"		{ PRINT }
 (*
 | "array"		{ ARRAY } 
 *)
-(*Note in dj literals are really only doubles *)
-| '-'? Decimal as lxm { LITERAL(lxm) }
-| '-'? ['0'-'9']+ Decimal? as lxm { LITERAL(lxm) }
+| '-'? Decimal as lxm { LITERAL(lxm) } (* Note in dj literals are really only doubles *)
+| '-'? ['0'-'9']+ Decimal? as lxm { LITERAL(lxm) } (* Note in dj literals are really only doubles *)
 | ['a'-'z' 'A'-'Z']['a'-'z' 'A'-'Z' '0'-'9' '_']* as lxm { ID(lxm) }
 | eof { EOF }
-| _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
+| _ as char { raise (Failure("Illegal character " ^ Char.escaped char)) }
 
 and comment = parse
   "*/" { token lexbuf }

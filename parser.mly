@@ -7,7 +7,7 @@
 %token VIB TREM ARROW
 %token EQ NEQ INCR DECR
 %token LT LEQ GT GEQ
-%token IF ELSE FOR WHILE LOOP RETURN DOUBLE
+%token IF ELSE FOR WHILE LOOP RETURN DOUBLE PRINT
 %token FUN VOL DUR PITCH INSTR
 %token <string> LITERAL
 %token <string> ID
@@ -27,7 +27,7 @@ to do (a = (b = c))*/
 %left SERIAL PARALLEL
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left VIB TREM ARROW
+%left VIB TREM
 /*incr - incrememnt (++); decr - decrement  (--) */
 /*Ex: (note++)++ */
 %left INCR DECR
@@ -135,17 +135,11 @@ score_list:
 
 /* --- TRACK -- */
 track_cr:
-    TRACK LPAREN RPAREN { TRACK_CR ([]) }
-    | TRACK LPAREN track_list RPAREN { TRACK_CR ( List.rev $3 ) }
-
-track_list:
-    expr { [$1] }
-    | track_list COMMA expr { $3 :: $1 }
+  TRACK LPAREN expr RPAREN { TRACK_CR( $3 ) }
 
 /* --- REST --- */
 rest_cr:
   REST LPAREN expr RPAREN { REST_CR( $3 ) }
-  /* later maybe we want to make this also with an id? */
 
 /*  --- NOTE  --- */
 note_cr:
@@ -197,11 +191,12 @@ stmt:
   | vinit SEMI { $1 }
   | vdecl SEMI { Vdecl($1) }
   | RETURN expr SEMI { Return($2) }
+  | PRINT LPAREN expr RPAREN SEMI { Print($3) }
   | LBRACE stmt_list RBRACE { Block(List.rev $2) }
   | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
   | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7) }
-  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt
-     { For($3, $5, $7, $9) }
+  | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt { For($3, $5, $7, $9) }
+  | LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
   /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
   /*| vdecl ASSIGN expr { Assign( $1, $3 ) }
@@ -245,6 +240,7 @@ expr:
   | expr TREM        { Modifier($1, Trem) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
+  | expr LBRACK expr RBRACK { Address($1, $3) }
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
  /* actuals - When you call the function you use actuals_opt?? */

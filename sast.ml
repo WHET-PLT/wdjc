@@ -34,13 +34,14 @@ type expr_t =
   | Id_t of string
   | NOTE_CR_t of expr_t * expr_t * expr_t
   | REST_CR_t of expr_t
-  | TRACK_CR_t of expr_t list
+  | TRACK_CR_t of expr_t
   | CHORD_CR_t of expr_t list
   | SCORE_CR_t of expr_t list
   | ACCESSOR_t of expr_t * note_attribute_t
   | Binop_t of expr_t * op_t * expr_t
   | Modifier_t of expr_t * modif_t
   | Assign_t of expr_t * expr_t
+  | Address_t of expr_t * expr_t
   | Call_t of string * expr_t list
   | Noexpr_t
 
@@ -64,8 +65,10 @@ type stmt_t =
     Block_t of stmt_t list
   | Expr_t of expr_t
   | Return_t of expr_t
+  | Print_t of expr_t
   | If_t of expr_t * stmt_t * stmt_t
   | For_t of expr_t * expr_t * expr_t * stmt_t
+  | Loop_t of expr_t * stmt_t
   | While_t of expr_t * stmt_t
   | Vdecl_t of var_decl_t
   | Vinit_t of var_decl_t * expr_t
@@ -87,20 +90,20 @@ let rec string_of_expr_t = function
     Literal_t(l) -> l
   | Id_t(s) -> s
   | NOTE_CR_t(a, b, c) ->
-      "(" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
-  | REST_CR_t(r) -> "(" ^ string_of_expr_t r ^ ")" 
-  | TRACK_CR_t(track_list) -> 
-  "(" ^ String.concat " : " (List.map string_of_expr_t track_list) ^ ")"
+      "note (" ^ string_of_expr_t a ^ ", " ^ string_of_expr_t b ^ ", " ^ string_of_expr_t c ^ ")"
+  | REST_CR_t(r) -> "rest (" ^ string_of_expr_t r ^ ")" 
+  | TRACK_CR_t(track) -> "track (" ^ string_of_expr_t track ^ ")" 
   | SCORE_CR_t(score_list) -> 
-  "(" ^ String.concat " : " (List.map string_of_expr_t score_list) ^ ")"
+  "score (" ^ String.concat " : " (List.map string_of_expr_t score_list) ^ ")"
   | ACCESSOR_t(a, b) -> 
       (string_of_expr_t a) ^ " -> " ^ (
       match b with
         Pitch_t -> "pitch" | Vol_t -> "vol" | Dur_t -> "dur"
       )
   | Assign_t(id, expr) -> string_of_expr_t id ^ " = " ^ string_of_expr_t expr
+  | Address_t(id, expr) -> string_of_expr_t id ^ " [" ^ string_of_expr_t expr ^ "]"
   | CHORD_CR_t(note_list) -> 
-      "(" ^ String.concat " : " (List.map string_of_expr_t note_list) ^ ")"
+      "chord (" ^ String.concat " : " (List.map string_of_expr_t note_list) ^ ")"
   | Binop_t(e1, o, e2) ->
       string_of_expr_t e1 ^ " " ^
       (match o with
@@ -133,25 +136,28 @@ let rec string_of_stmt_t = function
       "{\n" ^ String.concat "" (List.map string_of_stmt_t stmts) ^ "}\n"
   | Expr_t(expr) -> string_of_expr_t expr ^ ";\n";
   | Return_t(expr) -> "return " ^ string_of_expr_t expr ^ ";\n";
+  | Print_t(expr) -> "print (" ^ string_of_expr_t expr ^ ");\n";
   | If_t(e, s, Block_t([])) -> "if (" ^ string_of_expr_t e ^ ")\n" ^ string_of_stmt_t s
   | If_t(e, s1, s2) ->  "if (" ^ string_of_expr_t e ^ ")\n" ^
       string_of_stmt_t s1 ^ "else\n" ^ string_of_stmt_t s2
   | For_t(e1, e2, e3, s) ->
       "for (" ^ string_of_expr_t e1  ^ " ; " ^ string_of_expr_t e2 ^ " ; " ^
       string_of_expr_t e3  ^ ") " ^ string_of_stmt_t s
+  | Loop_t(e, s) -> "loop (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
   | While_t(e, s) -> "while (" ^ string_of_expr_t e ^ ") " ^ string_of_stmt_t s
   | Vdecl_t(v) -> string_of_vdecl_t v ^ ";\n"
   | Vinit_t(v, e) -> string_of_vdecl_t v ^ " = " ^ string_of_expr_t e ^ ";\n"
 
 
 let string_of_fdecl_t fdecl =
+  fdecl.fname_t ^
    (match fdecl.rtype_t with
-    Double_t -> "double "
-    | Note_t -> "note "
-    | Chord_t -> "chord "
-    | Track_t -> "track "
-    | Rest_t -> "rest "
-    | Score_t -> "score ") ^ fdecl.fname_t ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
+    Double_t -> " double "
+    | Note_t -> " note "
+    | Chord_t -> " chord "
+    | Track_t -> " track "
+    | Rest_t -> " rest "
+    | Score_t -> " score ") ^ "(" ^ String.concat ", " (List.map string_of_vdecl_t fdecl.formals_t) ^ ")\n{\n" ^
   String.concat "" (List.map string_of_stmt_t fdecl.body_t) ^
   "}\n"
 

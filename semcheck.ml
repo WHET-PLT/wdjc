@@ -96,6 +96,7 @@ let convert_types vardecl =
  (* TYPES - do we need this? *)
 let get_type = function
 	var -> string_of_vartype var.vType
+	
 
 (* HELPFUL FUNCTIONS TO GET AND ADD VARIABLES (GLOBAL & LOCAL), FUNCIONS TO ENVIRONMENT *)
 
@@ -182,6 +183,8 @@ let add_function fname rtype formals env =
 
 (* SEMANTIC CHECKING FUNCTIONS *)
 
+
+
 let rec build_expr = function
 	  Ast.Literal(i) -> Sast.Literal_t(i)
     | Ast.Id(i) -> Sast.Id_t(i)
@@ -189,11 +192,12 @@ let rec build_expr = function
 	| Ast.NOTE_CR(expr1, expr2, expr3) -> Sast.NOTE_CR_t( (build_expr expr1), (build_expr expr2), (build_expr expr3) )
 	| Ast.REST_CR(expr) -> Sast.REST_CR_t( (build_expr expr) )
 	| Ast.CHORD_CR(expr_list) -> Sast.CHORD_CR_t( (build_expr_list expr_list) )
-	| Ast.TRACK_CR(expr_list) -> Sast.TRACK_CR_t( (build_expr_list expr_list) )
+	| Ast.TRACK_CR(expr) -> Sast.TRACK_CR_t( (build_expr expr) )
 	| Ast.SCORE_CR(expr_list) -> Sast.SCORE_CR_t( (build_expr_list expr_list) )
 	| Ast.Binop(expr1, op, expr2) -> Sast.Binop_t( (build_expr expr1), (ast_to_sast_op op) , (build_expr expr2) )
 	| Ast.Modifier(expr, m) -> Sast.Modifier_t( (build_expr expr), (ast_to_sast_mod m) )
 	| Ast.Assign(expr1, expr2) -> Sast.Assign_t( (build_expr expr1), (build_expr expr2) ) 
+	| Ast.Address(expr1, expr2) -> Sast.Address_t( (build_expr expr1), (build_expr expr2) ) 
   	| Ast.Call(str, expr_list) -> Sast.Call_t( str, (build_expr_list expr_list) )
  	| Ast.Noexpr -> Sast.Noexpr_t
 
@@ -206,8 +210,10 @@ let rec build_stmt = function
 	  Ast.Block(stmt_list) -> Sast.Block_t( (build_stmt_list stmt_list) )
 	| Ast.Expr(expr) -> Sast.Expr_t( (build_expr expr) )
 	| Ast.Return(expr) -> Sast.Return_t( (build_expr expr) )
+	| Ast.Print(expr) -> Sast.Print_t( (build_expr expr) )
 	| Ast.If(expr, stmt1, stmt2) -> Sast.If_t( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
 	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For_t( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
+	| Ast.Loop(expr, stmt) -> Sast.Loop_t( (build_expr expr), (build_stmt stmt) )
 	| Ast.While(expr, stmt) -> Sast.While_t( (build_expr expr), (build_stmt stmt) )
 	| Ast.Vdecl( vardecl ) -> Sast.Vdecl_t( {vType_t=(ast_to_sast_type vardecl.vType); vName_t=vardecl.vName;} )
 	| Ast.Vinit(decl, expr) -> Sast.Vinit_t( {vType_t=(ast_to_sast_type decl.vType); vName_t=decl.vName;} , (build_expr expr) )
@@ -241,7 +247,7 @@ and type_call typestring env name_str expr_list =
 						  with Not_found -> raise (Failure ("Undefined function: " ^ name_str)) 
 		in
 		let rtype = (List.hd func_types_list) in
-		if rtype != typestring
+		if rtype != typestring && typestring <> "any"
 		then raise (Failure ("Mismatch Expression type: \n" ^ 
 			     	"function has return type " ^ rtype ^ ".\n" ^
 			   		"an expression of type " ^ typestring ^ " was expected."))
@@ -262,32 +268,61 @@ and type_binop typestring env expr1 op expr2 =
 	  			 ignore (type_expr "double" env expr2);
 	  			 "double"
 	(* TODO boolean should take note or chord or track too*)
-	| Ast.Equal -> ignore (type_expr "double" env expr1); 
-	  			   ignore (type_expr "double" env expr2);
+	| Ast.Equal -> ignore (type_expr "primitive" env expr1); 
+	  			   ignore (type_expr "primitive" env expr2);
 	  			   "boolean"
-	| Ast.Neq -> ignore (type_expr "double" env expr1); 
-	  			 ignore (type_expr "double" env expr2);
+	| Ast.Neq -> ignore (type_expr "primitive" env expr1); 
+	  			 ignore (type_expr "primitive" env expr2);
 	  			 "boolean"
-	| Ast.Geq -> ignore (type_expr "double" env expr1); 
-	  			 ignore (type_expr "double" env expr2);
+	| Ast.Geq -> ignore (type_expr "primitive" env expr1); 
+	  			 ignore (type_expr "primitive" env expr2);
 	  			 "boolean"
-	| Ast.Leq -> ignore (type_expr "double" env expr1); 
-	  			 ignore (type_expr "double" env expr2);
+	| Ast.Leq -> ignore (type_expr "primitive" env expr1); 
+	  			 ignore (type_expr "primitive" env expr2);
 	  			 "boolean"
-	| Ast.Greater -> ignore (type_expr "double" env expr1); 
-	  			     ignore (type_expr "double" env expr2);
+	| Ast.Greater -> ignore (type_expr "primitive" env expr1); 
+	  			     ignore (type_expr "primitive" env expr2);
 	  			     "boolean"
-	| Ast.Less -> ignore (type_expr "double" env expr1); 
-	  			  ignore (type_expr "double" env expr2);
+	| Ast.Less -> ignore (type_expr "primitive" env expr1); 
+	  			  ignore (type_expr "primitive" env expr2);
 	  			  "boolean"
 	 (* TODO either has to be chord OR note OR track *)
-	| Ast.Ser -> ignore (type_expr "chord" env expr1); 
-	  			 ignore (type_expr "chord" env expr2);
-	  			 "track"
-	 (* TODO either has to be chord OR note OR track *)
-	| Ast.Par -> ignore (type_expr "note" env expr1); 
-	  			 ignore (type_expr "note" env expr2);
-	  			 "chord"
+	| Ast.Ser -> (match typestring with
+	  			 | "track" ->
+						ignore (type_expr "track" env expr1); 
+		 	  			ignore (type_expr "track_or_chord" env expr2);
+		 	  			"track"
+	  			 | "any" ->
+						ignore (type_expr "track" env expr1); 
+		 	  			ignore (type_expr "track_or_chord" env expr2);
+		 	  			"track"
+	  			 | _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+  						     	"expression was of type track.\n" ^
+  						   		"but an expression of type " ^ typestring ^ " was expected.")) )
+	 (* TODO either has to be chord OR note OR track OR score *)
+	| Ast.Par -> (match typestring with
+	  			   "score" ->
+		  				ignore (type_expr "score" env expr1); 
+		   	  			ignore (type_expr "score_or_track" env expr2);
+		   	  			"score"
+	  			 | "chord" -> 
+		 				ignore (type_expr "chord" env expr1); 
+		  	  			ignore (type_expr "chord_or_note_or_rest" env expr2);
+		  	  			"chord"
+		  	  			
+	  			 | "any" -> try
+								ignore (type_expr "chord" env expr1); 
+				 	  			ignore (type_expr "chord_or_note_or_rest" env expr2);
+				 	  			"chord"
+				 	  		with Failure cause -> 
+						 	  		try 
+			 	  						ignore (type_expr "score" env expr1); 
+			 	  		 	  			ignore (type_expr "score_or_track" env expr2);
+			 	  		 	  			"score"
+			 	  		 	  		with Failure cause -> raise (Failure ("Mismatch Expression type: \n" ^ 
+	  				  						     	"expression was required to be of type score or chord.\n" ^
+	  				  						   		"but an expression of type " ^ typestring ^ " was expected."))
+	  			 )
 	
 and type_expr typestring env expr =
 	match expr with
@@ -304,19 +339,38 @@ and type_expr typestring env expr =
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
-	    			else
-	    				if typestring <> id_type && typestring <> "any"
-						then raise (Failure ("Mismatch Expression type: \n" ^ 
-						     	"expression was of type " ^ id_type ^ ".\n" ^
-						   		"an expression of type " ^ typestring ^ " was expected."))
-						else env
+	    			else (match typestring with
+		    				  id_type -> env
+		    				| "any" -> env
+		    				| "chord_or_note_or_rest" -> (match id_type with
+		    												  "chord" -> env
+		    												| "note" -> env
+		    												| "rest" -> env
+		    												| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+														     	"expression was of type " ^ id_type ^ ".\n" ^
+														   		"an expression of type " ^ typestring ^ " was expected.")) )
+		    				| "score_or_track" -> (match id_type with
+    												  "score" -> env
+    												| "track" -> env
+    												| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+												     	"expression was of type " ^ id_type ^ ".\n" ^
+												   		"an expression of type " ^ typestring ^ " was expected.")) )
+		    				| "track_or_chord" -> (match id_type with
+    												  "track" -> env
+    												| "chord" -> env
+    												| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+												     	"expression was of type " ^ id_type ^ ".\n" ^
+												   		"an expression of type " ^ typestring ^ " was expected.")) )
+		    				| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+							     	"expression was of type " ^ id_type ^ ".\n" ^
+							   		"an expression of type " ^ typestring ^ " was expected.")) )
 	| Ast.ACCESSOR(expr, note_attr) -> ignore (type_expr "note" env expr);
 										if typestring <> "double" && typestring <> "any"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
 				  						     	"expression was of type double.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
 					  					else env
-	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring <> "primitive" && typestring <> "note" && typestring <> "any"
+	| Ast.NOTE_CR(expr1, expr2, expr3) -> if typestring <> "primitive" && typestring <> "note" && typestring <> "chord_or_note_or_rest" && typestring <> "any"
 										  then raise (Failure ("Mismatch Expression type: \n" ^ 
 				  						     	"expression was of type note.\n" ^
 				  						   		"an expression of type " ^ typestring ^ " was expected."))
@@ -324,26 +378,26 @@ and type_expr typestring env expr =
 											   ignore (type_expr "double" env expr2);
 											   ignore (type_expr "double" env expr3);
 											   env
-	| Ast.REST_CR(expr) -> if typestring <> "primitive" && typestring <> "rest" && typestring <> "any"
+	| Ast.REST_CR(expr) -> if typestring <> "primitive" && typestring <> "rest" && typestring <> "chord_or_note_or_rest" && typestring <> "any"
 						   then raise (Failure ("Mismatch Expression type: \n" ^ 
   						      	"expression was of type rest.\n" ^
   						   		"an expression of type " ^ typestring ^ " was expected."))
 						   else ignore (type_expr "double" env expr);
 							    env
-	| Ast.CHORD_CR(expr_list) -> if typestring <> "primitive" && typestring <> "chord" && typestring <> "any"
+	| Ast.CHORD_CR(expr_list) -> if typestring <> "primitive" && typestring <> "chord" && typestring <> "chord_or_note_or_rest" && typestring <> "track_or_chord" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type chord.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
 								 else ignore (type_expr_list "note" env expr_list);
 								 	  env
 
-	| Ast.TRACK_CR(expr_list) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "any"
+	| Ast.TRACK_CR(expr) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "track_or_chord" && typestring <> "score_or_track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
-								 else ignore (type_expr_list "chord" env expr_list);
+								 else ignore (type_expr "double" env expr);
 								 	  env
-	| Ast.SCORE_CR(expr_list) -> if typestring <> "primitive" && typestring <> "score" && typestring <> "any"
+	| Ast.SCORE_CR(expr_list) -> if typestring <> "primitive" && typestring <> "score" && typestring <> "score_or_track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
@@ -360,7 +414,28 @@ and type_expr typestring env expr =
 								  ignore (type_expr typestring env expr1);
 								  ignore (type_expr typestring env expr2);
 								  (* TODO update environment with initialized boolean *)
+								  (* TODO update environment? *)
 								  env
+	| Ast.Address(expr1, expr2) -> ignore (is_id expr1);
+									(match typestring with
+									"track" -> ignore (type_expr "score" env expr1);
+											   ignore (type_expr "double" env expr2);
+											   env
+									| "chord" -> ignore (type_expr "track" env expr1);
+											     ignore (type_expr "double" env expr2);
+											     env
+									| "note" -> ignore (type_expr "chord" env expr1);
+											    ignore (type_expr "double" env expr2);
+											    env
+									| "rest" -> ignore (type_expr "chord" env expr1);
+											    ignore (type_expr "double" env expr2);
+											    env
+									| "any" -> ignore (type_expr "any" env expr1);
+											   ignore (type_expr "double" env expr2);
+											   env
+									| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+			  						            "expression was of the wrong type.\n" ^
+				  						   		"an expression of type " ^ typestring ^ " was expected.")) )
   	| Ast.Call(name_str, expr_list) -> ignore (type_call typestring env name_str expr_list); 
   										env
  	| Ast.Noexpr -> env
@@ -371,11 +446,19 @@ and type_expr_list typestring env = function
 	
 
 (* function matches a STATEMENT *)
+(*|| func.fname = "Song"*)
 let rec type_stmt func env stmt =
 	match stmt with 
 	  Ast.Block(stmt_list) -> type_stmt_list func env stmt_list
 	| Ast.Expr(expr) -> type_expr "any" env expr
-	| Ast.Return(expr) -> type_expr (string_of_vartype func.rtype) env expr
+	| Ast.Print(expr) -> type_expr "any" env expr
+	| Ast.Return(expr) -> if func.fname != "song" 
+							then type_expr (string_of_vartype func.rtype) env expr
+						  else
+							 let rtn_type = string_of_vartype func.rtype in
+							 	if rtn_type != "score" 
+							 	then raise (Failure ("Return type of song function must be of type score."))
+								else type_expr (string_of_vartype func.rtype) env expr
 	(* reordered! expr comes last (after stmts) becuase its the only one that can change the environment outside the block *)
 	| Ast.If(expr, stmt1, stmt2) -> ignore (type_stmt func env stmt1);
 									ignore (type_stmt func env stmt2);
@@ -386,7 +469,9 @@ let rec type_stmt func env stmt =
 												ignore (type_expr "any" for_env expr3);
 												ignore (type_stmt func for_env stmt);
 												env
-	(* (type_expr expr1), (type_expr expr2), type_expr "junk" env expr, (type_stmt stmt) *)
+	| Ast.Loop(expr, stmt) -> let loop_env = type_expr "double" env expr in 
+								ignore (type_stmt func loop_env stmt);
+								env
 	| Ast.While(expr, stmt) -> let while_env = type_expr "boolean" env expr in 
 								ignore (type_stmt func while_env stmt);
 								env
@@ -411,6 +496,7 @@ and type_stmt_list func env = function
 	  [] -> env
 	| hd::tl -> let new_env = (type_stmt func env hd) in type_stmt_list func new_env tl
 	
+
 (* let rec sc_local_vars func env =  *)
 
 (* check the expression type can be used for
@@ -419,7 +505,6 @@ and type_stmt_list func env = function
 let sc_func_arg lst expr arg_t =
 	if (snd expr) = arg_t then (fst expr)::lst else
 	raise (Failure("function arguments do not match"))
-
 (* FUNCTIONS  - EMILY *)
 (*checks function arguments, then updates env*)
 let sc_formal formal env =
@@ -461,7 +546,8 @@ let rec sc_function fn env =
 				}
 			fill up env_new with functions;
 			change name possibly to something more intuitive
-			new_fn_sm - new function stringmap			
+			new_fn_sm - new function stringmap
+			
 			in *)
 			let new_function_stringmap = add_function fn.fname fn.rtype fn.formals env in
 				let env =
