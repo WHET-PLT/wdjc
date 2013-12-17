@@ -12,7 +12,7 @@ let _ =
     let output_name = 
       if Array.length Sys.argv > 2 then
         Sys.argv.(2) 
-      else "DJ" in
+      else "../DJ.mid" in
   
   let lexbuf = Lexing.from_channel stdin in
   let program = Parser.program Scanner.token lexbuf in

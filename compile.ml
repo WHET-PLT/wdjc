@@ -105,7 +105,7 @@ and write_stmt file f_name statement =
   | Return_t(expr) -> 
     let ex1 = write_expr "junk" expr in
       if f_name = "song" then 
-        sprintf "%s" "Write.midi(" ^ ex1 ^", \"" ^ file ^ ".mid\");\n" 
+        sprintf "%s" "Write.midi(" ^ ex1 ^", \"" ^ file ^ "\");\n" 
       else sprintf "%s" "return " ^ ex1 ^ ";\n"
   | If_t(e, s, Block_t([])) -> 
       let ex1 = write_expr "junk" e in 
