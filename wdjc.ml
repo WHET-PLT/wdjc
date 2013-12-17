@@ -7,8 +7,9 @@ let _ =
             (* ("-c", Compile); *)
             ("-j", Java) ]
   else Compile in
-  if Array.length Sys.argv > 1 then
-      let f_name = Sys.argv.(2) in
+  let f_name = if Array.length Sys.argv > 2 then
+     Sys.argv.(2) 
+  else "test" in
   let lexbuf = Lexing.from_channel stdin in
   let program = Parser.program Scanner.token lexbuf in
   match action with
