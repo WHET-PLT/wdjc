@@ -25,8 +25,8 @@ let _ =
     | Java -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
           in ignore( listing );
     | Compile -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
-          in (* ignore( listing ); *)
-          let output = Sys.command("./compile main") in
+          in ignore( listing );
+          let output = Sys.command("cd java; echo $PWD; make") in
             print_int output
               (* ignore(output); *)
 (*           in ignore( listing ); *)
