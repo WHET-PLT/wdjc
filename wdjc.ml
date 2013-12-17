@@ -25,7 +25,7 @@ let _ =
     | Java -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
           in ignore( listing );
     | Compile -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
-          (* in ignore( listing ); *)
+          in (* ignore( listing ); *)
           let output = Sys.command("./compile main") in
             print_int output
               (* ignore(output); *)
