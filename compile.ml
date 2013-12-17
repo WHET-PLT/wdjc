@@ -2,7 +2,11 @@ open Sast
 open Printf
 
 let num_tracks = ref 0;;
-let imports = "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimport jm.util.*;\n\npublic class DJ implements JMC{\n" 
+let imports = "import java.util.*;\n" ^
+              "import jm.JMC;\n" ^
+              "import jm.music.data.*;\n" ^
+              "import jm.util.*;\n\n" ^
+              "public class DJ implements JMC{\n" 
   
 
 (* ------------------------------------------------------------------------------------------------------------- *)
@@ -160,10 +164,9 @@ and write_expr v_name ex =
       let notes_string = String.concat ", " notes in
         sprintf "%s" " new CPhrase();\n" ^ "Note [] notes_array = {" ^ notes_string ^ "};\n" ^  v_name^ ".addChord(notes_array)"
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
-  | TRACK_CR_t(chord_list) ->
-    let chords = write_chord_list v_name chord_list in
-      let chords_string = String.concat ";\n" chords in
-        sprintf "%s" (" new Part();\n" ^ chords_string )
+  | TRACK_CR_t(instr) ->
+    let ex1  = write_expr "junk" instr in
+      sprintf "%s" "new Part(" ^ ex1 ^ ");"
   (* GLOBAL VARIABLES???? *)
   | SCORE_CR_t(track_list) ->
     let track_adds = write_score_track_list v_name track_list in
@@ -197,8 +200,9 @@ and write_score_track_list vname = function
   [] -> []
   | h::t -> let track_str_list = (vname ^ ".addPart(" ^ (write_expr "junk" h) ^ ")") in track_str_list::(write_score_track_list vname t)
 
-and write_chord_list vname = function 
-  [] -> []
+and write_chord_list vname chord_list = 
+  match chord_list with 
+    [] -> []
   | h::t -> let track_str_list = (vname ^ ".addCPhrase(" ^ (write_expr "junk" h) ^ ")") in track_str_list::(write_score_track_list vname t)
   
   
