@@ -322,7 +322,9 @@ and type_binop typestring env expr1 op expr2 =
 			 	  		 	  		with Failure cause -> raise (Failure ("Mismatch Expression type: \n" ^ 
 	  				  						     	"expression was required to be of type score or chord.\n" ^
 	  				  						   		"but an expression of type " ^ typestring ^ " was expected."))
-	  			 )
+			 	 | _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+				     	"expression was required to be of type score or chord.\n" ^
+				   		"but an expression of type " ^ typestring ^ " was expected.")) )
 	
 and type_expr typestring env expr =
 	match expr with
