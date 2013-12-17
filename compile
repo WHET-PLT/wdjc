@@ -23,7 +23,7 @@ JAVA=java
 JFLAGS="-classpath $CLASSPATH"
 
 JAVAC=javac
-JCFLAGS="-sourcepath $SOURCE_DIR -d $SOURCE_DIR -classpath $CLASSPATH"
+JCFLAGS="-sourcepath $SOURCE_DIR -classpath $CLASSPATH"
 
 
 # List the sourcefiles
@@ -32,8 +32,8 @@ FILES=$SOURCE_DIR/$MAIN.java
 echo $JAVAC $JCFLAGS $FILES
 $( $JAVAC $JCFLAGS $FILES )
 
-echo $JAVA $JFLAGS $MAIN
-$JAVA $JFLAGS $MAIN
+echo $JAVA $JFLAGS $SOURCE_DIR/$MAIN
+$JAVA $JFLAGS $SOURCE_DIR/$MAIN
 
 # rm -rf $SOURCE_DIR/$MAIN.class
 # rm -rf $SOURCE_DIR/$MAIN.java
