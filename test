@@ -50,6 +50,20 @@ elif [[ $1 =~ '-j' ]]; then
 	done
 	echo ">> Done Compiling JAVA <<" 
 	echo
+#if flag is j - JAVA
+elif [[ $1 =~ '-t' ]]; then
+	echo ">> Compiling JAVA <<" 
+	echo
+	for file in ./tests/*.dj
+	do
+		echo $file
+		echo ------------------------
+		$WDJC -t < $file
+		echo
+	done
+	echo ">> Done Compiling JAVA <<" 
+	echo
+	
 #if no flag, default to ast
 else
 	echo ">> Compiling AST <<" 
