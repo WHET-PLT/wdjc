@@ -11,7 +11,7 @@ let imports = "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimp
 
 (* WRITE PROGRAM TO FILE  *)
 let rec write_to_file file programString =
-  let oc = open_out ("java/testOutput/" ^ file ^ ".java") in 
+  let oc = open_out ("java/src/" ^ file ^ ".java") in 
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
@@ -100,7 +100,7 @@ and write_stmt f_name statement =
   | Return_t(expr) -> 
     let ex1 = write_expr "junk" expr in
       if f_name = "song" then 
-        sprintf "%s" "Write.midi(" ^ ex1 ^", \"createNotes.mid\");\n" 
+        sprintf "%s" "Write.midi(" ^ ex1 ^", \"helloWorld.mid\");\n" 
       else sprintf "%s" "return " ^ ex1 ^ ";\n"
   | If_t(e, s, Block_t([])) -> 
       let ex1 = write_expr "junk" e in 

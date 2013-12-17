@@ -1,11 +1,12 @@
-type action = Ast | Compile | Java | Sast
+type action = Ast | Compile | Java | Sast | Test
 
 let _ =
   let action = if Array.length Sys.argv > 1 then
     List.assoc Sys.argv.(1) [ ("-a", Ast);
             ("-s", Sast);
             (* ("-c", Compile); *)
-            ("-j", Java) ]
+            ("-j", Java);
+            ("-t", Test) ]
   else Compile in
   let f_name = if Array.length Sys.argv > 2 then
      Sys.argv.(2) 
@@ -20,6 +21,12 @@ let _ =
           in print_string listing
     | Java -> let listing = Compile.string_of_program f_name (Semcheck.sc_program program)
           in ignore( listing );
+    | Test -> let listing = Compile.string_of_program f_name (Semcheck.sc_program program) in
+              (* ignore( listing ); *)
+              let output = Sys.command("cd ./java\nmake") in
+              print_int output
+              (* ignore(output); *)
+(*           in ignore( listing ); *)
     (* | Java -> let listing = Compile.program_string program
               in print_endline listing
     | Compile -> Execute.javacompile (Compile.program_string (Semcheck.sc_program program)) *)
