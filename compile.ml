@@ -15,7 +15,7 @@ let imports = "import java.util.*;\n" ^
 
 (* WRITE PROGRAM TO FILE  *)
 let rec write_to_file programString =
-  let oc = open_out ("main.java") in 
+  let oc = open_out ("java/src/main.java") in 
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
