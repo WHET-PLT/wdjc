@@ -8,7 +8,7 @@ make
 echo
 
 # Set time limit for all operations
-ulimit -t 30
+# ulimit -t 30
 
 #check for command line args (flags) can be -a, -s, or -j for now; default to a
 #if flag is a - AST
