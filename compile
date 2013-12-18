@@ -22,8 +22,8 @@ else
 	javac $JCFLAGS tests/$MAIN.java
 
 	echo "Running"
-	echo "java $JFLAGS tests/$MAIN.java"
-	java $JFLAGS tests/$MAIN.java
+	echo "java $JFLAGS tests/$MAIN"
+	java $JFLAGS tests/$MAIN
 fi
 
 
