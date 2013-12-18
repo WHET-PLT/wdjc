@@ -1,21 +1,9 @@
 open Sast
 open Printf
 
-let num_tracks = ref 0;;
-let imports = "import java.util.*;\n" ^
-              "import jm.JMC;\n" ^
-              "import jm.music.data.*;\n" ^
-              "import jm.util.*;\n\n" ^
-              "public class DJ implements JMC{\n" 
-  
-
-(* ------------------------------------------------------------------------------------------------------------- *)
-
-  (* new code based on new ast that emily showed me *)
-
 (* WRITE PROGRAM TO FILE  *)
 let rec write_to_file file programString =
-  let oc = open_out ("tests/" ^ file ^ ".java") in 
+  let oc = open_out ("tests/" ^ file ^ "_dj.java") in 
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
