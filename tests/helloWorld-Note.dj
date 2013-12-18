@@ -9,9 +9,10 @@ song score ()
 	pitchA = 440; 
 	volume=100; 
 	duration=4; 
+	
 	note n = note (pitchA, duration, volume);
 	chord c = chord(n);
-	track t = track(c);
-	score s = score(t);
+	track t = track( n );
+	score s = score( n );
 	return s; 
 }
