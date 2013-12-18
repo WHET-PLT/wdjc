@@ -3,7 +3,7 @@ open Printf
 
 (* WRITE PROGRAM TO FILE  *)
 let rec write_to_file file programString =
-  let oc = open_out ("tests/" ^ file ^ "_dj.java") in 
+  let oc = open_out ("tests/" ^ file ^ "dj.java") in 
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
@@ -12,7 +12,7 @@ and string_of_program file (vars, funcs)=
     let func_string = write_func_string file funcs in 
   let out = sprintf 
     "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimport jm.util.*;\n\npublic class %s implements JMC {\n%s\n\n%s\n}" 
-    (file^"_dj") global_string func_string in
+    (file^"dj") global_string func_string in
     write_to_file file out;
     out
       
