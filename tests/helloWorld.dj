@@ -7,7 +7,7 @@ song score ()
 	double duration; 
 
 	pitchA = 440; 
-	volume=2; 
+	volume=50; 
 	duration=4; 
 	
 	note n = note (pitchA, volume, duration);

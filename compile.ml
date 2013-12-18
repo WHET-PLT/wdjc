@@ -9,10 +9,10 @@ let rec write_to_file file programString =
 
 and string_of_program file (vars, funcs)= 
   let global_string = write_global_string vars in
-    let func_string = write_func_string file funcs in 
+    let func_string = write_func_string file funcs global_string in 
   let out = sprintf 
-    "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimport jm.util.*;\n\npublic class %s implements JMC {\n%s\n\n%s\n}" 
-    (file^"dj") global_string func_string in
+    "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimport jm.util.*;\n\npublic class %s implements JMC {\n%s\n}" 
+    (file^"dj") func_string in
     write_to_file file out;
     out
       
@@ -23,17 +23,17 @@ and write_global_string vars =
   else
     sprintf "%s" (String.concat ";\n" gs)
 
-and write_func_string file funcs =
-  let fs = parse_funcs file funcs in
+and write_func_string file funcs global_string =
+  let fs = parse_funcs file global_string funcs in
     sprintf "%s" (String.concat "" fs)
 
 and parse_global = function
   [] -> []
   | h::t -> let global_string = (write_vdecl h) in global_string::(parse_global t)
 
-and parse_funcs file = function
+and parse_funcs file global_string = function
   [] -> []
-  | h::t -> let funcs_string = (write_fdecl file h) in funcs_string::(parse_funcs file t)
+  | h::t -> let funcs_string = (write_fdecl file global_string h) in funcs_string::(parse_funcs file global_string t)
 
 and write_vdecl v = 
   (match v.vType_t with
@@ -46,14 +46,15 @@ and write_vdecl v =
 
 and write_vdecl_name v =  v.vName_t
 
-and write_fdecl file f =
+and write_fdecl file global_string f =
   (* no song function has arguments *)
   let stmt_list = write_stmt_list file f.fname_t f.body_t in
     let stmt_string = String.concat "" stmt_list in 
   (* SONG FUNCTION *)
   if f.fname_t = "song" 
     then 
-        "public static void main(String[] args){\n\tNote [] notes_array;\n" ^
+        "public static void main(String[] args){\n\tNote [] notes_array;\n" ^ 
+        global_string ^ "\n" ^
         stmt_string ^
         "\n\t\t}\n"
   (* NON-SONG FUNCTION *)
@@ -98,12 +99,16 @@ and write_stmt file f_name statement =
       let ex2 = write_expr "junk" e2 in
         let ex3 = write_expr "junk" e3 in
           let s1 = write_stmt file f_name s in
-            sprintf "%s" "\t\tfor ( (int)" ^ ex1  ^ "" ^ ex2 ^ " ; " ^ ex3 ^ ") " ^ s1
+            sprintf "%s" "\t\tfor (" ^ ex1  ^ " " ^ ex2 ^ "; " ^ ex3 ^ ") " ^ s1
   | Print_t(e) -> sprintf "System.out.println(%s);\n" (write_expr f_name e)
   | While_t(e, s) -> 
   let ex1 = write_expr "junk" e in
     let s1 = write_stmt file f_name s in
       sprintf "%s" ("\t\twhile (" ^ ex1^ ") " ^ s1)
+  | Loop_t(e, s) -> 
+  let ex1 = write_expr "junk" e1 in
+    let s1 = write_stmt file f_name s in
+      sprintf "%s" "\t\tfor (int w = 0; w < " ^ ex2 ^ "; w ++) " ^ s1
   | Vdecl_t(v) -> sprintf "%s" (write_vdecl v ^ ";\n")
   | Vinit_t(v, e) -> 
     let var = write_vdecl v in 
@@ -138,7 +143,7 @@ and write_expr v_name ex =
   | Assign_t(id, expr) -> 
       let identifier = write_expr "junk" id in
         let ex = write_expr identifier expr in
-          sprintf "%s" identifier ^ " = " ^ ex ^ ";\n"
+          sprintf "%s" identifier ^ " = " ^ ex
   | CHORD_CR_t(note_list) -> 
     let notes = write_expr_list "junk" note_list in
       let notes_string = String.concat ", " notes in
@@ -172,14 +177,15 @@ and write_expr v_name ex =
     
 
   | Modifier_t(e1, modif) ->
-    let ex1 = write_expr "junk" e1 in
       let modifier = (
         match modif with
-        Vib_t -> ";\n" 
-        | Trem_t -> ";\n" 
-        | Incr_t -> ".setPitch((" ^ write_expr "junk" e1 ^".getPitch()) + 50)"  
-        | Decr_t -> ".setPitch((" ^ write_expr "junk" e1 ^".getPitch())  -50)") in
-      sprintf "%s" (ex1 ^ modifier)
+        Vib_t -> "" 
+        | Trem_t -> "" 
+        | Incr_t -> "++"  
+        | Decr_t -> "--") in
+        (* | Incr_t -> ".setPitch((" ^ write_expr "junk" e1 ^".getPitch()) + 50)"  
+        | Decr_t -> ".setPitch((" ^ write_expr "junk" e1 ^".getPitch())  -50)") in *)
+      sprintf "%s" ((write_expr "junk" e1) ^ modifier)
   | Call_t(f, el) ->
         let calls = write_expr_list "junk" el in
         sprintf "%s" (f ^ "(" ^ String.concat ", " calls ^ ")")

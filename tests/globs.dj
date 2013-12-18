@@ -1,4 +1,4 @@
-double global
+double glob
 
 song score ( ) {
 
@@ -6,7 +6,7 @@ song score ( ) {
 Simple arithmetic test.
 Can test comments too.
  */
-global = 5;
+glob = 5;
 print(1+1);
 
 score s = score();

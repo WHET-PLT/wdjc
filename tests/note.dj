@@ -20,8 +20,8 @@ duration = 4;
 
 
 n = note (pitchA, volume, duration);
-n = note (1.33, 2, 3);
-n = note (n1 -> pitch, volume, 4);
+n1 = note (1.33, 2, 3);
+n2 = note (n1 -> pitch, volume, 4);
 track t = track (5);
 score s = score( t );
 
