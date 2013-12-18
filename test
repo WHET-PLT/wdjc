@@ -56,9 +56,11 @@ elif [[ $1 =~ '-c' ]]; then
 	echo
 	for file in ./tests/*.dj
 	do
+		name=$(basename $file .dj)
 		echo $file
+		echo $name		
 		echo ------------------------
-		$WDJC -c < $file
+		$WDJC -c $name < $file
 		echo
 	done
 	echo ">> Done Compiling <<" 

@@ -14,8 +14,8 @@ let imports = "import java.util.*;\n" ^
   (* new code based on new ast that emily showed me *)
 
 (* WRITE PROGRAM TO FILE  *)
-let rec write_to_file programString =
-  let oc = open_out ("java/src/main.java") in 
+let rec write_to_file file programString =
+  let oc = open_out ("tests/" ^ file ^ ".java") in 
   fprintf oc "%s" programString;
 (*   close_out oc in *)
 
@@ -23,20 +23,10 @@ and string_of_program file (vars, funcs)=
   let global_string = write_global_string vars in
     let func_string = write_func_string file funcs in 
   let out = sprintf 
-    "
-    import java.util.*;
-    import jm.JMC;
-    import jm.music.data.*;
-    import jm.util.*; 
-
-    public class main implements JMC {
-      %s
-
-      %s 
-    }
-      " global_string func_string in
-      write_to_file out;
-      out
+    "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimport jm.util.*;\n\npublic class %s implements JMC {\n%s\n\n%s\n}" 
+    file global_string func_string in
+    write_to_file file out;
+    out
       
 and write_global_string vars =
   let gs = parse_global vars in
@@ -105,7 +95,7 @@ and write_stmt file f_name statement =
   | Return_t(expr) -> 
     let ex1 = write_expr "junk" expr in
       if f_name = "song" then 
-        sprintf "%s" "Write.midi(" ^ ex1 ^", \"" ^ file ^ "\");\n" 
+        sprintf "%s" "Write.midi(" ^ ex1 ^", \"" ^ file ^ ".mid\");\n" 
       else sprintf "%s" "return " ^ ex1 ^ ";\n"
   | If_t(e, s, Block_t([])) -> 
       let ex1 = write_expr "junk" e in 
@@ -121,6 +111,7 @@ and write_stmt file f_name statement =
         let ex3 = write_expr "junk" e3 in
           let s1 = write_stmt file f_name s in
             sprintf "%s" "for ( (int)" ^ ex1  ^ "" ^ ex2 ^ " ; " ^ ex3 ^ ") " ^ s1
+  | Print_t(e) -> sprintf "System.out.println(%s);\n" (write_expr f_name e)
   | While_t(e, s) -> 
   let ex1 = write_expr "junk" e in
     let s1 = write_stmt file f_name s in

@@ -12,7 +12,7 @@ let _ =
     let output_name = 
       if Array.length Sys.argv > 2 then
         Sys.argv.(2) 
-      else "../DJ.mid" in
+      else "dj" in
   
   let lexbuf = Lexing.from_channel stdin in
   let program = Parser.program Scanner.token lexbuf in
@@ -27,7 +27,7 @@ let _ =
     | Compile -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
           in 
           let lst = listing in
-          let output = Sys.command("cd java; make") in
+          let output = Sys.command("./compile.sh " ^ output_name) in
             ignore (lst); print_int output
               (* ignore(output); *)
 (*           in ignore( listing ); *)
