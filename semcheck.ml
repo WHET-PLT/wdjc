@@ -210,7 +210,7 @@ let rec build_stmt = function
 	  Ast.Block(stmt_list) -> Sast.Block_t( (build_stmt_list stmt_list) )
 	| Ast.Expr(expr) -> Sast.Expr_t( (build_expr expr) )
 	| Ast.Return(expr) -> Sast.Return_t( (build_expr expr) )
-	| Ast.Print(expr) -> Sast.Print_t( (build_expr expr) )
+	| Ast.Print(expr) -> Sast.st( (build_expr expr) )
 	| Ast.If(expr, stmt1, stmt2) -> Sast.If_t( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
 	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For_t( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
 	| Ast.Loop(expr, stmt) -> Sast.Loop_t( (build_expr expr), (build_stmt stmt) )
@@ -334,8 +334,6 @@ and type_expr typestring env expr =
   						   		"an expression of type " ^ typestring ^ " was expected."))
 	  					else env
     | Ast.Id(i) -> let id_type = get_variable_type i env in
-			    ignore (print_string (i ^ ": "));
-			    ignore (print_string (id_type ^ "\n"));
     				if typestring = "primitive"
     				then
 	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track" && id_type <> "score" && id_type <> "double"
@@ -343,11 +341,8 @@ and type_expr typestring env expr =
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
-	    			else 
-	    			(ignore (print_string (typestring ^ " - " ^ id_type ^ "\n")); (* double = typdstring, note = id_type*)
-
-	    				match typestring with
-		    				 id_type -> ignore (print_string (id_type ^ ">>HERE\n")); env
+	    			else (match typestring with
+		    				 id_type -> env
 		    				| "any" -> env
 		    				| "chord_or_note_or_rest" -> (match id_type with
 		    												  "chord" -> env
@@ -489,8 +484,6 @@ let rec type_stmt func env stmt =
 									} in
 									new_env
 	| Ast.Vinit(vardecl, expr) -> let new_locals_stringmap = add_local vardecl.vType vardecl.vName env in
-									ignore (print_string (vardecl.vName ^ ": "));
-									ignore (print_string ((string_of_vartype vardecl.vType ^ "\n")));
 									let new_env = 
 										{
 											locals = new_locals_stringmap; 
