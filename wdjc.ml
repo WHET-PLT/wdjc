@@ -27,7 +27,7 @@ let _ =
     | Compile -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
           in 
           let lst = listing in
-          let output = Sys.command("./compile.sh " ^ output_name) in
+          let output = Sys.command("./compile " ^ output_name) in
             ignore (lst); print_int output
               (* ignore(output); *)
 (*           in ignore( listing ); *)
