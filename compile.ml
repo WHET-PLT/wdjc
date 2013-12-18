@@ -69,7 +69,7 @@ and write_fdecl file global_string f =
               | Track_t -> "Part "
               | Rest_t -> "Rest "
               | Score_t -> "Score "
-              | _ -> "void") ^ 
+              (* | _ -> "void" *)) ^ 
             f.fname_t ^ "( " ^ formals_str ^ " )" ^
             "\n{\n\tNote [] notes_array;\n" ^ stmt_string ^ "\n\t\t}\n"
 

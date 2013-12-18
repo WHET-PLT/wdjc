@@ -45,7 +45,7 @@ let ast_to_sast_note_attr = function
 	Ast.Pitch -> Sast.Pitch_t
 	| Ast.Vol -> Sast.Vol_t
 	| Ast.Dur -> Sast.Dur_t
-	| _ -> raise (Failure ("Mismatch Note Attribute Type"))
+	(* | _ -> raise (Failure ("Mismatch Note Attribute Type")) *)
   
 (* ast -> sast type*)
 let ast_to_sast_op = function
@@ -61,14 +61,14 @@ let ast_to_sast_op = function
 	| Ast.Leq -> Sast.Leq_t
 	| Ast.Greater -> Sast.Greater_t
 	| Ast.Less -> Sast.Less_t
-	| _ -> raise (Failure ("Mismatch Operator Type"))
+	(* | _ -> raise (Failure ("Mismatch Operator Type")) *)
 	
 let ast_to_sast_mod = function
 	  Ast.Vib -> Sast.Vib_t
 	| Ast.Trem -> Sast.Trem_t
 	| Ast.Incr -> Sast.Incr_t
 	| Ast.Decr -> Sast.Decr_t
-	| _ -> raise (Failure ("Mismatch Modifier Type"))
+	(* | _ -> raise (Failure ("Mismatch Modifier Type")) *)
 
 (* ast -> sast type*)
 let ast_to_sast_type = function
@@ -78,7 +78,7 @@ let ast_to_sast_type = function
    | Ast.Chord -> Sast.Chord_t
    | Ast.Track -> Sast.Track_t
    | Ast.Score -> Sast.Score_t
-   | _ -> raise (Failure ("Mismatch Variable Type Type"))
+   (* | _ -> raise (Failure ("Mismatch Variable Type Type")) *)
    (* 
 let ast_to_sast_vdecl vdecl = 
 	let sast_type = (* ast_to_sast_type *) vdecl.vType in

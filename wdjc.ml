@@ -31,4 +31,5 @@ let _ =
           (* let compile = Sys.command("javac -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/" ^ output_name ^ "dj.java") in
           let run = Sys.command("java -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. " ^ output_name ^ "dj") in *)
             (* print_endline listing;  *)
+            ignore( listing );
             print_int 0
