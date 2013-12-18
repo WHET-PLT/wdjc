@@ -1,4 +1,4 @@
-song note ( ) {
+song score ( ) {
 
 /*
 Simple arithmetic test.
@@ -6,6 +6,6 @@ Can test comments too.
  */
 (1+1);
 note n;
-return n;
+return score();
 
 }

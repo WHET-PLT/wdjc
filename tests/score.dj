@@ -1,18 +1,25 @@
-song score () 
+name score() 
 {
 	/*simple note test */
 
 	double pitchA; 
 	double volume; 
 	double duration; 
+	
+	double instr = 40;
 
 	pitchA = 440; 
 	volume=2; 
 	duration=4; 
 	note n = note (pitchA, volume, duration);
 	chord c = chord(n);
-	track t = track(5);
+	track t = track(instr);
 	score s = score(t);
 
 	return s;
+}
+
+song score () 
+{
+	return name();
 }

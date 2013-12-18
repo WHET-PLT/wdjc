@@ -1,5 +1,5 @@
 
-song double ( ) {
+song score ( ) {
 /* Simple note text. */
 
 /* individual declaration + assignment */
@@ -13,6 +13,6 @@ double pitchB;
 /* declaration + initialization */
 pitchB = 900;
 
-return 1;
+return score();
 
 }

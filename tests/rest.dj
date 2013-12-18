@@ -1,4 +1,4 @@
-song double ()
+song score ()
 {
 	/* rest of duration 5  */
 	/* make a chord which is a rest + a note */	
@@ -8,15 +8,16 @@ song double ()
 	double a;
 	double b;
 	double c;
+
 	
 	r = rest (5);
 	r = rest (i);
 	
 
 	note n = note (a, b, c);
-	/* TODO chord should be able to take rests too */
 	d = d : n;
 
-	return 1;
+	return score();
+
 
 } 

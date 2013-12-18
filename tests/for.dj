@@ -1,4 +1,4 @@
-song double ( ) {
+song score ( ) {
 
 /* Simple for loop test */
 
@@ -7,5 +7,5 @@ song double ( ) {
     	
   }
 
-  return i;
+  return score();
 }
