@@ -75,7 +75,7 @@ and write_fdecl file f =
   (* SONG FUNCTION *)
   if f.fname_t = "song" 
     then 
-        "public static void main(String[] args){\n" ^
+        "public static void main(String[] args){\nNote [] notes_array;\n" ^
         stmt_string ^
         "\n\t\t}\n"
   (* NON-SONG FUNCTION *)
@@ -163,11 +163,11 @@ and write_expr v_name ex =
   | CHORD_CR_t(note_list) -> 
     let notes = write_expr_list "junk" note_list in
       let notes_string = String.concat ", " notes in
-        sprintf "%s" " new CPhrase();\n" ^ "\t\tNote [] notes_array = {" ^ notes_string ^ "};\n\t\t" ^  v_name^ ".addChord(notes_array)"
+        sprintf "%s" " new CPhrase();\n" ^ "\t\tnotes_array = new Note [] {" ^ notes_string ^ "};\n\t\t" ^  v_name^ ".addChord(notes_array)"
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
   | TRACK_CR_t(instr) ->
     let ex1  = write_expr "junk" instr in
-      sprintf "%s" "new Part(" ^ ex1 ^ ")"
+      sprintf "%s" "new Part( (int) " ^ ex1 ^ ")"
   (* GLOBAL VARIABLES???? *)
   | SCORE_CR_t(track_list) ->
     let track_adds = write_score_track_list v_name track_list in
@@ -186,8 +186,8 @@ and write_expr v_name ex =
               (* parallel (:); score:track, chord: note/rest*)
               | Par_t -> ":" ) in
         (*serial add*)
-    if op = "." then sprintf "%s" ("\t\t" ^ ex1 ^ ";\n" ^ v_name ^ ".addCPhrase(" ^ ex2 ^ ")") 
-    else if op = ":" then sprintf "%s" ("\t\t" ^ ex1 ^ ".addPart(" ^ ex2 ^ ")") 
+    if op = "." then sprintf "%s" ("\t" ^ ex1 ^ ";\n" ^ v_name ^ ".addCPhrase(" ^ ex2 ^ ")") 
+    else if op = ":" then sprintf "%s" ("\t" ^ ex1 ^ ";\n" ^ "\tnotes_array = new Note [] {"^ ex2 ^ "};\n" ^ v_name ^ ".addChord( notes_array )") 
         else sprintf "%s" (ex1 ^ " " ^ op ^ " " ^ ex2)
     (* if op = ":" then sprintf "%s" (ex1 ^ ".addPart(" ^ ex2 ^ ")") *)
     

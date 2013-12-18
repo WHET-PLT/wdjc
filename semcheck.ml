@@ -303,7 +303,7 @@ and type_binop typestring env expr1 op expr2 =
 	| Ast.Par -> (match typestring with
 	  			   "score" ->
 		  				ignore (type_expr "score" env expr1); 
-		   	  			ignore (type_expr "track" env expr2);
+		   	  			ignore (type_expr "score_or_track" env expr2);
 		   	  			"score"
 	  			 | "chord" -> 
 		 				ignore (type_expr "chord" env expr1); 
