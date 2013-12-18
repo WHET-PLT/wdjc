@@ -8,6 +8,7 @@
 *.cmxs
 *.cmxa
 *.class
+*.mid
 midi/
 class/
 javadocs/

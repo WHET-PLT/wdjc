@@ -83,7 +83,7 @@ and write_stmt file f_name statement =
   | Return_t(expr) -> 
     let ex1 = write_expr "junk" expr in
       if f_name = "song" then 
-        sprintf "%s" "\t\tWrite.midi(" ^ ex1 ^", \"" ^ file ^ "\");\n" 
+        sprintf "%s" "\t\tWrite.midi(" ^ ex1 ^", \"" ^ file ^ ".mid\");\n" 
       else sprintf "%s" "\t\treturn " ^ ex1 ^ ";\n"
   | If_t(e, s, Block_t([])) -> 
       let ex1 = write_expr "junk" e in 
@@ -151,7 +151,7 @@ and write_expr v_name ex =
   | SCORE_CR_t(track_list) ->
     let track_adds = write_score_track_list v_name track_list in
       let track_str = String.concat ";\n" track_adds in
-        sprintf "%s" ("new Score()\n" ^ track_str)
+        sprintf "%s" ("new Score();\n" ^ track_str)
   | Binop_t(e1, o, e2) ->
       let ex1 = write_expr "junk" e1 in
         let ex2 = write_expr "junk" e2 in
