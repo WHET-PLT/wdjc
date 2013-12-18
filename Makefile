@@ -8,7 +8,7 @@
 # ....
 
 
-OBJS = parser.cmo scanner.cmo ast.cmo sast.cmo semcheck.cmo compile.cmo  wdjc.cmo 
+OBJS = scanner.cmo parser.cmo ast.cmo sast.cmo semcheck.cmo compile.cmo  wdjc.cmo 
 
 wdjc : $(OBJS)
 	ocamlc -o wdjc $(OBJS)

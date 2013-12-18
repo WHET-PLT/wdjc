@@ -28,15 +28,41 @@ song score () {
 	double eighth = 2;
 	double sixteenth = 1;
 	
+	/*
 	double pipe_organ = 19;
+	*/
 	double piano = 0;
+
+/*
+C4,C4,C4,D4,E4,E4,D4,E4,F4,G4,C5,C5,C5,G4,G4,G4,E4,E4,E4,C4,C4,C4,G4,F4,E4,D4,C4
+C, C,CT, QT,C, CT,QT,CT,QT,M, QT,QT,QT,QT,QT,QT,QT,QT,QT,QT,QT,QT,CT,QT,CT,QT, M
+*/
+
+	track rowrow = track (piano);
+
+	note cwhole = note (C4, 100, 16);
+	note cct
+	note dquarter = note (D4, 100, 4);
+	note ewhole = note (E4, 100, 16);
+	note ect
+	note fquarter = note (F4, 100, 4);
+	note gwhole = note (G4, 100, 16);
+	note cquarter = note (C4, 100, 4);
+	note gquarter = note (G4, 100, 4);
+	note equarter = note (E4, 100, 4);
+	note cquarter = note (C4, 100, 4);
+	note ect
+
+	rowrow.
+
 	
+	/*	
 	track treble_clef = track ( pipe_organ );
 
 	note held_A = note ( ASharp3, 50, half + eighth );
 	
 	treble_clef = treble_clef . held_A;
+	*/
 	
-	
-	return score ( treble_clef );
+	/*return score ( treble_clef );*/
 }

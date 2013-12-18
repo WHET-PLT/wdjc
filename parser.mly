@@ -44,6 +44,7 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
+
 /*  --- FUNCTION --- */
 fdecl:
 
@@ -91,6 +92,7 @@ fdecl:
        body = List.rev $7
     }}
 
+
 /* --- FORMALS --- */
 /* formals to be vdecl */
 formal:
@@ -110,6 +112,7 @@ formal_list:
 /* --- VARIABLE DECLARATIONS --- */
 vdecl:
    dType ID     { { vType = $1;  vName = $2; } }
+
 
 /*
 vdecl_list:
@@ -156,8 +159,17 @@ chord_list:
     | chord_list COMMA expr { $3 :: $1 }
 
 /* --- ACCESSOR --- */
+
 accessor:
-  expr ARROW note_attribute { ACCESSOR($1, $3) }
+  ID ARROW note_attribute { ACCESSOR(Id($1), $3) }
+
+/*
+accessor:
+  data_type_acc { $1 }
+
+data_type_acc: 
+  note_cr ARROW note_attribute { ACCESSOR($1, $3) }
+*/
 
 /* List of note attributes */
 note_attribute:
@@ -240,7 +252,9 @@ expr:
   | expr TREM        { Modifier($1, Trem) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | expr LBRACK expr RBRACK { Address($1, $3) }
+  | ID LBRACK expr RBRACK { Address(Id($1), $3) }
+
+
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
  /* actuals - When you call the function you use actuals_opt?? */

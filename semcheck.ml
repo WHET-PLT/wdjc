@@ -418,8 +418,7 @@ and type_expr typestring env expr =
 								  (* TODO update environment with initialized boolean *)
 								  (* TODO update environment? *)
 								  env
-	| Ast.Address(expr1, expr2) -> ignore (is_id expr1);
-									(match typestring with
+	| Ast.Address(expr1, expr2) -> (match typestring with
 									"track" -> ignore (type_expr "score" env expr1);
 											   ignore (type_expr "double" env expr2);
 											   env
