@@ -57,8 +57,8 @@ elif [[ $1 =~ '-c' ]]; then
 	for file in ./tests/*.dj
 	do
 		name=$(basename $file .dj)
+		name=$name
 		echo $file
-		echo $name		
 		echo ------------------------
 		$WDJC -c $name < $file
 		echo

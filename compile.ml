@@ -12,7 +12,7 @@ and string_of_program file (vars, funcs)=
     let func_string = write_func_string file funcs in 
   let out = sprintf 
     "import java.util.*;\nimport jm.JMC;\nimport jm.music.data.*;\nimport jm.util.*;\n\npublic class %s implements JMC {\n%s\n\n%s\n}" 
-    file global_string func_string in
+    (file^"_dj") global_string func_string in
     write_to_file file out;
     out
       
