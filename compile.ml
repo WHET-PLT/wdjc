@@ -147,11 +147,11 @@ and write_expr v_name ex =
   | Address_t(id, expr) -> 
       let identifier = write_expr "junk" id in
         let ex = write_expr identifier expr in
-          sprintf "%s.get(%s)" identifier ex
+          sprintf "%s.getPhrase((int)%s)" identifier ex
   | CHORD_CR_t(note_list) -> 
     let notes = write_expr_list "junk" note_list in
       let notes_string = String.concat ", " notes in
-        sprintf "%s" " new CPhrase();\n" ^ "\t\tnotes_array = new Note [] {" ^ notes_string ^ "};\n\t\t" ^  v_name^ ".addChord(notes_array);"
+        sprintf "%s" " new CPhrase();\n" ^ "\t\t" ^ v_name ^ ".setAppend(true);\n"^ "\t\tnotes_array = new Note [] {" ^ notes_string ^ "};\n\t\t" ^  v_name^ ".addChord(notes_array);"
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
   | TRACK_CR_t(instr) ->
     let ex1  = write_expr "junk" instr in

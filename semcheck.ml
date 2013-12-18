@@ -290,11 +290,11 @@ and type_binop typestring env expr1 op expr2 =
 	| Ast.Ser -> (match typestring with
 	  			 | "track" ->
 						ignore (type_expr "track" env expr1); 
-		 	  			ignore (type_expr "track_or_chord" env expr2);
+		 	  			ignore (type_expr "chord" env expr2);
 		 	  			"track"
 	  			 | "any" ->
 						ignore (type_expr "track" env expr1); 
-		 	  			ignore (type_expr "track_or_chord" env expr2);
+		 	  			ignore (type_expr "chord" env expr2);
 		 	  			"track"
 	  			 | _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
   						     	"expression was of type track.\n" ^
@@ -390,7 +390,7 @@ and type_expr typestring env expr =
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type chord.\n" ^
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
-								 else ignore (type_expr_list "note" env expr_list);
+								 else ignore (type_expr_list "chord_or_note_or_rest" env expr_list);
 								 	  env
 	| Ast.TRACK_CR(expr) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "track_or_chord" && typestring <> "score_or_track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
