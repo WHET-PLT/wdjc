@@ -32,6 +32,10 @@ song score ()
 	{
 		i = i + 1;
 	}
-	return score();
+	/*track t = new track(0);
+	double k = 1; 
+	score s = new score(t); */
+	score s = score();
+	return s;
 
 }

@@ -151,7 +151,7 @@ and write_expr v_name ex =
   | SCORE_CR_t(track_list) ->
     let track_adds = write_score_track_list v_name track_list in
       let track_str = String.concat ";\n" track_adds in
-        sprintf "%s" ("new Score();\n" ^ track_str)
+        sprintf "%s" ("new Score()\n" ^ track_str)
   | Binop_t(e1, o, e2) ->
       let ex1 = write_expr "junk" e1 in
         let ex2 = write_expr "junk" e2 in
