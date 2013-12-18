@@ -121,8 +121,7 @@ vinit:
     vdecl ASSIGN expr { Vinit($1, $3) }
 
 assign:
-    ID ASSIGN expr { Assign(Id($1), $3) }
-  | accessor ASSIGN expr { Assign($1, $3) }
+    expr ASSIGN expr { Assign($1, $3) }
 
 /* --- SCORE -- */
 score_cr:
@@ -143,8 +142,7 @@ rest_cr:
 
 /*  --- NOTE  --- */
 note_cr:
-  NOTE LPAREN expr COMMA expr COMMA expr RPAREN
-    { NOTE_CR($3, $5, $7) }
+  NOTE LPAREN expr COMMA expr COMMA expr RPAREN { NOTE_CR($3, $5, $7) }
 
 /* --- CHORD --- */
 chord_cr:
@@ -240,7 +238,7 @@ expr:
   | expr TREM        { Modifier($1, Trem) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | expr LBRACK expr RBRACK { Address($1, $3) }
+  | ID LBRACK expr RBRACK { Address(Id($1), $3) }
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
  /* actuals - When you call the function you use actuals_opt?? */

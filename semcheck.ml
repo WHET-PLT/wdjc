@@ -149,7 +149,7 @@ let add_local var_type name env =
 		name - gariable name
 		env - environment stringmap
 
-	Checks to see if the name is in the env's global list.
+	Checks to see if the add_localname is in the env's global list.
 	If it dlesn't contain it, it adds it to the env's global list.
 *)
 let add_global var_type name env =
@@ -303,7 +303,7 @@ and type_binop typestring env expr1 op expr2 =
 	| Ast.Par -> (match typestring with
 	  			   "score" ->
 		  				ignore (type_expr "score" env expr1); 
-		   	  			ignore (type_expr "score_or_track" env expr2);
+		   	  			ignore (type_expr "track" env expr2);
 		   	  			"score"
 	  			 | "chord" -> 
 		 				ignore (type_expr "chord" env expr1); 
@@ -334,6 +334,8 @@ and type_expr typestring env expr =
   						   		"an expression of type " ^ typestring ^ " was expected."))
 	  					else env
     | Ast.Id(i) -> let id_type = get_variable_type i env in
+			    ignore (print_string (i ^ ": "));
+			    ignore (print_string (id_type ^ "\n"));
     				if typestring = "primitive"
     				then
 	    				if id_type <> "note" && id_type <> "chord" && id_type <> "track" && id_type <> "score" && id_type <> "double"
@@ -341,8 +343,11 @@ and type_expr typestring env expr =
 						     	"expression was of type " ^ id_type ^ ".\n" ^
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
-	    			else (match typestring with
-		    				  id_type -> env
+	    			else 
+	    			(ignore (print_string (typestring ^ " - " ^ id_type ^ "\n")); (* double = typdstring, note = id_type*)
+
+	    				match typestring with
+		    				 id_type -> ignore (print_string (id_type ^ ">>HERE\n")); env
 		    				| "any" -> env
 		    				| "chord_or_note_or_rest" -> (match id_type with
 		    												  "chord" -> env
@@ -392,7 +397,6 @@ and type_expr typestring env expr =
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
 								 else ignore (type_expr_list "note" env expr_list);
 								 	  env
-
 	| Ast.TRACK_CR(expr) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "track_or_chord" && typestring <> "score_or_track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
@@ -486,6 +490,8 @@ let rec type_stmt func env stmt =
 									} in
 									new_env
 	| Ast.Vinit(vardecl, expr) -> let new_locals_stringmap = add_local vardecl.vType vardecl.vName env in
+									ignore (print_string (vardecl.vName ^ ": "));
+									ignore (print_string ((string_of_vartype vardecl.vType ^ "\n")));
 									let new_env = 
 										{
 											locals = new_locals_stringmap; 
