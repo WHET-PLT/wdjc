@@ -80,7 +80,7 @@ and write_fdecl file f =
         "\n}\n"
   (* NON-SONG FUNCTION *)
   else 
-      let formals_list = List.map string_of_vdecl_t f.formals_t in
+      let formals_list = List.map write_vdecl f.formals_t in
         let formals_str = String.concat ", " formals_list in
           "private static " ^ 
             (match f.rtype_t with
@@ -181,8 +181,17 @@ and write_expr v_name ex =
               Add_t -> "+" | Sub_t -> "-" | Mult_t -> "*" | Div_t -> "/"
               | Equal_t -> "==" | Neq_t -> "!="
               | Less_t -> "<" | Leq_t -> "<=" | Greater_t -> ">" | Geq_t -> ">=" 
-              | Ser_t -> "" | Par_t -> "" ) in
-      sprintf "%s" (ex1 ^ " " ^ op ^ " " ^ ex2)
+              (* serial (.); track.chord, track.track? *)
+              | Ser_t -> "." 
+              (* parallel (:); score:track, chord: note/rest*)
+              | Par_t -> ":" ) in
+        (*serial add*)
+    if op = "." then sprintf "%s" (ex1 ^ ".addPart(" ^ ex2 ^ ")") 
+    else if op = ":" then sprintf "%s" (ex1 ^ ".addPart(" ^ ex2 ^ ")") 
+        else sprintf "%s" (ex1 ^ " " ^ op ^ " " ^ ex2)
+    (* if op = ":" then sprintf "%s" (ex1 ^ ".addPart(" ^ ex2 ^ ")") *)
+    
+
   | Modifier_t(e1, modif) ->
     let ex1 = write_expr "junk" e1 in
       let modifier = (

@@ -1,10 +1,21 @@
-song double () {
-	
-	note n;
-	double p;
-	p = n -> pitch;
-	p = n -> dur;
-	p = n -> vol;
+createOtherNote note (note n){
+	/* creates + returns new note*/
+	double p = n -> pitch + 10;
+	double d = n -> dur + 5;
+	double v = n -> vol + 10;
 
+	return note(p, d, v);
+
+}
+
+func double() {
+	
+	note n1 = note(440, 10, 100);
+	note n2 = createOtherNote(n1);
+	/*chord c = chord(n1, n2);
+	track t = (26);
+	t = t.c;
+	score s = score(t);
+	return s;*/
 	return 1;
 }
