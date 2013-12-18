@@ -210,7 +210,7 @@ let rec build_stmt = function
 	  Ast.Block(stmt_list) -> Sast.Block_t( (build_stmt_list stmt_list) )
 	| Ast.Expr(expr) -> Sast.Expr_t( (build_expr expr) )
 	| Ast.Return(expr) -> Sast.Return_t( (build_expr expr) )
-	| Ast.Print(expr) -> Sast.st( (build_expr expr) )
+	| Ast.Print(expr) -> Sast.Print_t( (build_expr expr) )
 	| Ast.If(expr, stmt1, stmt2) -> Sast.If_t( (build_expr expr), (build_stmt stmt1), (build_stmt stmt2) )
 	| Ast.For(expr1, expr2, expr3, stmt) -> Sast.For_t( (build_expr expr1), (build_expr expr2), (build_expr expr3), (build_stmt stmt) )
 	| Ast.Loop(expr, stmt) -> Sast.Loop_t( (build_expr expr), (build_stmt stmt) )
@@ -342,8 +342,7 @@ and type_expr typestring env expr =
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
 	    			else (match typestring with
-		    				 id_type -> env
-		    				| "any" -> env
+		    				 "any" -> env
 		    				| "chord_or_note_or_rest" -> (match id_type with
 		    												  "chord" -> env
 		    												| "note" -> env
@@ -363,9 +362,11 @@ and type_expr typestring env expr =
     												| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
 												     	"expression was of type " ^ id_type ^ ".\n" ^
 												   		"an expression of type " ^ typestring ^ " was expected.")) )
-		    				| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
-							     	"expression was of type " ^ id_type ^ ".\n" ^
-							   		"an expression of type " ^ typestring ^ " was expected.")) )
+		    				| _ -> if typestring <> id_type
+				    				then raise (Failure ("Mismatch Expression type: \n" ^ 
+								     	"expression was of type " ^ id_type ^ ".\n" ^
+								   		"an expression of type " ^ typestring ^ " was expected.")) 
+					    			else env )
 	| Ast.ACCESSOR(expr, note_attr) -> ignore (type_expr "note" env expr);
 										if typestring <> "double" && typestring <> "any"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 

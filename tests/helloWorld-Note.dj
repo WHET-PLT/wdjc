@@ -12,7 +12,7 @@ song score ()
 	
 	note n = note (pitchA, duration, volume);
 	chord c = chord(n);
-	track t = track( n );
-	score s = score( n );
+	track t = track( 0 );
+	score s = score( t );
 	return s; 
 }

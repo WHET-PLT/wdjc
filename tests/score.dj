@@ -11,7 +11,7 @@ song score ()
 	duration=4; 
 	note n = note (pitchA, volume, duration);
 	chord c = chord(n);
-	track t = track(c);
+	track t = track(5);
 	score s = score(t);
 
 	return s;
