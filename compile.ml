@@ -59,7 +59,7 @@ and parse_funcs file = function
 
 and write_vdecl v = 
   (match v.vType_t with
-    Double_t -> "double "
+    Double_t -> "\t\tdouble "
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
@@ -77,7 +77,7 @@ and write_fdecl file f =
     then 
         "public static void main(String[] args){\n" ^
         stmt_string ^
-        "\n}\n"
+        "\n\t\t}\n"
   (* NON-SONG FUNCTION *)
   else 
       let formals_list = List.map write_vdecl f.formals_t in
@@ -92,45 +92,45 @@ and write_fdecl file f =
               | Score_t -> "Score "
               | _ -> "void") ^ 
             f.fname_t ^ "( " ^ formals_str ^ " )" ^
-            "\n{" ^ stmt_string ^ "\n}\n"
+            "\n{\n" ^ stmt_string ^ "\n\t\t}\n"
 
 and write_stmt_list file fname = function 
   [] -> []
   | h::t -> let string_stmt_list = ((write_stmt file fname h)) in string_stmt_list::(write_stmt_list file fname t)
-
+ 
 and write_stmt file f_name statement = 
   match statement with
-    Block_t(stmts) -> sprintf "%s" (write_stmt_block file f_name stmts)
-  | Expr_t(expr) -> sprintf "%s" (write_expr f_name expr)
+    Block_t(stmts) -> sprintf "%s" ("\t\t" ^ write_stmt_block file f_name stmts)
+  | Expr_t(expr) -> sprintf "%s" ("\t\t" ^write_expr f_name expr)
   | Return_t(expr) -> 
     let ex1 = write_expr "junk" expr in
       if f_name = "song" then 
-        sprintf "%s" "Write.midi(" ^ ex1 ^", \"" ^ file ^ "\");\n" 
-      else sprintf "%s" "return " ^ ex1 ^ ";\n"
+        sprintf "%s" "\t\tWrite.midi(" ^ ex1 ^", \"" ^ file ^ "\");\n" 
+      else sprintf "%s" "\t\treturn " ^ ex1 ^ ";\n"
   | If_t(e, s, Block_t([])) -> 
       let ex1 = write_expr "junk" e in 
-        sprintf "%s" "if (" ^ ex1 ^ ")\n" ^ write_stmt file f_name s
+        sprintf "%s" "\t\tif (" ^ ex1 ^ ")\n" ^ write_stmt file f_name s
   | If_t(e, s1, s2) ->  
       let ex1 = write_expr "junk" e in
         let s1 = write_stmt file f_name s1 in
           let s2 = write_stmt file f_name s2 in
-            sprintf "%s" "if (" ^ ex1 ^ ")\n" ^ s1 ^ "else\n" ^ s2
+            sprintf "%s" "\t\tif (" ^ ex1 ^ ")\n" ^ s1 ^ "else\n" ^ s2
   | For_t(e1, e2, e3, s) -> 
     let ex1 = write_expr "junk" e1 in
       let ex2 = write_expr "junk" e2 in
         let ex3 = write_expr "junk" e3 in
           let s1 = write_stmt file f_name s in
-            sprintf "%s" "for ( (int)" ^ ex1  ^ "" ^ ex2 ^ " ; " ^ ex3 ^ ") " ^ s1
+            sprintf "%s" "\t\tfor ( (int)" ^ ex1  ^ "" ^ ex2 ^ " ; " ^ ex3 ^ ") " ^ s1
   | While_t(e, s) -> 
   let ex1 = write_expr "junk" e in
     let s1 = write_stmt file f_name s in
-      sprintf "%s" ("while (" ^ ex1^ ") " ^ s1)
+      sprintf "%s" ("\t\twhile (" ^ ex1^ ") " ^ s1)
   | Vdecl_t(v) -> sprintf "%s" (write_vdecl v ^ ";\n")
   | Vinit_t(v, e) -> 
     let var = write_vdecl v in 
       (* let name = write_expr "junk" v  *)
       let ex1 = (write_expr v.vName_t e) in 
-        sprintf "%s" (var ^ " = " ^ ex1 ^ ";\n")
+        sprintf "%s" ("\t\t" ^ var ^ " = " ^ ex1 ^ ";\n")
 
 and write_stmt_block file f_name stmts = 
   let stmt_list = (write_stmt_list file f_name stmts) in
@@ -163,11 +163,11 @@ and write_expr v_name ex =
   | CHORD_CR_t(note_list) -> 
     let notes = write_expr_list "junk" note_list in
       let notes_string = String.concat ", " notes in
-        sprintf "%s" " new CPhrase();\n" ^ "Note [] notes_array = {" ^ notes_string ^ "};\n" ^  v_name^ ".addChord(notes_array)"
+        sprintf "%s" " new CPhrase();\n" ^ "\t\tNote [] notes_array = {" ^ notes_string ^ "};\n\t\t" ^  v_name^ ".addChord(notes_array)"
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
   | TRACK_CR_t(instr) ->
     let ex1  = write_expr "junk" instr in
-      sprintf "%s" "new Part(" ^ ex1 ^ ");"
+      sprintf "%s" "new Part(" ^ ex1 ^ ")"
   (* GLOBAL VARIABLES???? *)
   | SCORE_CR_t(track_list) ->
     let track_adds = write_score_track_list v_name track_list in
@@ -186,8 +186,8 @@ and write_expr v_name ex =
               (* parallel (:); score:track, chord: note/rest*)
               | Par_t -> ":" ) in
         (*serial add*)
-    if op = "." then sprintf "%s" (ex1 ^ ".addPart(" ^ ex2 ^ ")") 
-    else if op = ":" then sprintf "%s" (ex1 ^ ".addPart(" ^ ex2 ^ ")") 
+    if op = "." then sprintf "%s" ("\t\t" ^ ex1 ^ ";\n" ^ v_name ^ ".addCPhrase(" ^ ex2 ^ ")") 
+    else if op = ":" then sprintf "%s" ("\t\t" ^ ex1 ^ ".addPart(" ^ ex2 ^ ")") 
         else sprintf "%s" (ex1 ^ " " ^ op ^ " " ^ ex2)
     (* if op = ":" then sprintf "%s" (ex1 ^ ".addPart(" ^ ex2 ^ ")") *)
     
@@ -208,12 +208,12 @@ and write_expr v_name ex =
 
 and write_score_track_list vname = function 
   [] -> []
-  | h::t -> let track_str_list = (vname ^ ".addPart(" ^ (write_expr "junk" h) ^ ")") in track_str_list::(write_score_track_list vname t)
+  | h::t -> let track_str_list = ("\t\t" ^ vname ^ ".addPart(" ^ (write_expr "junk" h) ^ ")") in track_str_list::(write_score_track_list vname t)
 
 and write_chord_list vname chord_list = 
   match chord_list with 
     [] -> []
-  | h::t -> let track_str_list = (vname ^ ".addCPhrase(" ^ (write_expr "junk" h) ^ ")") in track_str_list::(write_score_track_list vname t)
+  | h::t -> let track_str_list = ("\t\t" ^ vname ^ ".addCPhrase(" ^ (write_expr "junk" h) ^ ")") in track_str_list::(write_score_track_list vname t)
   
   
 and write_expr_list v_name expr_list = 
