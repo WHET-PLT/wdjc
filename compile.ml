@@ -41,7 +41,7 @@ and write_vdecl v =
     | Note_t -> "Note "
     | Chord_t -> "CPhrase "
     | Track_t -> "Part "
-    | Rest_t-> "Rest "
+    | Rest_t-> "Note "
     | Score_t -> "Score ") ^ v.vName_t
 
 and write_vdecl_name v =  v.vName_t
@@ -127,7 +127,7 @@ and write_expr v_name ex =
      sprintf "%s" "new Note((double)" ^ ex1 ^ ", " ^  ex3 ^ ", (int) " ^ ex2 ^ ")"
   | REST_CR_t(r) -> 
       let ex1  = write_expr "junk" r in
-      sprintf "%s" "new Note(( REST, " ^ ex1 ^ ")" 
+      sprintf "%s" "new Note( REST, " ^ ex1 ^ ")" 
   | ACCESSOR_t(a, b) -> 
       let ex1 = write_expr "junk" a in
         let access_type = (
@@ -175,10 +175,10 @@ and write_expr v_name ex =
     let ex1 = write_expr "junk" e1 in
       let modifier = (
         match modif with
-        Vib_t -> " " |
-        Trem_t -> " " | 
-        Incr_t -> ".setPitch((" ^ write_expr "junk" e1 ^".getPitch()) + 50)"  | 
-        Decr_t -> ".setPitch((" ^ write_expr "junk" e1 ^".getPitch())  -50)") in
+        Vib_t -> ";\n" 
+        | Trem_t -> ";\n" 
+        | Incr_t -> ".setPitch((" ^ write_expr "junk" e1 ^".getPitch()) + 50)"  
+        | Decr_t -> ".setPitch((" ^ write_expr "junk" e1 ^".getPitch())  -50)") in
       sprintf "%s" (ex1 ^ modifier)
   | Call_t(f, el) ->
         let calls = write_expr_list "junk" el in
