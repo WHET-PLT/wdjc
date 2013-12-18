@@ -310,7 +310,7 @@ and type_binop typestring env expr1 op expr2 =
 		  	  			ignore (type_expr "chord_or_note_or_rest" env expr2);
 		  	  			"chord"
 		  	  			
-	  			 | "any" -> try
+	  			 | "any" -> (try
 								ignore (type_expr "chord" env expr1); 
 				 	  			ignore (type_expr "chord_or_note_or_rest" env expr2);
 				 	  			"chord"
@@ -321,10 +321,10 @@ and type_binop typestring env expr1 op expr2 =
 			 	  		 	  			"score"
 			 	  		 	  		with Failure cause -> raise (Failure ("Mismatch Expression type: \n" ^ 
 	  				  						     	"expression was required to be of type score or chord.\n" ^
-	  				  						   		"but an expression of type " ^ typestring ^ " was expected."))
-			 	 | _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
-				     	"expression was required to be of type score or chord.\n" ^
-				   		"but an expression of type " ^ typestring ^ " was expected.")) )
+	  				  						   		"but an expression of type " ^ typestring ^ " was expected.")) )
+			 	| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+                       "expression was required to be of type score or chord.\n" ^
+                       "but an expression of type " ^ typestring ^ " was expected.")) )
 	
 and type_expr typestring env expr =
 	match expr with
