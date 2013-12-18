@@ -1,5 +1,6 @@
 song score () {
 	
+	/* higher notes */
 	double C3 = 130.81;
 	double CSharp3 = 138.59;
 	double D3 = 146.83;
@@ -21,6 +22,19 @@ song score () {
 	double GSharp4 = 415.3;
 	double ASharp4 = 466.16;
 	double C5 = 523.25;
+	
+	/* lower notes */
+	double E2 = 82.41;
+	double F2 = 87.31;
+	double FSharp2 = 92.5;
+	double G2 = 98;
+	double GSharp2 = 103.83;
+	double A2 = 110;
+	double ASharp2 = 116.54;
+	double B2 = 123.47;
+	double A3 = 220;
+	double B3 = 246.94;
+	
 
 	double whole = 16/8.0;
 	double half = 8/8.0;
@@ -52,12 +66,16 @@ song score () {
 	note c4_1 = note (C4, 100, sixteenth);
 	note d4_1 = note (D4, 100, sixteenth);
 	note ds4_1 = note (DSharp4, 100, sixteenth);
+	
+	note f5_2 = note (F4, 100, eighth);
+	note f5_8 = note (F4, 100, half);
+
 
 	
 	/* CHORDING THEM OUT */
 	chord c1 = chord (as4_10);
 	chord c2 = chord (f3_2);
-	/* chord c2b = chord (f3_2); */
+	chord c2b = chord (f3_2);
 	chord c3 = chord (as4_2);
 	chord c4 = chord (gs3_1);
 	chord c5 = chord (fs3_1);
@@ -72,11 +90,20 @@ song score () {
 	chord c13 = chord (c4_1);
 	chord c14 = chord (d4_1);
 	chord c15 = chord (ds4_1);
+	
+	chord c16 = chord (f5_2);
+	chord c17 = chord (as4_2);
+	chord c18 = chord (as4_1);
+	chord c19 = chord (c4_1);
+	chord c20 = chord (d4_1);
+	chord c21 = chord (ds4_1);
+	chord c22 = chord (f5_8);
+	
 		
 	loop (2) {
 		treble_clef = treble_clef . c1;
 		treble_clef = treble_clef . c2;
-		/* treble_clef = treble_clef . c2b; */
+		treble_clef = treble_clef . c2b;
 		treble_clef = treble_clef . c3;
 		treble_clef = treble_clef . c4;
 		treble_clef = treble_clef . c5;
@@ -92,6 +119,13 @@ song score () {
 	treble_clef = treble_clef . c13;
 	treble_clef = treble_clef . c14;
 	treble_clef = treble_clef . c15;
+	treble_clef = treble_clef . c16;
+	treble_clef = treble_clef . c17;
+	treble_clef = treble_clef . c18;
+	treble_clef = treble_clef . c19;
+	treble_clef = treble_clef . c20;
+	treble_clef = treble_clef . c21;
+	treble_clef = treble_clef . c22;
 
 
 
@@ -99,9 +133,46 @@ song score () {
 	/* BASS */
 	track bass_clef = track ( pipe_organ );
 
+	note as2_4 = note (ASharp2, 100, quarter);
+	note f3_4 = note (F3, 100, quarter);
+	note b3_8 = note (B3, 100, half);
+	note gs2_4 = note (GSharp2, 100, quarter);
+	note ds3_4 = note (DSharp3, 100, quarter);
+	note a3_8 = note (A3, 100, half);
+	note fs2_4 = note (FSharp2, 100, quarter);
+	note cs3_4 = note (CSharp3, 100, quarter);
+	note g3_8 = note (G3, 100, half);
+	note f2_4 = note (F2, 100, quarter);
+	note c3_4 = note (C3, 100, quarter);
+	note f3_8 = note (F3, 100, half);
+
+	chord b0 = chord (as2_4);
+	chord b1 = chord (f3_4);
+	chord b2 = chord (b3_8);
+	chord b3 = chord (gs2_4);
+	chord b4 = chord (ds3_4);
+	chord b5 = chord (a3_8);
+	chord b6 = chord (fs2_4);
+	chord b7 = chord (cs3_4);
+	chord b8 = chord (g3_8);
+	chord b9 = chord (f2_4);
+	chord b10 = chord (c3_4);
+	chord b11 = chord (f3_8);
+
+	bass_clef = bass_clef . b0;
+	bass_clef = bass_clef . b1;
+	bass_clef = bass_clef . b2;
+	bass_clef = bass_clef . b3;
+	bass_clef = bass_clef . b4;
+	bass_clef = bass_clef . b5;
+	bass_clef = bass_clef . b6;
+	bass_clef = bass_clef . b7;
+	bass_clef = bass_clef . b8;
+	bass_clef = bass_clef . b9;
+	bass_clef = bass_clef . b10;
+	bass_clef = bass_clef . b11;
 
 
-
-	score s = score ( treble_clef );
+	score s = score ( treble_clef, bass_clef );
 	return s;
 }
