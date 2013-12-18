@@ -32,6 +32,9 @@ song score ()
 	{
 		i = i + 1;
 	}
-	return score();
+	
+	score s = score();
+
+	return s;
 
 }

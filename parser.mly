@@ -44,6 +44,7 @@ program:
  | program vdecl { ($2 :: fst $1), snd $1 }
  | program fdecl { fst $1, ($2 :: snd $1) }
 
+
 /*  --- FUNCTION --- */
 fdecl:
 
@@ -91,6 +92,7 @@ fdecl:
        body = List.rev $7
     }}
 
+
 /* --- FORMALS --- */
 /* formals to be vdecl */
 formal:
@@ -111,6 +113,7 @@ formal_list:
 vdecl:
    dType ID     { { vType = $1;  vName = $2; } }
 
+
 /*
 vdecl_list:
    */ /* nothing *//*    { [] }
@@ -121,8 +124,7 @@ vinit:
     vdecl ASSIGN expr { Vinit($1, $3) }
 
 assign:
-    ID ASSIGN expr { Assign(Id($1), $3) }
-  | accessor ASSIGN expr { Assign($1, $3) }
+    expr ASSIGN expr { Assign($1, $3) }
 
 /* --- SCORE -- */
 score_cr:
@@ -143,8 +145,7 @@ rest_cr:
 
 /*  --- NOTE  --- */
 note_cr:
-  NOTE LPAREN expr COMMA expr COMMA expr RPAREN
-    { NOTE_CR($3, $5, $7) }
+  NOTE LPAREN expr COMMA expr COMMA expr RPAREN { NOTE_CR($3, $5, $7) }
 
 /* --- CHORD --- */
 chord_cr:
@@ -156,8 +157,17 @@ chord_list:
     | chord_list COMMA expr { $3 :: $1 }
 
 /* --- ACCESSOR --- */
+
 accessor:
-  expr ARROW note_attribute { ACCESSOR($1, $3) }
+  ID ARROW note_attribute { ACCESSOR(Id($1), $3) }
+
+/*
+accessor:
+  data_type_acc { $1 }
+
+data_type_acc: 
+  note_cr ARROW note_attribute { ACCESSOR($1, $3) }
+*/
 
 /* List of note attributes */
 note_attribute:
@@ -198,9 +208,6 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt { For($3, $5, $7, $9) }
   | LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
-  /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
-  /*| vdecl ASSIGN expr { Assign( $1, $3 ) }
-  | vdecl SEMI { Vdecl($1) }*/
 
 stmt_list:
     /* nothing */  { [] }
@@ -240,7 +247,7 @@ expr:
   | expr TREM        { Modifier($1, Trem) }
   | ID LPAREN actuals_opt RPAREN { Call($1, $3) }
   | LPAREN expr RPAREN { $2 }
-  | expr LBRACK expr RBRACK { Address($1, $3) }
+  | ID LBRACK expr RBRACK { Address(Id($1), $3) }
   /*| LBRACKET actuals_opt RBRACKET { Array($?) } */
 
  /* actuals - When you call the function you use actuals_opt?? */

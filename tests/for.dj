@@ -6,6 +6,7 @@ song score ( ) {
   for (i = 0 ; i < 5 ; i = i + 1) {
     	
   }
+  score s = score();
 
-  return score();
+  return s;
 }

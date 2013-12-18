@@ -17,6 +17,8 @@ song score () {
 
 	chord c = t[index];
 
-	return score( t );
+	score s = score( t );
+
+	return s;
 					
 }

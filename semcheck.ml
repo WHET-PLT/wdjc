@@ -149,7 +149,7 @@ let add_local var_type name env =
 		name - gariable name
 		env - environment stringmap
 
-	Checks to see if the name is in the env's global list.
+	Checks to see if the add_localname is in the env's global list.
 	If it dlesn't contain it, it adds it to the env's global list.
 *)
 let add_global var_type name env =
@@ -303,14 +303,13 @@ and type_binop typestring env expr1 op expr2 =
 	| Ast.Par -> (match typestring with
 	  			   "score" ->
 		  				ignore (type_expr "score" env expr1); 
-		   	  			ignore (type_expr "score_or_track" env expr2);
+		   	  			ignore (type_expr "track" env expr2);
 		   	  			"score"
 	  			 | "chord" -> 
 		 				ignore (type_expr "chord" env expr1); 
 		  	  			ignore (type_expr "chord_or_note_or_rest" env expr2);
-		  	  			"chord"
-		  	  			
-	  			 | "any" -> try
+		  	  			"chord"	
+	  			 | "any" -> (try
 								ignore (type_expr "chord" env expr1); 
 				 	  			ignore (type_expr "chord_or_note_or_rest" env expr2);
 				 	  			"chord"
@@ -321,8 +320,10 @@ and type_binop typestring env expr1 op expr2 =
 			 	  		 	  			"score"
 			 	  		 	  		with Failure cause -> raise (Failure ("Mismatch Expression type: \n" ^ 
 	  				  						     	"expression was required to be of type score or chord.\n" ^
-	  				  						   		"but an expression of type " ^ typestring ^ " was expected."))
-	  			 )
+	  				  						   		"but an expression of type " ^ typestring ^ " was expected.")) )
+			 	| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
+                       "expression was required to be of type score or chord.\n" ^
+                       "but an expression of type " ^ typestring ^ " was expected.")) )
 	
 and type_expr typestring env expr =
 	match expr with
@@ -340,8 +341,7 @@ and type_expr typestring env expr =
 						   		"an expression of type " ^ typestring ^ " was expected."))
 						else env
 	    			else (match typestring with
-		    				  id_type -> env
-		    				| "any" -> env
+		    				 "any" -> env
 		    				| "chord_or_note_or_rest" -> (match id_type with
 		    												  "chord" -> env
 		    												| "note" -> env
@@ -361,9 +361,11 @@ and type_expr typestring env expr =
     												| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
 												     	"expression was of type " ^ id_type ^ ".\n" ^
 												   		"an expression of type " ^ typestring ^ " was expected.")) )
-		    				| _ -> raise (Failure ("Mismatch Expression type: \n" ^ 
-							     	"expression was of type " ^ id_type ^ ".\n" ^
-							   		"an expression of type " ^ typestring ^ " was expected.")) )
+		    				| _ -> if typestring <> id_type
+				    				then raise (Failure ("Mismatch Expression type: \n" ^ 
+								     	"expression was of type " ^ id_type ^ ".\n" ^
+								   		"an expression of type " ^ typestring ^ " was expected.")) 
+					    			else env )
 	| Ast.ACCESSOR(expr, note_attr) -> ignore (type_expr "note" env expr);
 										if typestring <> "double" && typestring <> "any"
 				  						then raise (Failure ("Mismatch Expression type: \n" ^ 
@@ -390,7 +392,6 @@ and type_expr typestring env expr =
 		  						   	"an expression of type " ^ typestring ^ " was expected."))
 								 else ignore (type_expr_list "note" env expr_list);
 								 	  env
-
 	| Ast.TRACK_CR(expr) -> if typestring <> "primitive" && typestring <> "track" && typestring <> "track_or_chord" && typestring <> "score_or_track" && typestring <> "any"
 								 then raise (Failure ("Mismatch Expression type: \n" ^ 
 		  						    "expression was of type track.\n" ^
@@ -416,8 +417,7 @@ and type_expr typestring env expr =
 								  (* TODO update environment with initialized boolean *)
 								  (* TODO update environment? *)
 								  env
-	| Ast.Address(expr1, expr2) -> ignore (is_id expr1);
-									(match typestring with
+	| Ast.Address(expr1, expr2) -> (match typestring with
 									"track" -> ignore (type_expr "score" env expr1);
 											   ignore (type_expr "double" env expr2);
 											   env

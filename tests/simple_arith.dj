@@ -4,8 +4,11 @@ song score ( ) {
 Simple arithmetic test.
 Can test comments too.
  */
-(1+1);
+double i = (1+1);
 note n;
-return score();
+
+score s = score();
+
+return s;
 
 }

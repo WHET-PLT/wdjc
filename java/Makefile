@@ -1,11 +1,9 @@
 # the main class name
-MAIN=RowYourBoat
+MAIN=main
 
 # Location of trees.
 SOURCE_DIR=src
 OUTPUT_DIR=class
-DOC_DIR=javadocs
-MIDI_DIR=midi
 
 # Java tools
 JAVA=java
@@ -25,7 +23,7 @@ JM_INSTR=jMusic/inst/
 CLASSPATH=$(OUTPUT_DIR):$(JM_JAR):$(JM_INSTR):.
 
 # List the sourcefiles
-FILES=$(SOURCE_DIR)/*.java	
+FILES=$(SOURCE_DIR)/$(MAIN).java	
 	
 # compile and run default
 default: compile run
@@ -39,14 +37,7 @@ compile:
 # Run the java main
 .PHONY: run
 run: 
-	mkdir -p $(MIDI_DIR)
 	$(JAVA) $(JFLAGS) $(MAIN)
-
-# javadoc - Generate the Java doc from sources
-.PHONY: javadoc
-javadoc: 
-	mkdir -p $(DOC_DIR)
-	$(JAVADOC) $(JDFLAGS) $(FILES)
 
 .PHONY: clean
 clean: 

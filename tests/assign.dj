@@ -13,6 +13,8 @@ double pitchB;
 /* declaration + initialization */
 pitchB = 900;
 
-return score();
+score s = score();
+
+return s;
 
 }

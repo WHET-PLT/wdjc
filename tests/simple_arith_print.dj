@@ -5,6 +5,9 @@ Simple arithmetic test.
 Can test comments too.
  */
 print(1+1);
-return score();
+
+score s = score();
+
+return s;
 
 }

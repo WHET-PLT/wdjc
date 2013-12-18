@@ -43,13 +43,29 @@ elif [[ $1 =~ '-j' ]]; then
 	echo
 	for file in ./tests/*.dj
 	do
+		name=$(basename $file .dj)
 		echo $file
 		echo ------------------------
-		$WDJC -j < $file
+		$WDJC -j $name < $file
 		echo
 	done
 	echo ">> Done Compiling JAVA <<" 
 	echo
+#if flag is j - JAVA
+elif [[ $1 =~ '-c' ]]; then
+	echo ">> Compiling <<" 
+	echo
+	for file in ./tests/*.dj
+	do
+		name=$(basename $file .dj)
+		echo $file
+		echo ------------------------
+		$WDJC -c $name < $file
+		echo
+	done
+	echo ">> Done Compiling <<" 
+	echo
+	
 #if no flag, default to ast
 else
 	echo ">> Compiling AST <<" 

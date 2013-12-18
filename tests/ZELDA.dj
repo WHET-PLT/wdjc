@@ -30,13 +30,31 @@ song score () {
 	
 	double pipe_organ = 19;
 	double piano = 0;
+
+
+	track rowrow = track (piano);
+
+	note cwhole = note (C4, 100, 16);
+	note dquarter = note (D4, 100, 4);
+	note ewhole = note (E4, 100, 16);
+	note fquarter = note (F4, 100, 4);
+	note gwhole = note (G4, 100, 16);
+	note gquarter = note (G4, 100, 4);
+	note equarter = note (E4, 100, 4);
+	note cquarter = note (C4, 100, 4);
+
+	chord c1 = chord (cwhole, dquarter, ewhole, fquarter);
+	chord c2 = chord (gwhole, gquarter, equarter, cquarter);
+
 	
 	track treble_clef = track ( pipe_organ );
 
 	note held_A = note ( ASharp3, 50, half + eighth );
 	
-	treble_clef = treble_clef . held_A;
 	
-	
-	return score ( treble_clef );
+	treble_clef = treble_clef . c1;
+	treble_clef = treble_clef . c2;
+
+	score s = score ( treble_clef );
+	return s;
 }

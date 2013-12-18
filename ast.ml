@@ -117,7 +117,7 @@ let string_of_vdecl v =
     | Chord -> "chord "
     | Track -> "track "
     | Rest -> "rest "
-    | Score -> "score" ) ^ v.vName
+    | Score -> "score " ) ^ v.vName
 
 (*
 let string_of_cr_type t =

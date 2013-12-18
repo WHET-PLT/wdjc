@@ -8,7 +8,12 @@
 *.cmxs
 *.cmxa
 *.class
+*.mid
 midi/
 class/
 javadocs/
 .DS_Store
+parser.ml
+parser.mli
+scanner.ml
+wdjc
