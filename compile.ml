@@ -99,16 +99,16 @@ and write_stmt file f_name statement =
       let ex2 = write_expr "junk" e2 in
         let ex3 = write_expr "junk" e3 in
           let s1 = write_stmt file f_name s in
-            sprintf "%s" "\t\tfor (" ^ ex1  ^ " " ^ ex2 ^ "; " ^ ex3 ^ ") " ^ s1
+            sprintf "%s" "\t\tfor (" ^ ex1  ^ "; " ^ ex2 ^ "; " ^ ex3 ^ ") " ^ s1
   | Print_t(e) -> sprintf "System.out.println(%s);\n" (write_expr f_name e)
   | While_t(e, s) -> 
   let ex1 = write_expr "junk" e in
     let s1 = write_stmt file f_name s in
       sprintf "%s" ("\t\twhile (" ^ ex1^ ") " ^ s1)
   | Loop_t(e, s) -> 
-  let ex1 = write_expr "junk" e1 in
+  let ex1 = write_expr "junk" e in
     let s1 = write_stmt file f_name s in
-      sprintf "%s" "\t\tfor (int w = 0; w < " ^ ex2 ^ "; w ++) " ^ s1
+      sprintf "%s" "\t\tfor (int w = 0; w < " ^ ex1 ^ "; w ++) " ^ s1
   | Vdecl_t(v) -> sprintf "%s" (write_vdecl v ^ ";\n")
   | Vinit_t(v, e) -> 
     let var = write_vdecl v in 
@@ -144,10 +144,14 @@ and write_expr v_name ex =
       let identifier = write_expr "junk" id in
         let ex = write_expr identifier expr in
           sprintf "%s" identifier ^ " = " ^ ex
+  | Address_t(id, expr) -> 
+      let identifier = write_expr "junk" id in
+        let ex = write_expr identifier expr in
+          sprintf "%s.get(%s)" identifier ex
   | CHORD_CR_t(note_list) -> 
     let notes = write_expr_list "junk" note_list in
       let notes_string = String.concat ", " notes in
-        sprintf "%s" " new CPhrase();\n" ^ "\t\tnotes_array = new Note [] {" ^ notes_string ^ "};\n\t\t" ^  v_name^ ".addChord(notes_array)"
+        sprintf "%s" " new CPhrase();\n" ^ "\t\tnotes_array = new Note [] {" ^ notes_string ^ "};\n\t\t" ^  v_name^ ".addChord(notes_array);"
 (* What exactly is track.. track creation, because that's what I'm writing it as. also where is the instrument part*)
   | TRACK_CR_t(instr) ->
     let ex1  = write_expr "junk" instr in
