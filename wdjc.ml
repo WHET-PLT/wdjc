@@ -24,11 +24,12 @@ let _ =
           in print_string listing
     | Java -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
           in ignore( listing );
-    | Compile -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
-          in 
-          let lst = listing in
-          let output = Sys.command("./compile " ^ output_name ^ "dj") in
-            ignore (lst); print_int output
+    | Compile -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program) in 
+          (* let output = Sys.command("./compile " ^ output_name ^ "dj") in *)
+          let compile = Sys.command("javac -sourcepath tests -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/" ^ output_name ^ "dj.java") in
+          let run = Sys.command("java -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. " ^ output_name ^ "dj") in
+            (* print_endline listing;  *)
+            print_int compile;
               (* ignore(output); *)
 (*           in ignore( listing ); *)
     (* | Java -> let listing = Compile.program_string program

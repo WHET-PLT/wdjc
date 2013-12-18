@@ -208,9 +208,6 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr_opt SEMI expr_opt RPAREN stmt { For($3, $5, $7, $9) }
   | LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }
   | WHILE LPAREN expr RPAREN stmt { While($3, $5) }
-  /*| LOOP LPAREN expr RPAREN stmt { Loop($3, $5) }*/
-  /*| vdecl ASSIGN expr { Assign( $1, $3 ) }
-  | vdecl SEMI { Vdecl($1) }*/
 
 stmt_list:
     /* nothing */  { [] }

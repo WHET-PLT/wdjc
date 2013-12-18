@@ -18,12 +18,12 @@ else
 	#JCFLAGS="-sourcepath tests -d tests -classpath $CLASSPATH"
 
 	echo "Compiling"
-	echo "javac -sourcepath tests -d tests -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/$MAIN.java"
-	javac -sourcepath tests -d tests -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/$MAIN.java
+	echo "javac -sourcepath tests -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/$MAIN.java"
+	javac -sourcepath tests -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/$MAIN.java
 
 	echo "Running"
-	echo "java -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests.$MAIN"
-	java -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests.$MAIN
+	echo "java -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. $MAIN"
+	java -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. $MAIN
 fi
 
 
