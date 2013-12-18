@@ -8,6 +8,9 @@ Can test comments too.
  */
 global = 5;
 print(1+1);
-return score();
+
+score s = score();
+
+return s;
 
 }

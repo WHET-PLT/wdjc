@@ -53,7 +53,7 @@ and write_fdecl file f =
   (* SONG FUNCTION *)
   if f.fname_t = "song" 
     then 
-        "public static void main(String[] args){\nNote [] notes_array;\n" ^
+        "public static void main(String[] args){\n\tNote [] notes_array;\n" ^
         stmt_string ^
         "\n\t\t}\n"
   (* NON-SONG FUNCTION *)
@@ -70,7 +70,7 @@ and write_fdecl file f =
               | Score_t -> "Score "
               | _ -> "void") ^ 
             f.fname_t ^ "( " ^ formals_str ^ " )" ^
-            "\n{\n" ^ stmt_string ^ "\n\t\t}\n"
+            "\n{\n\tNote [] notes_array;\n" ^ stmt_string ^ "\n\t\t}\n"
 
 and write_stmt_list file fname = function 
   [] -> []
@@ -79,7 +79,7 @@ and write_stmt_list file fname = function
 and write_stmt file f_name statement = 
   match statement with
     Block_t(stmts) -> sprintf "%s" ("\t\t" ^ write_stmt_block file f_name stmts)
-  | Expr_t(expr) -> sprintf "%s" ("\t\t" ^write_expr f_name expr)
+  | Expr_t(expr) -> sprintf "%s;\n" ("\t\t" ^write_expr f_name expr)
   | Return_t(expr) -> 
     let ex1 = write_expr "junk" expr in
       if f_name = "song" then 
@@ -124,7 +124,7 @@ and write_expr v_name ex =
       let ex1 = write_expr "junk" a in
         let ex2 = write_expr "junk" b in
           let ex3 = write_expr "junk" c in 
-     sprintf "%s" "new Note((double)" ^ ex1 ^ ", " ^  ex2 ^ ", (int) " ^ ex3 ^ ")"
+     sprintf "%s" "new Note((double)" ^ ex1 ^ ", " ^  ex3 ^ ", (int) " ^ ex2 ^ ")"
   | REST_CR_t(r) -> 
       let ex1  = write_expr "junk" r in
       sprintf "%s" "new Note(( REST, " ^ ex1 ^ ")" 

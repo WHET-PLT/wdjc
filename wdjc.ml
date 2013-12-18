@@ -22,16 +22,13 @@ let _ =
     | Sast -> let program_t = Semcheck.sc_program program in 
           let listing = Sast.string_of_program_t program_t
           in print_string listing
-    | Java -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program)
-          in ignore( listing );
+    | Java -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program) in
+          (* let compile = Sys.command("javac -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/" ^ output_name ^ "dj.java") in
+            print_int compile; *)
+          print_endline listing
     | Compile -> let listing = Compile.string_of_program output_name (Semcheck.sc_program program) in 
           (* let output = Sys.command("./compile " ^ output_name ^ "dj") in *)
-          let compile = Sys.command("javac -sourcepath tests -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/" ^ output_name ^ "dj.java") in
+          let compile = Sys.command("javac -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. tests/" ^ output_name ^ "dj.java") in
           let run = Sys.command("java -classpath tests:java/jMusic/jMusic1.6.4.jar:java/jMusic/inst/:. " ^ output_name ^ "dj") in
             (* print_endline listing;  *)
-            print_int compile;
-              (* ignore(output); *)
-(*           in ignore( listing ); *)
-    (* | Java -> let listing = Compile.program_string program
-              in print_endline listing
-    | Compile -> Execute.javacompile (Compile.program_string (Semcheck.sc_program program)) *)
+            print_int compile

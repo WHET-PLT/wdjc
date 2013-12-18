@@ -6,6 +6,9 @@ Can test comments too.
  */
 (1+1);
 note n;
-return score();
+
+score s = score();
+
+return s;
 
 }

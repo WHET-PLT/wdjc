@@ -33,7 +33,7 @@ song score ()
 	/* LIT != LIT */
 	while( i != j )
 	{
-		i = i + 1;
+		i = j;
 	}
 	/*track t = new track(0);
 	double k = 1; 

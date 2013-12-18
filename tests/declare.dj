@@ -5,6 +5,8 @@ double pitchA;
 
 note mynote;
 
-return score();
+score s = score();
+
+return s;
 
 }

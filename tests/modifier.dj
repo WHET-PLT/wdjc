@@ -9,6 +9,7 @@ note n;
 n^;
 n~;
  
- return score();
+ score s = score();
+ return s;
 
 }

@@ -17,7 +17,9 @@ song score ()
 	note n = note (a, b, c);
 	d = d : n;
 
-	return score();
+	score s = score();
+
+	return s;
 
 
 } 

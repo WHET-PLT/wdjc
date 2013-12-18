@@ -6,7 +6,11 @@ Incr and Decr
 
  double i;
  i ++;
- return score();
+ 
+ 
+ score s = score();
+
+ return s;
 
  
 }

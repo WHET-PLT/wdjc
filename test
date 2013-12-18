@@ -43,9 +43,10 @@ elif [[ $1 =~ '-j' ]]; then
 	echo
 	for file in ./tests/*.dj
 	do
+		name=$(basename $file .dj)
 		echo $file
 		echo ------------------------
-		$WDJC -j < $file
+		$WDJC -j $name < $file
 		echo
 	done
 	echo ">> Done Compiling JAVA <<" 
@@ -57,7 +58,6 @@ elif [[ $1 =~ '-c' ]]; then
 	for file in ./tests/*.dj
 	do
 		name=$(basename $file .dj)
-		name=$name
 		echo $file
 		echo ------------------------
 		$WDJC -c $name < $file

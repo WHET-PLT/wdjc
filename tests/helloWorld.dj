@@ -14,7 +14,7 @@ song score ()
 
 	chord c = chord(n);
 		
-	track t = track( 0.0 );
+	track t = track( 0 );
 	
 	t = t . c;
 	
