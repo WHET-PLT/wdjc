@@ -173,7 +173,8 @@ song score () {
 	chord b10 = chord (c3_4);
 	chord b11 = chord (f3_8);
 	
-	chord b12 = chord (f3_2, cs3_2, as2_2);
+	chord b12 = chord (f3_2, cs3_2);
+	b12 = b12 : as2_2;
 	chord b13 = chord (f3_1, as2_1);
 	chord b14 = chord (as2_1);
 	chord b15 = chord (f3_2, as2_2);

@@ -4,12 +4,12 @@ createOtherNote note (note n){
 	double d = n -> dur + 5;
 	double v = n -> vol + 10;
 
-	return note(p, d, v);
+	return note(p, v, d);
 
 }
 
 song score () {
-	note n1 = note(440, 5, 100);
+	note n1 = note(440, 100, 5);
 	note n2 = createOtherNote(n1);
 	note n3 = createOtherNote(n2);
 	chord c = chord(n1);
