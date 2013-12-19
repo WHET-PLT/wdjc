@@ -22,6 +22,13 @@ song score () {
 	double GSharp4 = 415.3;
 	double ASharp4 = 466.16;
 	double C5 = 523.25;
+	double CSharp5 = 554.37;
+	double D5 = 587.33;
+	double DSharp5 = 622.25;
+	double E5 = 659.26;
+	double F5 = 698.46;
+	double FSharp5 = 739.99;
+	double G5 = 783.99;
 	
 	/* lower notes */
 	double E2 = 82.41;
@@ -52,20 +59,20 @@ song score () {
 
 	/* THE KEY PLAYERS */
 	note as4_10 = note (ASharp4, 100, half + eighth);
-	note f3_2 = note (F3, 100, eighth);
+	note f4_2 = note (F4, 100, eighth);
 	note as4_2 = note (ASharp4, 100, eighth);
-	note gs3_1 = note (GSharp3, 100, sixteenth);
-	note fs3_1 = note (FSharp3, 100, sixteenth);
-	note gs3_14 = note (GSharp3, 100, quarter + eighth + half);
+	note gs4_1 = note (GSharp4, 100, sixteenth);
+	note fs4_1 = note (FSharp4, 100, sixteenth);
+	note gs4_14 = note (GSharp4, 100, quarter + eighth + half);
 	
 	rest wr = rest ( whole );
 	
 	note as4_4 = note (ASharp4, 100, quarter);
-	note f3_6 = note (F3, 100, quarter + eighth);
+	note f4_6 = note (F4, 100, quarter + eighth);
 	note as4_1 = note (ASharp4, 100, sixteenth);
-	note c4_1 = note (C4, 100, sixteenth);
-	note d4_1 = note (D4, 100, sixteenth);
-	note ds4_1 = note (DSharp4, 100, sixteenth);
+	note c5_1 = note (C5, 100, sixteenth);
+	note d5_1 = note (D5, 100, sixteenth);
+	note ds5_1 = note (DSharp5, 100, sixteenth);
 	
 	note f5_2 = note (F4, 100, eighth);
 	note f5_8 = note (F4, 100, half);
@@ -74,29 +81,29 @@ song score () {
 	
 	/* CHORDING THEM OUT */
 	chord c1 = chord (as4_10);
-	chord c2 = chord (f3_2);
-	chord c2b = chord (f3_2);
+	chord c2 = chord (f4_2);
+	chord c2b = chord (f4_2);
 	chord c3 = chord (as4_2);
-	chord c4 = chord (gs3_1);
-	chord c5 = chord (fs3_1);
-	chord c6 = chord (gs3_14);
+	chord c4 = chord (gs4_1);
+	chord c5 = chord (fs4_1);
+	chord c6 = chord (gs4_14);
 	
 	chord c7 = chord (wr);
 	chord c8 = chord (wr);
 	chord c9 = chord (as4_4);
-	chord c10 = chord (f3_6);
+	chord c10 = chord (f4_6);
 	chord c11 = chord (as4_2);
 	chord c12 = chord (as4_1);
-	chord c13 = chord (c4_1);
-	chord c14 = chord (d4_1);
-	chord c15 = chord (ds4_1);
+	chord c13 = chord (c5_1);
+	chord c14 = chord (d5_1);
+	chord c15 = chord (ds5_1);
 	
 	chord c16 = chord (f5_2);
 	chord c17 = chord (as4_2);
 	chord c18 = chord (as4_1);
-	chord c19 = chord (c4_1);
-	chord c20 = chord (d4_1);
-	chord c21 = chord (ds4_1);
+	chord c19 = chord (c5_1);
+	chord c20 = chord (d5_1);
+	chord c21 = chord (ds5_1);
 	chord c22 = chord (f5_8);
 	
 		
@@ -134,17 +141,24 @@ song score () {
 	track bass_clef = track ( pipe_organ );
 
 	note as2_4 = note (ASharp2, 100, quarter);
-	note f3_4 = note (F3, 100, quarter);
-	note b3_8 = note (B3, 100, half);
+	note f3_4 = note (DSharp3, 100, quarter);
+	note b3_8 = note (ASharp3, 100, half);
 	note gs2_4 = note (GSharp2, 100, quarter);
 	note ds3_4 = note (DSharp3, 100, quarter);
-	note a3_8 = note (A3, 100, half);
+	note a3_8 = note (ASharp3, 100, half);
 	note fs2_4 = note (FSharp2, 100, quarter);
 	note cs3_4 = note (CSharp3, 100, quarter);
-	note g3_8 = note (G3, 100, half);
+	note g3_8 = note (ASharp3, 100, half);
 	note f2_4 = note (F2, 100, quarter);
 	note c3_4 = note (C3, 100, quarter);
 	note f3_8 = note (F3, 100, half);
+	
+	note f3_2 = note (F3, 100, eighth);
+	note cs3_2 = note (CSharp3, 100, eighth);
+	note as2_2 = note (ASharp2, 100, eighth);
+	note f3_1 = note (F3, 100, sixteenth);
+	note as2_1 = note (ASharp2, 100, sixteenth);
+
 
 	chord b0 = chord (as2_4);
 	chord b1 = chord (f3_4);
@@ -158,6 +172,20 @@ song score () {
 	chord b9 = chord (f2_4);
 	chord b10 = chord (c3_4);
 	chord b11 = chord (f3_8);
+	
+	chord b12 = chord (f3_2, cs3_2, as2_2);
+	chord b13 = chord (f3_1, as2_1);
+	chord b14 = chord (as2_1);
+	chord b15 = chord (f3_2, as2_2);
+	chord b16 = chord (f3_1, as2_1);
+	chord b17 = chord (as2_1);
+	chord b18 = chord (f3_2, as2_2);
+	chord b19 = chord (f3_1, as2_1);
+	chord b20 = chord (as2_1);
+	chord b21 = chord (f3_1, as2_1);
+	chord b22 = chord (as2_1);
+	chord b23 = chord (f3_1, as2_1);
+	chord b24 = chord (as2_1);
 
 	bass_clef = bass_clef . b0;
 	bass_clef = bass_clef . b1;
@@ -172,6 +200,19 @@ song score () {
 	bass_clef = bass_clef . b10;
 	bass_clef = bass_clef . b11;
 
+	bass_clef = bass_clef . b12;
+	bass_clef = bass_clef . b13;
+	bass_clef = bass_clef . b14;
+	bass_clef = bass_clef . b15;
+	bass_clef = bass_clef . b16;
+	bass_clef = bass_clef . b17;
+	bass_clef = bass_clef . b18;
+	bass_clef = bass_clef . b19;
+	bass_clef = bass_clef . b20;
+	bass_clef = bass_clef . b21;
+	bass_clef = bass_clef . b22;
+	bass_clef = bass_clef . b23;
+	bass_clef = bass_clef . b24;
 
 	score s = score ( treble_clef, bass_clef );
 	return s;
